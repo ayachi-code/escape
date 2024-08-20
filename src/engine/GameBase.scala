@@ -51,13 +51,47 @@ class GameBase   extends PApplet {
     popStyle()
   }
 
+
   def drawLine(p1 : Point, p2 : Point) : Unit = {
 //    strokeWeight(5)
     line(p1.x,p1.y, p2.x,p2.y )
   }
 
-  def drawRectangle(r: Rectangle): Unit =
+
+//  def drawMazeCell(): Unit = {
+//
+//  }
+
+  def drawMazeCell(r: Rectangle, walls: List[Char]): Unit = {
+
+    if (walls.contains('n')) {
+      drawLine(Point(r.left, r.top), Point(r.left + r.width, r.top))
+    }
+
+    if (walls.contains('s')) {
+      drawLine(Point(r.left + r.width, r.top + r.height), Point(r.left, r.top + r.height))
+    }
+
+    if (walls.contains('e')) {
+      drawLine(Point(r.left + r.width, r.top), Point(r.left + r.width, r.top + r.height))
+    }
+
+    if (walls.contains('w')) {
+      drawLine(Point(r.left, r.top + r.height), Point(r.left, r.top))
+    }
+//    // top
+//    drawLine(Point(r.left, r.top), Point(r.left + r.width, r.top))
+//    //Right
+//    drawLine(Point(r.left + r.width, r.top), Point(r.left + r.width, r.top + r.height))
+//     //Bottom
+//    drawLine(Point(r.left + r.width, r.top + r.height), Point(r.left, r.top + r.height))
+//    // Left
+//    drawLine(Point(r.left, r.top + r.height), Point(r.left, r.top))
+  }
+
+  def drawRectangle(r: Rectangle): Unit = {
     rect(r.left,r.top, r.width, r.height)
+  }
 
   def drawTriangle(t: Triangle): Unit =
     triangle(t.p1.x, t.p1.y, t.p2.x,t.p2.y, t.p3.x,t.p3.y)

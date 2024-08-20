@@ -50,10 +50,11 @@ class TetrisGame extends GameBase {
       Rectangle(leftUp, widthPerCell, heightPerCell)
     }
 
-    def drawCell(area: Rectangle, tetrisColor: CellType): Unit = { // test
-      val color = tetrisBlockToColor(tetrisColor)
-      setFillColor(color)
-      drawRectangle(area)
+    def drawCell(area: Rectangle, walls: List[Char]): Unit = { // test
+//      val color = tetrisBlockToColor(tetrisColor)
+//      val theWalls = List[Char]()
+//      setFillColor(color)
+      drawMazeCell(area, walls)
     }
 
   }
@@ -104,18 +105,18 @@ class TetrisGame extends GameBase {
     }
   }
 
-  def tetrisBlockToColor(color: CellType): Color =
-    color match {
-      case MazeCell => Color.White
-      case ICell => Color.LightBlue
-      case OCell => Color.Yellow
-      case LCell => Color.Orange
-      case JCell => Color.Blue
-      case SCell => Color.Green
-      case Empty  => Color.Black
-      case TCell => Color.Purple
-      case ZCell => Color.Red
-    }
+//  def tetrisBlockToColor(color: CellType): Color =
+//    color match {
+//      case MazeCell => Color.White
+//      case ICell => Color.LightBlue
+//      case OCell => Color.Yellow
+//      case LCell => Color.Orange
+//      case JCell => Color.Blue
+//      case SCell => Color.Green
+//      case Empty  => Color.Black
+//      case TCell => Color.Purple
+//      case ZCell => Color.Red
+//    }
 }
 
 object TetrisGame {

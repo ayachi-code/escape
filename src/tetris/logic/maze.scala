@@ -143,6 +143,15 @@ class Maze(width: Int, height: Int) {
       return this
     }
 
+    def getWalls(): List[Char] = {
+      var theWalls : List[Char] = List[Char]()
+      if (walls('n')) theWalls = theWalls :+ 'n'
+      if (walls('s')) theWalls = theWalls :+ 's'
+      if (walls('e')) theWalls = theWalls :+ 'e'
+      if (walls('w')) theWalls = theWalls :+ 'w'
+      theWalls
+    }
+
     def addWall(wall: Char): Cell = {
       walls(wall) = true
       return this

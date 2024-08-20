@@ -12,6 +12,9 @@ class TetrisLogic(val randomGen: RandomGenerator,
                   val gridDims : Dimensions,
                   val initialBoard: Seq[Seq[CellType]]) {
 
+
+  val mazeGrid = new Maze(10,10).generateMaze()
+
   def this(random: RandomGenerator, gridDims : Dimensions) =
     this(random, gridDims, makeEmptyBoard(gridDims))
 
@@ -40,12 +43,8 @@ class TetrisLogic(val randomGen: RandomGenerator,
   def isGameOver: Boolean = false
 
   // TODO implement me
-  def getCellType(p : Point): CellType = {
-    if (p.x == 0) {
-      ICell
-    } else {
-      MazeCell
-    }
+  def getCellType(p : Point): List[Char] = {
+    mazeGrid(p.y)(p.x).getWalls()
   }
 }
 
