@@ -58,12 +58,10 @@ class GameBase   extends PApplet {
   }
 
 
-//  def drawMazeCell(): Unit = {
-//
-//  }
-
   def drawMazeCell(r: Rectangle, walls: List[Char]): Unit = {
 
+    stroke(10,10,10)
+    strokeWeight(13)
     if (walls.contains('n')) {
       drawLine(Point(r.left, r.top), Point(r.left + r.width, r.top))
     }
