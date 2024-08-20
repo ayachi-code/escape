@@ -40,7 +40,13 @@ class TetrisLogic(val randomGen: RandomGenerator,
   def isGameOver: Boolean = false
 
   // TODO implement me
-  def getCellType(p : Point): CellType = Empty
+  def getCellType(p : Point): CellType = {
+    if (p.x == 0) {
+      ICell
+    } else {
+      MazeCell
+    }
+  }
 }
 
 object TetrisLogic {
@@ -51,29 +57,19 @@ object TetrisLogic {
   // or decrease to make game smaller
 
 
+  var maze = new Maze(10,10).generateMaze()
+
 
   def makeEmptyBoard(gridDims : Dimensions): Seq[Seq[CellType]] = {
-    val emptyLine = Seq.fill(gridDims.width)(Empty)
+    val emptyLine = Seq.fill(gridDims.width)(MazeCell)
     Seq.fill(gridDims.height)(emptyLine)
   }
 
 
-  // These are the dimensions used when playing the game.
-  // When testing the game, other dimensions are passed to
-  // the constructor of GameLogic.
-  //
-  // DO NOT USE the variable DefaultGridDims in your code!
-  //
-  // Doing so will cause tests which have different dimensions to FAIL!
-  //
-  // In your code only use gridDims.width and gridDims.height
-  // do NOT use DefaultDims.width and DefaultDims.height
-
-
-  val DefaultWidth: Int = 10
+  val DefaultWidth: Int = 30
   val NrTopInvisibleLines: Int = 4
-  val DefaultVisibleHeight: Int = 20
-  val DefaultHeight: Int = DefaultVisibleHeight + NrTopInvisibleLines
+  val DefaultVisibleHeight: Int = 30
+  val DefaultHeight: Int = DefaultVisibleHeight //+ NrTopInvisibleLines
   val DefaultDims : Dimensions = Dimensions(width = DefaultWidth, height = DefaultHeight)
 
 

@@ -5,7 +5,7 @@ package tetris
 
 import engine.random.RandomGenerator
 import generic.{CellTypeInterface, GameLogicInterface, GameTestSuite}
-import tetris.logic.{CellType, Dimensions, Empty, ICell, JCell, LCell, OCell, Point, SCell, TCell, TetrisLogic, ZCell}
+import tetris.logic.{CellType, Dimensions, Empty, ICell, JCell, LCell, OCell, Point, SCell, TCell, TetrisLogic, ZCell, mazeCell}
 
 sealed abstract class TetrisAction
 case object RotateLeft    extends TetrisAction

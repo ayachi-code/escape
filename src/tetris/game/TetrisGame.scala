@@ -36,8 +36,8 @@ class TetrisGame extends GameBase {
 
   def drawGrid(): Unit = {
 
-    val widthPerCell = screenArea.width / gridDims.width
-    val heightPerCell = screenArea.height / gridDims.height
+    val widthPerCell = (screenArea.width / gridDims.width) * 3
+    val heightPerCell = (screenArea.height / gridDims.height) * 3
 
     for (p <- gridDims.allPointsInside) {
       drawCell(getCell(p), gameLogic.getCellType(p))  // s
@@ -46,15 +46,14 @@ class TetrisGame extends GameBase {
     def getCell(p : GridPoint): Rectangle = {
       val leftUp = Point(screenArea.left + p.x * widthPerCell,
         screenArea.top + p.y * heightPerCell)
+
       Rectangle(leftUp, widthPerCell, heightPerCell)
     }
 
     def drawCell(area: Rectangle, tetrisColor: CellType): Unit = { // test
       val color = tetrisBlockToColor(tetrisColor)
-      setFillColor(Color.Orange)
-      //drawLine(Point(0,7), Point(7,7))
+      setFillColor(color)
       drawRectangle(area)
-      //drawLine(Point(0,0), Point(5,0))
     }
 
   }
@@ -107,6 +106,7 @@ class TetrisGame extends GameBase {
 
   def tetrisBlockToColor(color: CellType): Color =
     color match {
+      case MazeCell => Color.White
       case ICell => Color.LightBlue
       case OCell => Color.Yellow
       case LCell => Color.Orange
