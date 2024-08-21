@@ -93,7 +93,7 @@ class Maze(width: Int, height: Int) {
 
     val rand = new Random(10)
 
-    var theStack = Stack[Cell](mazeCells(0)(0).setVisited(true))
+    var theStack = Stack[Cell](mazeCells(0)(0).setVisited(true).setPlayer(true))
 
     while (visitedCells < area) {
       var possibleNeigh = possibleNeigbours(theStack.top.pos)
@@ -135,6 +135,7 @@ class Maze(width: Int, height: Int) {
     val coordinate : Point = pos
     var walls : collection.mutable.Map[Char, Boolean] = collection.mutable.Map[Char, Boolean]('n' -> false, 's' -> false, 'w' -> false, 'e' -> false)
     private var visited : Boolean = false
+    var isPlayerOn : Boolean = false
 
     var linedCell : List[Point] = List[Point]()
 
@@ -160,6 +161,11 @@ class Maze(width: Int, height: Int) {
     def setVisited(state: Boolean): Cell = {
       visited = state
       return this
+    }
+
+    def setPlayer(state: Boolean): Cell = {
+      isPlayerOn = state
+      return  this
     }
 
     def isVisited(): Boolean =  visited

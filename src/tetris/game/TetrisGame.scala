@@ -24,6 +24,7 @@ class TetrisGame extends GameBase {
   val screenArea: Rectangle = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
 
   override def draw(): Unit = {
+    background(255) // clears old frame
     updateState()
     drawGrid()
     if (gameLogic.isGameOver) drawGameOverScreen()
@@ -40,7 +41,7 @@ class TetrisGame extends GameBase {
     val heightPerCell = (screenArea.height / gridDims.height) * 3
 
     for (p <- gridDims.allPointsInside) {
-      drawCell(getCell(p), gameLogic.getCellType(p))  // s
+      drawCell(getCell(p), gameLogic.getWalls(p), gameLogic.getCellType(p))  // s
     }
 
     def getCell(p : GridPoint): Rectangle = {
@@ -50,14 +51,21 @@ class TetrisGame extends GameBase {
       Rectangle(leftUp, widthPerCell, heightPerCell)
     }
 
-    def drawCell(area: Rectangle, walls: List[Char]): Unit = { // test
-//      val color = tetrisBlockToColor(tetrisColor)
-//      val theWalls = List[Char]()
-//      setFillColor(color)
+    def drawCell(area: Rectangle, walls: List[Char], typeOfCell: CellType): Unit = {
+      typeOfCell match {
+        case PlayerCell => drawPlayer(area)
+        case _ => Empty
+      }
       drawMazeCell(area, walls)
     }
 
   }
+
+//  def typeOfCell(cell: CellType): Unit = {
+//    cell match {
+//      case
+//    }
+
 
   /** Method that calls handlers for different key press events.
    * You may add extra functionality for other keys here.
@@ -70,7 +78,7 @@ class TetrisGame extends GameBase {
     event.getKeyCode match {
       case VK_A     => gameLogic.rotateLeft()
       case VK_S     => gameLogic.rotateRight()
-      case VK_UP    => gameLogic.rotateRight()
+      case VK_UP    => gameLogic.moveUp()
       case VK_DOWN  => gameLogic.moveDown()
       case VK_LEFT  => gameLogic.moveLeft()
       case VK_RIGHT => gameLogic.moveRight()
@@ -100,7 +108,7 @@ class TetrisGame extends GameBase {
 
   def updateState(): Unit = {
     if (updateTimer.timeForNextFrame()) {
-      gameLogic.moveDown()
+      //gameLogic.moveDown()
       updateTimer.advanceFrame()
     }
   }

@@ -3,17 +3,20 @@ package tetris.logic
 import engine.random.{RandomGenerator, ScalaRandomGen}
 import tetris.logic.TetrisLogic._
 
-/** To implement Tetris, complete the ``TODOs`` below.
- *
- * If you need additional files,
- * please also put them in the ``tetris`` package.
- */
+
+// TODO: Add player that can move and win condition
+
+
 class TetrisLogic(val randomGen: RandomGenerator,
                   val gridDims : Dimensions,
                   val initialBoard: Seq[Seq[CellType]]) {
 
 
+  var gameState = GameState(Point(0, 0), gameDone = false)
+
   val mazeGrid = new Maze(10,10).generateMaze()
+
+  println("debug")
 
   def this(random: RandomGenerator, gridDims : Dimensions) =
     this(random, gridDims, makeEmptyBoard(gridDims))
@@ -27,14 +30,33 @@ class TetrisLogic(val randomGen: RandomGenerator,
   // TODO implement me
   def rotateRight(): Unit = ()
 
-  // TODO implement me
-  def moveLeft(): Unit = ()
+
+  def moveUp(): Unit = {
+    mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
+    mazeGrid(gameState.playerPosition.y - 1)(gameState.playerPosition.x).setPlayer(true)
+    gameState = GameState(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y - 1), gameDone = false)
+  }
 
   // TODO implement me
-  def moveRight(): Unit = ()
+  def moveLeft(): Unit = {
+    mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
+    mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x - 1).setPlayer(true)
+    gameState = GameState(playerPosition = Point(gameState.playerPosition.x - 1, gameState.playerPosition.y), gameDone = false)
+  }
 
   // TODO implement me
-  def moveDown(): Unit = ()
+  def moveRight(): Unit = {
+    mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
+    mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x + 1).setPlayer(true)
+    gameState = GameState(playerPosition = Point(gameState.playerPosition.x + 1, gameState.playerPosition.y), gameDone = false)
+  }
+
+  // TODO implement me
+  def moveDown(): Unit = {
+    mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
+    mazeGrid(gameState.playerPosition.y + 1)(gameState.playerPosition.x).setPlayer(true)
+    gameState = GameState(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y + 1), gameDone = false)
+  }
 
   // TODO implement me
   def doHardDrop(): Unit = ()
@@ -42,9 +64,17 @@ class TetrisLogic(val randomGen: RandomGenerator,
   // TODO implement me
   def isGameOver: Boolean = false
 
-  // TODO implement me
-  def getCellType(p : Point): List[Char] = {
+  def getWalls(p : Point): List[Char] = {
     mazeGrid(p.y)(p.x).getWalls()
+  }
+
+
+  // TODO implement me
+  def getCellType(p : Point): CellType = {
+    if (mazeGrid(p.y)(p.x).isPlayerOn) {
+      return PlayerCell
+    }
+    Empty
   }
 }
 

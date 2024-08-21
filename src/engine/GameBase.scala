@@ -87,9 +87,20 @@ class GameBase   extends PApplet {
 //    drawLine(Point(r.left, r.top + r.height), Point(r.left, r.top))
   }
 
+//  def emptyCell(r: Rectangle): Unit = {
+////    rect(r.left,r.top, r.width, r.height)
+//  }
+
   def drawRectangle(r: Rectangle): Unit = {
     rect(r.left,r.top, r.width, r.height)
   }
+
+  def drawPlayer(r : Rectangle): Unit = {
+    fill(250,10,10)
+    strokeWeight(1)
+    ellipse(r.center.x, r.center.y, r.width / 2, r.height / 2)
+  }
+
 
   def drawTriangle(t: Triangle): Unit =
     triangle(t.p1.x, t.p1.y, t.p2.x,t.p2.y, t.p3.x,t.p3.y)
