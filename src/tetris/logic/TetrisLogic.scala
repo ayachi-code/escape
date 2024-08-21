@@ -30,32 +30,52 @@ class TetrisLogic(val randomGen: RandomGenerator,
   // TODO implement me
   def rotateRight(): Unit = ()
 
-
   def moveUp(): Unit = {
-    mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
-    mazeGrid(gameState.playerPosition.y - 1)(gameState.playerPosition.x).setPlayer(true)
-    gameState = GameState(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y - 1), gameDone = false)
+    if (isMovePossible(gameState.playerPosition, 'n')) {
+      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
+      mazeGrid(gameState.playerPosition.y - 1)(gameState.playerPosition.x).setPlayer(true)
+      gameState = GameState(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y - 1), gameDone = false)
+    }
   }
 
   // TODO implement me
   def moveLeft(): Unit = {
-    mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
-    mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x - 1).setPlayer(true)
-    gameState = GameState(playerPosition = Point(gameState.playerPosition.x - 1, gameState.playerPosition.y), gameDone = false)
+    if (isMovePossible(gameState.playerPosition, 'w')) {
+      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
+      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x - 1).setPlayer(true)
+      gameState = GameState(playerPosition = Point(gameState.playerPosition.x - 1, gameState.playerPosition.y), gameDone = false)
+    }
   }
 
   // TODO implement me
   def moveRight(): Unit = {
-    mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
-    mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x + 1).setPlayer(true)
-    gameState = GameState(playerPosition = Point(gameState.playerPosition.x + 1, gameState.playerPosition.y), gameDone = false)
+    if (isMovePossible(gameState.playerPosition, 'e')) {
+      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
+      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x + 1).setPlayer(true)
+      gameState = GameState(playerPosition = Point(gameState.playerPosition.x + 1, gameState.playerPosition.y), gameDone = false)
+
+    }
   }
+
+
+  def isMovePossible(point: Point, move: Char): Boolean = {
+    move match {
+      case 's' => !(point.x < 0 || point.y + 1 < 0 || point.x > mazeGrid.length - 1 || point.y + 1 > mazeGrid.length - 1) && !mazeGrid(point.y + 1)(point.x).walls('n') && !mazeGrid(point.y)(point.x).walls('s')
+      case 'n' => !(point.x < 0 || point.y - 1 < 0 || point.x > mazeGrid.length - 1 || point.y - 1 > mazeGrid.length - 1) && !mazeGrid(point.y - 1)(point.x).walls('s') && !mazeGrid(point.y)(point.x).walls('n')
+      case 'e' => !(point.x + 1 < 0 || point.y < 0 || point.x + 1 > mazeGrid.length - 1|| point.y > mazeGrid.length - 1) && !mazeGrid(point.y)(point.x + 1).walls('w') && !mazeGrid(point.y)(point.x).walls('e')
+      case 'w' => !(point.x - 1 < 0 || point.y < 0 || point.x - 1 > mazeGrid.length - 1 || point.y > mazeGrid.length - 1) && !mazeGrid(point.y)(point.x - 1).walls('e') && !mazeGrid(point.y)(point.x).walls('w')
+    }
+
+  }
+
 
   // TODO implement me
   def moveDown(): Unit = {
-    mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
-    mazeGrid(gameState.playerPosition.y + 1)(gameState.playerPosition.x).setPlayer(true)
-    gameState = GameState(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y + 1), gameDone = false)
+    if (isMovePossible(gameState.playerPosition, 's')) {
+      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
+      mazeGrid(gameState.playerPosition.y + 1)(gameState.playerPosition.x).setPlayer(true)
+      gameState = GameState(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y + 1), gameDone = false)
+    }
   }
 
   // TODO implement me
