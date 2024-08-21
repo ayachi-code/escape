@@ -29,7 +29,6 @@ class TetrisGame extends GameBase {
     fill(0)
     drawTextCentered("Score: " + gameLogic.gameState.score, 23, Point(45, ((screenArea.height / gridDims.height) * 3) / 2))
 
-
   }
 
   override def draw(): Unit = {
@@ -72,6 +71,16 @@ class TetrisGame extends GameBase {
       drawMazeCell(area, walls)
     }
 
+  }
+
+
+  override def keyReleased(event: KeyEvent): Unit = {
+    event.getKeyCode match {
+      case VK_S     => {
+        println("test")
+      }
+      case _        => ()
+    }
   }
 
   /** Method that calls handlers for different key press events.

@@ -4,6 +4,8 @@ import engine.random.{RandomGenerator, ScalaRandomGen}
 import tetris.logic.TetrisLogic._
 
 
+//TODO: Gamestate manager + progression levels + timer + highscore + voorkom dat als je knop niet kan ingedrukt houden om te lopen
+
 class TetrisLogic(val randomGen: RandomGenerator,
                   val gridDims : Dimensions,
                   val initialBoard: Seq[Seq[CellType]], val mazeDim: Dimensions) {
@@ -64,7 +66,6 @@ class TetrisLogic(val randomGen: RandomGenerator,
     }
   }
 
-  // TODO implement me
   def moveRight(): Unit = {
     if (isMovePossible(gameState.playerPosition, 'e')) {
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
@@ -94,7 +95,6 @@ class TetrisLogic(val randomGen: RandomGenerator,
       gameState = gameState.copy(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y + 1), gameDone = false)
 
       checkCoinCollision()
-
     }
   }
 
@@ -110,16 +110,9 @@ class TetrisLogic(val randomGen: RandomGenerator,
 
   def getCellType(p : Point): CellType = {
 
-//    if (mazeGrid(p.y)(p.x).isCoin && mazeGrid(p.y)(p.x).isPlayerOn) {
-//      gameState = gameState.copy(score = gameState.score + 1)
-//      mazeGrid(p.y)(p.x).isCoin = false
-//      return Empty
-//    }
-
     if (mazeGrid(p.y)(p.x).isPlayerOn && mazeGrid(p.y)(p.x).isPortal) {
       return PlayerOnDoor
     }
-
 
     if (mazeGrid(p.y)(p.x).isPlayerOn) {
       return PlayerCell
@@ -132,7 +125,6 @@ class TetrisLogic(val randomGen: RandomGenerator,
     if (mazeGrid(p.y)(p.x).isCoin) {
       return Coin
     }
-
 
     Empty
   }

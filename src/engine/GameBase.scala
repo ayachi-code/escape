@@ -100,7 +100,7 @@ class GameBase   extends PApplet {
 
   def drawCoin(r: Rectangle): Unit = { // TODO: Substarct by halve of cell width
     val img : PImage = loadImage("src/tetris/assets/x.png")
-    image(img, (r.left + r.right - 22) / 2, (r.top + r.bottom - 22) / 2, r.width / 2, r.height / 2)
+    image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
   }
 
   def drawPlayerOnDoor(r: Rectangle): Unit = {
