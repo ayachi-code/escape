@@ -37,6 +37,9 @@ class TetrisLogic(val randomGen: RandomGenerator,
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
       mazeGrid(gameState.playerPosition.y - 1)(gameState.playerPosition.x).setPlayer(true)
       gameState = GameState(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y - 1), gameDone = false)
+
+      if (gameState.playerPosition == maze.portalLocation) gameState = gameState.copy(gameDone = true)
+
     }
   }
 
@@ -46,6 +49,9 @@ class TetrisLogic(val randomGen: RandomGenerator,
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x - 1).setPlayer(true)
       gameState = GameState(playerPosition = Point(gameState.playerPosition.x - 1, gameState.playerPosition.y), gameDone = false)
+
+      if (gameState.playerPosition == maze.portalLocation) gameState = gameState.copy(gameDone = true)
+
     }
   }
 
@@ -56,9 +62,7 @@ class TetrisLogic(val randomGen: RandomGenerator,
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x + 1).setPlayer(true)
       gameState = GameState(playerPosition = Point(gameState.playerPosition.x + 1, gameState.playerPosition.y), gameDone = false)
 
-      if (gameState.playerPosition == maze.portalLocation) {
-        gameState = gameState.copy(gameDone = true)
-      }
+      if (gameState.playerPosition == maze.portalLocation) gameState = gameState.copy(gameDone = true)
 
     }
   }
@@ -80,6 +84,9 @@ class TetrisLogic(val randomGen: RandomGenerator,
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
       mazeGrid(gameState.playerPosition.y + 1)(gameState.playerPosition.x).setPlayer(true)
       gameState = GameState(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y + 1), gameDone = false)
+
+      if (gameState.playerPosition == maze.portalLocation) gameState = gameState.copy(gameDone = true)
+
     }
   }
 
