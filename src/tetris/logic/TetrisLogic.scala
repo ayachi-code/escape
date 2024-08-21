@@ -94,6 +94,11 @@ class TetrisLogic(val randomGen: RandomGenerator,
     if (mazeGrid(p.y)(p.x).isPlayerOn) {
       return PlayerCell
     }
+
+    if (mazeGrid(p.y)(p.x).isPortal) {
+      return Portal
+    }
+
     Empty
   }
 }

@@ -54,6 +54,7 @@ class TetrisGame extends GameBase {
     def drawCell(area: Rectangle, walls: List[Char], typeOfCell: CellType): Unit = {
       typeOfCell match {
         case PlayerCell => drawPlayer(area)
+        case Portal => drawPortal(area)
         case _ => Empty
       }
       drawMazeCell(area, walls)
@@ -113,18 +114,6 @@ class TetrisGame extends GameBase {
     }
   }
 
-//  def tetrisBlockToColor(color: CellType): Color =
-//    color match {
-//      case MazeCell => Color.White
-//      case ICell => Color.LightBlue
-//      case OCell => Color.Yellow
-//      case LCell => Color.Orange
-//      case JCell => Color.Blue
-//      case SCell => Color.Green
-//      case Empty  => Color.Black
-//      case TCell => Color.Purple
-//      case ZCell => Color.Red
-//    }
 }
 
 object TetrisGame {

@@ -5,7 +5,7 @@ package engine
 
 import engine.graphics.Color.Black
 import engine.graphics.{Color, Point, Rectangle, Triangle}
-import processing.core.{PApplet, PConstants}
+import processing.core.{PApplet, PConstants, PImage}
 
 class GameBase   extends PApplet {
 
@@ -60,7 +60,7 @@ class GameBase   extends PApplet {
 
   def drawMazeCell(r: Rectangle, walls: List[Char]): Unit = {
 
-    stroke(10,10,10)
+    stroke(10, 10, 10)
     strokeWeight(13)
     if (walls.contains('n')) {
       drawLine(Point(r.left, r.top), Point(r.left + r.width, r.top))
@@ -77,26 +77,21 @@ class GameBase   extends PApplet {
     if (walls.contains('w')) {
       drawLine(Point(r.left, r.top + r.height), Point(r.left, r.top))
     }
-//    // top
-//    drawLine(Point(r.left, r.top), Point(r.left + r.width, r.top))
-//    //Right
-//    drawLine(Point(r.left + r.width, r.top), Point(r.left + r.width, r.top + r.height))
-//     //Bottom
-//    drawLine(Point(r.left + r.width, r.top + r.height), Point(r.left, r.top + r.height))
-//    // Left
-//    drawLine(Point(r.left, r.top + r.height), Point(r.left, r.top))
   }
-
-//  def emptyCell(r: Rectangle): Unit = {
-////    rect(r.left,r.top, r.width, r.height)
-//  }
 
   def drawRectangle(r: Rectangle): Unit = {
     rect(r.left,r.top, r.width, r.height)
   }
 
+  def drawPortal(r: Rectangle): Unit = {
+    val img : PImage = loadImage("src/tetris/assets/door.png")
+    image(img, r.left, r.top, r.width, r.height)
+  }
+
   def drawPlayer(r : Rectangle): Unit = {
+    //val img : PImage = loadImage("src/tetris/assets/door.png")
     fill(250,10,10)
+    //image(img, r.left, r.right, r.width, r.height)
     strokeWeight(1)
     ellipse(r.center.x, r.center.y, r.width / 2, r.height / 2)
   }

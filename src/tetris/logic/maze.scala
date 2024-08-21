@@ -128,6 +128,8 @@ class Maze(width: Int, height: Int) {
 
     }
 
+    mazeCells(height - 1)(width - 1).isPortal = true
+
     mazeCells
   }
 
@@ -136,6 +138,8 @@ class Maze(width: Int, height: Int) {
     var walls : collection.mutable.Map[Char, Boolean] = collection.mutable.Map[Char, Boolean]('n' -> false, 's' -> false, 'w' -> false, 'e' -> false)
     private var visited : Boolean = false
     var isPlayerOn : Boolean = false
+
+    var isPortal : Boolean = false
 
     var linedCell : List[Point] = List[Point]()
 
