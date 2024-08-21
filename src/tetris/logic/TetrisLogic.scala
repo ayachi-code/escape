@@ -4,15 +4,12 @@ import engine.random.{RandomGenerator, ScalaRandomGen}
 import tetris.logic.TetrisLogic._
 
 
-// TODO: Add player that can move and win condition
-
-
 class TetrisLogic(val randomGen: RandomGenerator,
                   val gridDims : Dimensions,
-                  val initialBoard: Seq[Seq[CellType]]) {
+                  val initialBoard: Seq[Seq[CellType]], val mazeDim: Dimensions) {
 
 
-  var gameState = GameState(Point(0, 0), gameDone = false)
+  var gameState = GameState(Point(0, 0), gameDone = false, 0, false)
 
   val maze = new Maze(10,10)
 
@@ -21,10 +18,10 @@ class TetrisLogic(val randomGen: RandomGenerator,
   println("debug")
 
   def this(random: RandomGenerator, gridDims : Dimensions) =
-    this(random, gridDims, makeEmptyBoard(gridDims))
+    this(random, gridDims, makeEmptyBoard(gridDims), Dimensions(30,30))
 
   def this() =
-    this(new ScalaRandomGen(), DefaultDims, makeEmptyBoard(DefaultDims))
+    this(new ScalaRandomGen(), DefaultDims, makeEmptyBoard(DefaultDims), Dimensions(30,30))
 
   // TODO implement me
   def rotateLeft(): Unit = ()
@@ -36,9 +33,14 @@ class TetrisLogic(val randomGen: RandomGenerator,
     if (isMovePossible(gameState.playerPosition, 'n')) {
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
       mazeGrid(gameState.playerPosition.y - 1)(gameState.playerPosition.x).setPlayer(true)
-      gameState = GameState(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y - 1), gameDone = false)
+      gameState = gameState.copy(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y - 1), gameDone = false)
 
-      if (gameState.playerPosition == maze.portalLocation) gameState = gameState.copy(gameDone = true)
+      if (mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isCoin && mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isPlayerOn) {
+        gameState = gameState.copy(score = gameState.score + 1)
+        mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isCoin = false
+      }
+
+      checkCoinCollision()
 
     }
   }
@@ -48,10 +50,17 @@ class TetrisLogic(val randomGen: RandomGenerator,
     if (isMovePossible(gameState.playerPosition, 'w')) {
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x - 1).setPlayer(true)
-      gameState = GameState(playerPosition = Point(gameState.playerPosition.x - 1, gameState.playerPosition.y), gameDone = false)
+      gameState = gameState.copy(playerPosition = Point(gameState.playerPosition.x - 1, gameState.playerPosition.y), gameDone = false)
 
-      if (gameState.playerPosition == maze.portalLocation) gameState = gameState.copy(gameDone = true)
+      checkCoinCollision()
 
+    }
+  }
+
+  def checkCoinCollision(): Unit = {
+    if (mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isCoin && mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isPlayerOn) {
+      gameState = gameState.copy(score = gameState.score + 1)
+      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isCoin = false
     }
   }
 
@@ -60,10 +69,9 @@ class TetrisLogic(val randomGen: RandomGenerator,
     if (isMovePossible(gameState.playerPosition, 'e')) {
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x + 1).setPlayer(true)
-      gameState = GameState(playerPosition = Point(gameState.playerPosition.x + 1, gameState.playerPosition.y), gameDone = false)
+      gameState = gameState.copy(playerPosition = Point(gameState.playerPosition.x + 1, gameState.playerPosition.y), gameDone = false)
 
-      if (gameState.playerPosition == maze.portalLocation) gameState = gameState.copy(gameDone = true)
-
+      checkCoinCollision()
     }
   }
 
@@ -83,14 +91,16 @@ class TetrisLogic(val randomGen: RandomGenerator,
     if (isMovePossible(gameState.playerPosition, 's')) {
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
       mazeGrid(gameState.playerPosition.y + 1)(gameState.playerPosition.x).setPlayer(true)
-      gameState = GameState(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y + 1), gameDone = false)
+      gameState = gameState.copy(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y + 1), gameDone = false)
 
-      if (gameState.playerPosition == maze.portalLocation) gameState = gameState.copy(gameDone = true)
+      checkCoinCollision()
 
     }
   }
 
-  def doHardDrop(): Unit = ()
+  def leaveRoom(): Unit = {
+    if (gameState.playerPosition == maze.portalLocation) gameState = gameState.copy(gameDone = true)
+  }
 
   def isGameOver: Boolean = gameState.gameDone
 
@@ -99,6 +109,18 @@ class TetrisLogic(val randomGen: RandomGenerator,
   }
 
   def getCellType(p : Point): CellType = {
+
+//    if (mazeGrid(p.y)(p.x).isCoin && mazeGrid(p.y)(p.x).isPlayerOn) {
+//      gameState = gameState.copy(score = gameState.score + 1)
+//      mazeGrid(p.y)(p.x).isCoin = false
+//      return Empty
+//    }
+
+    if (mazeGrid(p.y)(p.x).isPlayerOn && mazeGrid(p.y)(p.x).isPortal) {
+      return PlayerOnDoor
+    }
+
+
     if (mazeGrid(p.y)(p.x).isPlayerOn) {
       return PlayerCell
     }
@@ -106,6 +128,11 @@ class TetrisLogic(val randomGen: RandomGenerator,
     if (mazeGrid(p.y)(p.x).isPortal) {
       return Portal
     }
+
+    if (mazeGrid(p.y)(p.x).isCoin) {
+      return Coin
+    }
+
 
     Empty
   }
@@ -126,13 +153,13 @@ object TetrisLogic {
 
   val DefaultWidth: Int = 30
   val NrTopInvisibleLines: Int = 4
-  val DefaultVisibleHeight: Int = 30
+  val DefaultVisibleHeight: Int = 33
   val DefaultHeight: Int = DefaultVisibleHeight //+ NrTopInvisibleLines
   val DefaultDims : Dimensions = Dimensions(width = DefaultWidth, height = DefaultHeight)
-
+  val mazeDims : Dimensions = Dimensions(width = 30, height = 30)
 
   def apply() = new TetrisLogic(new ScalaRandomGen(),
     DefaultDims,
-    makeEmptyBoard(DefaultDims))
+    makeEmptyBoard(DefaultDims), mazeDims)
 
 }

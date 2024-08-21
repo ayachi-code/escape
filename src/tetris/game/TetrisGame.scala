@@ -17,16 +17,26 @@ import tetris.logic.{Point => GridPoint}
 class TetrisGame extends GameBase {
 
   var gameLogic : TetrisLogic = TetrisLogic()
+  val mazeDims: Dimensions = gameLogic.mazeDim
   val updateTimer = new UpdateTimer(TetrisLogic.FramesPerSecond.toFloat)
   val gridDims : Dimensions = gameLogic.gridDims
   val widthInPixels: Int = (WidthCellInPixels * gridDims.width).ceil.toInt
   val heightInPixels: Int = (HeightCellInPixels * gridDims.height).ceil.toInt
   val screenArea: Rectangle = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
 
+
+  def menu(): Unit = {
+    fill(0)
+    drawTextCentered("Score: " + gameLogic.gameState.score, 23, Point(45, ((screenArea.height / gridDims.height) * 3) / 2))
+
+
+  }
+
   override def draw(): Unit = {
     background(255) // clears old frame
     updateState()
     drawGrid()
+    menu()
     if (gameLogic.isGameOver) drawGameOverScreen()
   }
 
@@ -40,13 +50,13 @@ class TetrisGame extends GameBase {
     val widthPerCell = (screenArea.width / gridDims.width) * 3
     val heightPerCell = (screenArea.height / gridDims.height) * 3
 
-    for (p <- gridDims.allPointsInside) {
+    for (p <- mazeDims.allPointsInside) {
       drawCell(getCell(p), gameLogic.getWalls(p), gameLogic.getCellType(p))  // s
     }
 
     def getCell(p : GridPoint): Rectangle = {
       val leftUp = Point(screenArea.left + p.x * widthPerCell,
-        screenArea.top + p.y * heightPerCell)
+        screenArea.top + p.y * heightPerCell + heightPerCell)
 
       Rectangle(leftUp, widthPerCell, heightPerCell)
     }
@@ -55,6 +65,8 @@ class TetrisGame extends GameBase {
       typeOfCell match {
         case PlayerCell => drawPlayer(area)
         case Portal => drawPortal(area)
+        case Coin => drawCoin(area)
+        case PlayerOnDoor => drawPlayerOnDoor(area)
         case _ => Empty
       }
       drawMazeCell(area, walls)
@@ -77,7 +89,7 @@ class TetrisGame extends GameBase {
       case VK_DOWN  => gameLogic.moveDown()
       case VK_LEFT  => gameLogic.moveLeft()
       case VK_RIGHT => gameLogic.moveRight()
-      case VK_SPACE => gameLogic.doHardDrop()
+      case VK_SPACE => gameLogic.leaveRoom()
       case _        => ()
     }
 

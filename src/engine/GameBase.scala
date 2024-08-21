@@ -98,6 +98,16 @@ class GameBase   extends PApplet {
   def drawTriangle(t: Triangle): Unit =
     triangle(t.p1.x, t.p1.y, t.p2.x,t.p2.y, t.p3.x,t.p3.y)
 
+  def drawCoin(r: Rectangle): Unit = { // TODO: Substarct by halve of cell width
+    val img : PImage = loadImage("src/tetris/assets/x.png")
+    image(img, (r.left + r.right - 22) / 2, (r.top + r.bottom - 22) / 2, r.width / 2, r.height / 2)
+  }
+
+  def drawPlayerOnDoor(r: Rectangle): Unit = {
+    drawPortal(r)
+    drawPlayer(r)
+  }
+
   def drawEllipse(r: Rectangle): Unit =
     ellipse(r.center.x, r.center.y, r.width, r.height)
 

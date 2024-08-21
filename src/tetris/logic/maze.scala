@@ -9,6 +9,8 @@ class Maze(width: Int, height: Int) {
   var mazeCells : ArrayBuffer[ArrayBuffer[Cell]] = ArrayBuffer[ArrayBuffer[Cell]]()
   var visitedCells : Int = 1
 
+  val rand = new Random()
+
   val portalLocation : Point = Point(width - 1, height - 1)
 
   private def initMaze(): Unit = {
@@ -90,10 +92,32 @@ class Maze(width: Int, height: Int) {
 
   }
 
+  def uniqueCoin(): Point = {
+    var state : Boolean = true
+    var coords = List[Point]()
+
+    while (state) {
+      val randomX = rand.nextInt(mazeCells.length - 1) + 1
+      val randomY = rand.nextInt(mazeCells.length - 1) + 1
+
+      if(!coords.contains(Point(randomX, randomY))) {
+        state = false
+        return Point(randomX, randomY)
+      }
+    }
+    Point(0,0)
+  }
+
+  def generateCoins(): Unit = {
+    for (i <- 0 until 5) {
+      val coinLocation = uniqueCoin()
+      mazeCells(coinLocation.y)(coinLocation.x).isCoin = true
+    }
+
+  }
+
   def generateMaze(): ArrayBuffer[ArrayBuffer[Cell]] = { //TODO: Implement
     initMaze()
-
-    val rand = new Random(10)
 
     var theStack = Stack[Cell](mazeCells(0)(0).setVisited(true).setPlayer(true))
 
@@ -132,6 +156,8 @@ class Maze(width: Int, height: Int) {
 
     mazeCells(height - 1)(width - 1).isPortal = true
 
+    generateCoins()
+
     mazeCells
   }
 
@@ -140,8 +166,9 @@ class Maze(width: Int, height: Int) {
     var walls : collection.mutable.Map[Char, Boolean] = collection.mutable.Map[Char, Boolean]('n' -> false, 's' -> false, 'w' -> false, 'e' -> false)
     private var visited : Boolean = false
     var isPlayerOn : Boolean = false
-
     var isPortal : Boolean = false
+    var isCoin : Boolean = false
+
 
     var linedCell : List[Point] = List[Point]()
 
