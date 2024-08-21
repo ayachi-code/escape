@@ -62,12 +62,6 @@ class TetrisGame extends GameBase {
 
   }
 
-//  def typeOfCell(cell: CellType): Unit = {
-//    cell match {
-//      case
-//    }
-
-
   /** Method that calls handlers for different key press events.
    * You may add extra functionality for other keys here.
    * See [[event.KeyEvent]] for all defined keycodes.

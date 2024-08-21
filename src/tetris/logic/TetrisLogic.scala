@@ -14,7 +14,9 @@ class TetrisLogic(val randomGen: RandomGenerator,
 
   var gameState = GameState(Point(0, 0), gameDone = false)
 
-  val mazeGrid = new Maze(10,10).generateMaze()
+  val maze = new Maze(10,10)
+
+  val mazeGrid = maze.generateMaze()
 
   println("debug")
 
@@ -54,6 +56,10 @@ class TetrisLogic(val randomGen: RandomGenerator,
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x + 1).setPlayer(true)
       gameState = GameState(playerPosition = Point(gameState.playerPosition.x + 1, gameState.playerPosition.y), gameDone = false)
 
+      if (gameState.playerPosition == maze.portalLocation) {
+        gameState = gameState.copy(gameDone = true)
+      }
+
     }
   }
 
@@ -69,7 +75,6 @@ class TetrisLogic(val randomGen: RandomGenerator,
   }
 
 
-  // TODO implement me
   def moveDown(): Unit = {
     if (isMovePossible(gameState.playerPosition, 's')) {
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
@@ -78,18 +83,14 @@ class TetrisLogic(val randomGen: RandomGenerator,
     }
   }
 
-  // TODO implement me
   def doHardDrop(): Unit = ()
 
-  // TODO implement me
-  def isGameOver: Boolean = false
+  def isGameOver: Boolean = gameState.gameDone
 
   def getWalls(p : Point): List[Char] = {
     mazeGrid(p.y)(p.x).getWalls()
   }
 
-
-  // TODO implement me
   def getCellType(p : Point): CellType = {
     if (mazeGrid(p.y)(p.x).isPlayerOn) {
       return PlayerCell
@@ -111,14 +112,10 @@ object TetrisLogic {
   // or decrease to make game smaller
 
 
-  var maze = new Maze(10,10).generateMaze()
-
-
   def makeEmptyBoard(gridDims : Dimensions): Seq[Seq[CellType]] = {
     val emptyLine = Seq.fill(gridDims.width)(MazeCell)
     Seq.fill(gridDims.height)(emptyLine)
   }
-
 
   val DefaultWidth: Int = 30
   val NrTopInvisibleLines: Int = 4

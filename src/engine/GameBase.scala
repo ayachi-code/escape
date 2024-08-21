@@ -89,9 +89,7 @@ class GameBase   extends PApplet {
   }
 
   def drawPlayer(r : Rectangle): Unit = {
-    //val img : PImage = loadImage("src/tetris/assets/door.png")
     fill(250,10,10)
-    //image(img, r.left, r.right, r.width, r.height)
     strokeWeight(1)
     ellipse(r.center.x, r.center.y, r.width / 2, r.height / 2)
   }

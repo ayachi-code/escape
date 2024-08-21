@@ -9,6 +9,8 @@ class Maze(width: Int, height: Int) {
   var mazeCells : ArrayBuffer[ArrayBuffer[Cell]] = ArrayBuffer[ArrayBuffer[Cell]]()
   var visitedCells : Int = 1
 
+  val portalLocation : Point = Point(width - 1, height - 1)
+
   private def initMaze(): Unit = {
 
     var roof = ArrayBuffer[Cell]().append(Cell(Point(0,0)).addWall('n').addWall('w'))
