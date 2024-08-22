@@ -31,6 +31,11 @@ class TetrisGame extends GameBase {
     fill(169, 139, 53)
     drawTextCentered("Gold: " + gameLogic.gameState.score, 23, Point(45, ((screenArea.height / gridDims.height) * 3) / 2))
     drawTextCentered("Depth: " + gameLogic.gameState.level, 23, Point(screenArea.width - 49, ((screenArea.height / gridDims.height) * 3) / 2))
+    if (gameLogic.gameState.gotKey) {
+      drawKey(Rectangle(Point(100,(screenArea.height / gridDims.height) - 20), 45,45))
+    }
+
+
 
   }
 
@@ -39,10 +44,6 @@ class TetrisGame extends GameBase {
     updateState()
     drawGrid()
     menu()
-//    if (gameLogic.gameState.transits) {
-//      gameLogic.gameState = gameLogic.gameState.copy(transits = false)
-//      drawTransistion()
-//    }
     if (gameLogic.isGameOver) drawGameOverScreen()
   }
 
@@ -77,6 +78,7 @@ class TetrisGame extends GameBase {
           drawOpenDoor(area)
           changeState = true
         }
+        case Key => drawKey(area)
         case _ => Empty
       }
       drawMazeCell(area, walls)
@@ -139,7 +141,7 @@ class TetrisGame extends GameBase {
         delay(1000)
         gameLogic.maze = new Maze(10,10)
         gameLogic.mazeGrid = gameLogic.maze.generateMaze()
-        gameLogic.gameState = gameLogic.gameState.copy(level = gameLogic.gameState.level + 1,transits = false, playerPosition = tetris.logic.Point(0,0))
+        gameLogic.gameState = gameLogic.gameState.copy(gotKey = false,level = gameLogic.gameState.level + 1,transits = false, playerPosition = tetris.logic.Point(0,0))
         changeState = false
       }
       updateTimer.advanceFrame()

@@ -7,6 +7,8 @@ case object PlayerCell extends CellType
 case object Portal extends  CellType
 case object Coin extends CellType
 case object PlayerOnDoor extends CellType
+case object OpenPortal extends CellType
+case object Key extends CellType
 //case object ICell  extends CellType
 //case object JCell  extends CellType
 //case object LCell  extends CellType

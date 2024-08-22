@@ -11,7 +11,7 @@ class TetrisLogic(val randomGen: RandomGenerator,
                   val initialBoard: Seq[Seq[CellType]], val mazeDim: Dimensions) {
 
 
-  var gameState = GameState(Point(0, 0), gameDone = false, 0, leaveRoomButtonPressed = false, 1, transits = false)
+  var gameState = GameState(false, Point(0, 0), gameDone = false, 0, leaveRoomButtonPressed = false, 1, transits = false)
 
   var maze = new Maze(10,10)
 
@@ -42,7 +42,7 @@ class TetrisLogic(val randomGen: RandomGenerator,
         mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isCoin = false
       }
 
-      checkCoinCollision()
+      checkCollisions()
 
     }
   }
@@ -54,7 +54,7 @@ class TetrisLogic(val randomGen: RandomGenerator,
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x - 1).setPlayer(true)
       gameState = gameState.copy(playerPosition = Point(gameState.playerPosition.x - 1, gameState.playerPosition.y), gameDone = false)
 
-      checkCoinCollision()
+      checkCollisions()
 
     }
   }
@@ -72,7 +72,7 @@ class TetrisLogic(val randomGen: RandomGenerator,
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x + 1).setPlayer(true)
       gameState = gameState.copy(playerPosition = Point(gameState.playerPosition.x + 1, gameState.playerPosition.y), gameDone = false)
 
-      checkCoinCollision()
+      checkCollisions()
     }
   }
 
@@ -94,15 +94,26 @@ class TetrisLogic(val randomGen: RandomGenerator,
       mazeGrid(gameState.playerPosition.y + 1)(gameState.playerPosition.x).setPlayer(true)
       gameState = gameState.copy(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y + 1), gameDone = false)
 
-      checkCoinCollision()
+      checkCollisions()
     }
   }
 
+  def checkCollisions(): Unit = {
+    checkKeyCollision()
+    checkCoinCollision()
+  }
+
   def leaveRoom(): Unit = {
-    if (gameState.playerPosition == maze.portalLocation) {
-//      maze = new Maze(10,10)
-//      mazeGrid = maze.generateMaze()
+    if (gameState.playerPosition == maze.portalLocation && gameState.gotKey) {
       gameState = gameState.copy(transits = true)
+    }
+  }
+
+
+  def checkKeyCollision(): Unit = {
+    if (mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isKey && mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isPlayerOn) {
+      gameState = gameState.copy(gotKey = true)
+      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isKey = false
     }
   }
 
@@ -113,6 +124,10 @@ class TetrisLogic(val randomGen: RandomGenerator,
   }
 
   def getCellType(p : Point): CellType = {
+
+    if (mazeGrid(p.y)(p.x).isKey) {
+      return Key
+    }
 
     if (mazeGrid(p.y)(p.x).isPlayerOn && mazeGrid(p.y)(p.x).isPortal && !gameState.transits) {
       return PlayerOnDoor

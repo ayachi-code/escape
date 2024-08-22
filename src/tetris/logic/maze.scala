@@ -116,6 +116,7 @@ class Maze(width: Int, height: Int) {
 
   }
 
+
   def generateMaze(): ArrayBuffer[ArrayBuffer[Cell]] = { //TODO: Implement
     initMaze()
 
@@ -158,6 +159,11 @@ class Maze(width: Int, height: Int) {
 
     generateCoins()
 
+
+//    mazeCells(1)(1).isKey = true // Spawns key
+
+    mazeCells(rand.nextInt(height - 1) + 1)(rand.nextInt(width - 1)).isKey = true // Spawns key
+
     mazeCells
   }
 
@@ -168,6 +174,7 @@ class Maze(width: Int, height: Int) {
     var isPlayerOn : Boolean = false
     var isPortal : Boolean = false
     var isCoin : Boolean = false
+    var isKey : Boolean = false
 
 
     var linedCell : List[Point] = List[Point]()
