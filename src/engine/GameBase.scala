@@ -117,6 +117,11 @@ class GameBase   extends PApplet {
     ellipse(r.center.x - 5, r.center.y, r.width / 2 - 10, r.height / 2 - 10)
   }
 
+  def drawHeart(r: Rectangle): Unit = {
+    val go : PImage = loadImage("src/tetris/assets/heart.png")
+    image(go, r.left, r.top, r.width, r.height)
+  }
+
   def drawKey(r: Rectangle): Unit = {
     val go : PImage = loadImage("src/tetris/assets/dd.png")
     image(go, r.left, r.top, r.width, r.height)

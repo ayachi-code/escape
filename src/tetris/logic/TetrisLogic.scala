@@ -11,7 +11,7 @@ class TetrisLogic(val randomGen: RandomGenerator,
                   val initialBoard: Seq[Seq[CellType]], val mazeDim: Dimensions) {
 
 
-  var gameState = GameState(false, Point(0, 0), gameDone = false, 0, leaveRoomButtonPressed = false, 1, transits = false)
+  var gameState = GameState(3, gotKey = false, Point(0, 0), gameDone = false, 0, leaveRoomButtonPressed = false, 1, transits = false)
 
   var maze = new Maze(10,10)
 

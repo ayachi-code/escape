@@ -35,7 +35,9 @@ class TetrisGame extends GameBase {
       drawKey(Rectangle(Point(100,(screenArea.height / gridDims.height) - 20), 45,45))
     }
 
-
+    for (i <- 0 until gameLogic.gameState.lives) {
+      drawHeart(Rectangle(Point(150 + i * 35,(screenArea.height / gridDims.height) - 20), 45,45))
+    }
 
   }
 
