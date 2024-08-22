@@ -19,12 +19,16 @@ class TetrisGame extends GameBase {
   var gameLogic : TetrisLogic = TetrisLogic()
   val mazeDims: Dimensions = gameLogic.mazeDim
   val updateTimer = new UpdateTimer(TetrisLogic.FramesPerSecond.toFloat)
+
   val gridDims : Dimensions = gameLogic.gridDims
   val widthInPixels: Int = (WidthCellInPixels * gridDims.width).ceil.toInt
   val heightInPixels: Int = (HeightCellInPixels * gridDims.height).ceil.toInt
   val screenArea: Rectangle = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
 
   var changeState = false
+
+  var waitBo = 1000
+  var time = 0
 
 
   def menu(): Unit = {
@@ -39,6 +43,9 @@ class TetrisGame extends GameBase {
       drawHeart(Rectangle(Point(150 + i * 35,(screenArea.height / gridDims.height) - 20), 45,45))
     }
 
+    fill(255, 0, 0)
+    drawTextCentered(gameLogic.gameState.timeLeft.toString, 23, Point(screenArea.width - 49 - 100, ((screenArea.height / gridDims.height) * 3) / 2))
+
   }
 
   override def draw(): Unit = {
@@ -47,6 +54,10 @@ class TetrisGame extends GameBase {
     drawGrid()
     menu()
     if (gameLogic.isGameOver) drawGameOverScreen()
+    if(millis() - time >= waitBo){
+      gameLogic.gameState = gameLogic.gameState.copy(timeLeft = gameLogic.gameState.timeLeft - 1)
+      time = millis();
+    }
   }
 
   def drawGameOverScreen(): Unit = {
@@ -135,6 +146,8 @@ class TetrisGame extends GameBase {
     // This should be called last, since the game
     // clock is officially ticking at this point
     updateTimer.init()
+
+    time = millis()
   }
 
   def updateState(): Unit = {
@@ -143,7 +156,7 @@ class TetrisGame extends GameBase {
         delay(1000)
         gameLogic.maze = new Maze(10,10)
         gameLogic.mazeGrid = gameLogic.maze.generateMaze()
-        gameLogic.gameState = gameLogic.gameState.copy(gotKey = false,level = gameLogic.gameState.level + 1,transits = false, playerPosition = tetris.logic.Point(0,0))
+        gameLogic.gameState = gameLogic.gameState.copy(timeLeft = 20, gotKey = false,level = gameLogic.gameState.level + 1,transits = false, playerPosition = tetris.logic.Point(0,0))
         changeState = false
       }
       updateTimer.advanceFrame()
