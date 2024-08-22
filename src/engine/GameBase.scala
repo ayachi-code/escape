@@ -60,7 +60,7 @@ class GameBase   extends PApplet {
 
   def drawMazeCell(r: Rectangle, walls: List[Char]): Unit = {
 
-    stroke(10, 10, 10)
+    stroke(112, 128, 144)
     strokeWeight(13)
     if (walls.contains('n')) {
       drawLine(Point(r.left, r.top), Point(r.left + r.width, r.top))
@@ -89,7 +89,7 @@ class GameBase   extends PApplet {
   }
 
   def drawPlayer(r : Rectangle): Unit = {
-    fill(250,10,10)
+    fill(255, 165, 0)
     strokeWeight(1)
     ellipse(r.center.x, r.center.y, r.width / 2, r.height / 2)
   }
@@ -106,6 +106,15 @@ class GameBase   extends PApplet {
   def drawPlayerOnDoor(r: Rectangle): Unit = {
     drawPortal(r)
     drawPlayer(r)
+  }
+
+  def drawOpenDoor(r: Rectangle): Unit = {
+    val img : PImage = loadImage("src/tetris/assets/openDoor.png")
+    image(img, r.left, r.top, r.width, r.height)
+
+    fill(255, 165, 0)
+    strokeWeight(1)
+    ellipse(r.center.x - 5, r.center.y, r.width / 2 - 10, r.height / 2 - 10)
   }
 
   def drawEllipse(r: Rectangle): Unit =

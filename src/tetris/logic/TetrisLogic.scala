@@ -11,11 +11,11 @@ class TetrisLogic(val randomGen: RandomGenerator,
                   val initialBoard: Seq[Seq[CellType]], val mazeDim: Dimensions) {
 
 
-  var gameState = GameState(Point(0, 0), gameDone = false, 0, false)
+  var gameState = GameState(Point(0, 0), gameDone = false, 0, leaveRoomButtonPressed = false, 1, transits = false)
 
-  val maze = new Maze(10,10)
+  var maze = new Maze(10,10)
 
-  val mazeGrid = maze.generateMaze()
+  var mazeGrid = maze.generateMaze()
 
   println("debug")
 
@@ -99,7 +99,11 @@ class TetrisLogic(val randomGen: RandomGenerator,
   }
 
   def leaveRoom(): Unit = {
-    if (gameState.playerPosition == maze.portalLocation) gameState = gameState.copy(gameDone = true)
+    if (gameState.playerPosition == maze.portalLocation) {
+//      maze = new Maze(10,10)
+//      mazeGrid = maze.generateMaze()
+      gameState = gameState.copy(transits = true)
+    }
   }
 
   def isGameOver: Boolean = gameState.gameDone
@@ -110,16 +114,19 @@ class TetrisLogic(val randomGen: RandomGenerator,
 
   def getCellType(p : Point): CellType = {
 
-    if (mazeGrid(p.y)(p.x).isPlayerOn && mazeGrid(p.y)(p.x).isPortal) {
+    if (mazeGrid(p.y)(p.x).isPlayerOn && mazeGrid(p.y)(p.x).isPortal && !gameState.transits) {
       return PlayerOnDoor
+    }
+
+    if (mazeGrid(p.y)(p.x).isPortal) {
+      if (gameState.transits) {
+        return OpenPortal
+      }
+      return Portal
     }
 
     if (mazeGrid(p.y)(p.x).isPlayerOn) {
       return PlayerCell
-    }
-
-    if (mazeGrid(p.y)(p.x).isPortal) {
-      return Portal
     }
 
     if (mazeGrid(p.y)(p.x).isCoin) {

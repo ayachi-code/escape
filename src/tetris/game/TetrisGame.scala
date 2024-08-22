@@ -5,13 +5,13 @@ package tetris.game
 
 import java.awt.event
 import java.awt.event.KeyEvent._
-
 import engine.GameBase
 import engine.graphics.{Color, Point, Rectangle}
 import processing.core.{PApplet, PConstants}
 import processing.event.KeyEvent
 import tetris.logic._
 import tetris.game.TetrisGame._
+import tetris.logic
 import tetris.logic.{Point => GridPoint}
 
 class TetrisGame extends GameBase {
@@ -24,18 +24,25 @@ class TetrisGame extends GameBase {
   val heightInPixels: Int = (HeightCellInPixels * gridDims.height).ceil.toInt
   val screenArea: Rectangle = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
 
+  var changeState = false
+
 
   def menu(): Unit = {
-    fill(0)
-    drawTextCentered("Score: " + gameLogic.gameState.score, 23, Point(45, ((screenArea.height / gridDims.height) * 3) / 2))
+    fill(169, 139, 53)
+    drawTextCentered("Gold: " + gameLogic.gameState.score, 23, Point(45, ((screenArea.height / gridDims.height) * 3) / 2))
+    drawTextCentered("Depth: " + gameLogic.gameState.level, 23, Point(screenArea.width - 49, ((screenArea.height / gridDims.height) * 3) / 2))
 
   }
 
   override def draw(): Unit = {
-    background(255) // clears old frame
+    background(48,25,52) // clears old frame
     updateState()
     drawGrid()
     menu()
+//    if (gameLogic.gameState.transits) {
+//      gameLogic.gameState = gameLogic.gameState.copy(transits = false)
+//      drawTransistion()
+//    }
     if (gameLogic.isGameOver) drawGameOverScreen()
   }
 
@@ -66,6 +73,10 @@ class TetrisGame extends GameBase {
         case Portal => drawPortal(area)
         case Coin => drawCoin(area)
         case PlayerOnDoor => drawPlayerOnDoor(area)
+        case OpenPortal => {
+          drawOpenDoor(area)
+          changeState = true
+        }
         case _ => Empty
       }
       drawMazeCell(area, walls)
@@ -124,7 +135,13 @@ class TetrisGame extends GameBase {
 
   def updateState(): Unit = {
     if (updateTimer.timeForNextFrame()) {
-      //gameLogic.moveDown()
+      if (changeState) {
+        delay(1000)
+        gameLogic.maze = new Maze(10,10)
+        gameLogic.mazeGrid = gameLogic.maze.generateMaze()
+        gameLogic.gameState = gameLogic.gameState.copy(level = gameLogic.gameState.level + 1,transits = false, playerPosition = tetris.logic.Point(0,0))
+        changeState = false
+      }
       updateTimer.advanceFrame()
     }
   }
