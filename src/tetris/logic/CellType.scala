@@ -10,6 +10,7 @@ case object PlayerOnDoor extends CellType
 case object OpenPortal extends CellType
 case object Key extends CellType
 case object Clock extends  CellType
+case object Enemy extends CellType
 //case object ICell  extends CellType
 //case object JCell  extends CellType
 //case object LCell  extends CellType

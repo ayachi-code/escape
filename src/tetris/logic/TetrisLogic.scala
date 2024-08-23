@@ -3,6 +3,8 @@ package tetris.logic
 import engine.random.{RandomGenerator, ScalaRandomGen}
 import tetris.logic.TetrisLogic._
 
+//Morgen
+//TODO: Add weapons + rare heart spawn 1/5 + testing
 
 //TODO: Gamestate manager + progression levels + timer + highscore + voorkom dat als je knop niet kan ingedrukt houden om te lopen
 
@@ -31,11 +33,20 @@ class TetrisLogic(val randomGen: RandomGenerator,
   // TODO implement me
   def rotateRight(): Unit = ()
 
+
+  def enemyPath(p: Point): Unit = {
+    mazeGrid(p.y)(p.x).isEnemyOn = false
+    var z = enemyPath(p)
+    mazeGrid(p.y)(p.x).isEnemyOn = true
+  }
+
   def moveUp(): Unit = {
     if (isMovePossible(gameState.playerPosition, 'n')) {
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
       mazeGrid(gameState.playerPosition.y - 1)(gameState.playerPosition.x).setPlayer(true)
       gameState = gameState.copy(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y - 1), gameDone = false)
+
+      maze.playerPosition = gameState.playerPosition
 
       if (mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isCoin && mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isPlayerOn) {
         gameState = gameState.copy(score = gameState.score + 1)
@@ -54,6 +65,9 @@ class TetrisLogic(val randomGen: RandomGenerator,
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x - 1).setPlayer(true)
       gameState = gameState.copy(playerPosition = Point(gameState.playerPosition.x - 1, gameState.playerPosition.y), gameDone = false)
 
+      maze.playerPosition = gameState.playerPosition
+
+
       checkCollisions()
 
     }
@@ -71,6 +85,9 @@ class TetrisLogic(val randomGen: RandomGenerator,
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
       mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x + 1).setPlayer(true)
       gameState = gameState.copy(playerPosition = Point(gameState.playerPosition.x + 1, gameState.playerPosition.y), gameDone = false)
+
+      maze.playerPosition = gameState.playerPosition
+
 
       checkCollisions()
     }
@@ -94,6 +111,8 @@ class TetrisLogic(val randomGen: RandomGenerator,
       mazeGrid(gameState.playerPosition.y + 1)(gameState.playerPosition.x).setPlayer(true)
       gameState = gameState.copy(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y + 1), gameDone = false)
 
+      maze.playerPosition = gameState.playerPosition
+
       checkCollisions()
     }
   }
@@ -105,10 +124,12 @@ class TetrisLogic(val randomGen: RandomGenerator,
     }
   }
 
+
   def checkCollisions(): Unit = {
     checkKeyCollision()
     checkCoinCollision()
     checkClockCollision()
+//    checkEnemyCollision()
   }
 
   def leaveRoom(): Unit = {
@@ -137,6 +158,10 @@ class TetrisLogic(val randomGen: RandomGenerator,
   }
 
   def getCellType(p : Point): CellType = {
+
+    if (mazeGrid(p.y)(p.x).isEnemyOn) {
+      return Enemy
+    }
 
     if (mazeGrid(p.y)(p.x).isClock) {
       return Clock
@@ -171,7 +196,7 @@ class TetrisLogic(val randomGen: RandomGenerator,
 
 object TetrisLogic {
 
-  val FramesPerSecond: Int = 30 // change this to speed up or slow down the game
+  val FramesPerSecond: Int = 120 // change this to speed up or slow down the game
 
   val DrawSizeFactor = 1.0 // increase this to make the game bigger (for high-res screens)
   // or decrease to make game smaller

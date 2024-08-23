@@ -21,6 +21,8 @@ class GameBase   extends PApplet {
 
   }
 
+  val foo = None
+
   // ===Processing Wrappers & Abstractions===
 
   /** An alias for the obscurely named function millis()
@@ -130,6 +132,15 @@ class GameBase   extends PApplet {
   def drawClock(r: Rectangle): Unit = {
     val go : PImage = loadImage("src/tetris/assets/clocko.png")
     image(go, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
+  }
+
+
+
+  def drawEnemy(r: Rectangle, img: PImage): Unit = {
+//    fill(255, 165, 0)
+//    strokeWeight(1)
+//    ellipse(r.center.x, r.center.y, r.width / 2, r.height / 2)
+    image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
   }
 
   def drawEllipse(r: Rectangle): Unit =

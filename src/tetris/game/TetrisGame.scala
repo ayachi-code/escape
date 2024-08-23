@@ -7,7 +7,7 @@ import java.awt.event
 import java.awt.event.KeyEvent._
 import engine.GameBase
 import engine.graphics.{Color, Point, Rectangle}
-import processing.core.{PApplet, PConstants}
+import processing.core.{PApplet, PConstants, PImage}
 import processing.event.KeyEvent
 import tetris.logic._
 import tetris.game.TetrisGame._
@@ -29,6 +29,13 @@ class TetrisGame extends GameBase {
 
   var waitBo = 1000
   var time = 0
+
+  var food : PImage = null
+
+  var immunityCooldownActive = false
+
+
+  var immunityCooldown = 0
 
 
   def menu(): Unit = {
@@ -53,8 +60,27 @@ class TetrisGame extends GameBase {
     updateState()
     drawGrid()
     menu()
+
+    if (immunityCooldownActive && millis() - time >= 1000) {
+        immunityCooldownActive = false
+    }
+
+    gameLogic.maze.enemys.foreach(enmy => {
+      if (enmy.point == gameLogic.gameState.playerPosition) {
+        if (!immunityCooldownActive) {
+          gameLogic.gameState = gameLogic.gameState.copy(lives = gameLogic.gameState.lives - 1)
+          immunityCooldownActive = true
+      }}
+    })
+
+//    if (millis() - time >= 500) {
+//      gameLogic.maze.enemyPath()
+//    }
+
     if (gameLogic.isGameOver) drawGameOverScreen()
-    if(millis() - time >= waitBo){
+
+    if(millis() - time >= 1000){
+      gameLogic.maze.enemyPath()
       gameLogic.gameState = gameLogic.gameState.copy(timeLeft = gameLogic.gameState.timeLeft - 1)
       time = millis();
     }
@@ -93,6 +119,7 @@ class TetrisGame extends GameBase {
         }
         case Key => drawKey(area)
         case Clock => drawClock(area)
+        case Enemy => drawEnemy(area, food)
         case _ => Empty
       }
       drawMazeCell(area, walls)
@@ -143,6 +170,8 @@ class TetrisGame extends GameBase {
     // for the first time, there is significant lag.
     // This prevents it from happening during gameplay.
     text("", 0, 0)
+
+    food = loadImage("src/tetris/assets/ghost.png")
 
     // This should be called last, since the game
     // clock is officially ticking at this point
