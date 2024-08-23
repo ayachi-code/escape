@@ -4,7 +4,7 @@ import engine.random.{RandomGenerator, ScalaRandomGen}
 import tetris.logic.TetrisLogic._
 
 //Morgen
-//TODO: Add weapons + rare heart spawn 1/5 + testing
+//TODO: Add weapons + rare heart spawn 1/5 + testing d
 
 //TODO: Gamestate manager + progression levels + timer + highscore + voorkom dat als je knop niet kan ingedrukt houden om te lopen
 
