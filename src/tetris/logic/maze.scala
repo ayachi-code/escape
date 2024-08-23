@@ -100,7 +100,7 @@ class Maze(width: Int, height: Int) {
       val randomX = rand.nextInt(mazeCells.length - 1) + 1
       val randomY = rand.nextInt(mazeCells.length - 1) + 1
 
-      if(!coords.contains(Point(randomX, randomY))) {
+      if(!coords.contains(Point(randomX, randomY)) && !mazeCells(randomY)(randomX).isClock) {
         state = false
         return Point(randomX, randomY)
       }
@@ -109,13 +109,19 @@ class Maze(width: Int, height: Int) {
   }
 
   def generateCoins(): Unit = {
-    for (i <- 0 until 5) {
+    for (i <- 0 until 2) {
       val coinLocation = uniqueCoin()
       mazeCells(coinLocation.y)(coinLocation.x).isCoin = true
     }
 
   }
 
+  def generateClock(): Unit = {
+    for (i <- 0 until 2) {
+      val coinLocation = uniqueCoin()
+      mazeCells(coinLocation.y)(coinLocation.x).isClock = true
+    }
+  }
 
   def generateMaze(): ArrayBuffer[ArrayBuffer[Cell]] = { //TODO: Implement
     initMaze()
@@ -158,6 +164,7 @@ class Maze(width: Int, height: Int) {
     mazeCells(height - 1)(width - 1).isPortal = true
 
     generateCoins()
+    generateClock()
 
 
 //    mazeCells(1)(1).isKey = true // Spawns key
@@ -175,7 +182,7 @@ class Maze(width: Int, height: Int) {
     var isPortal : Boolean = false
     var isCoin : Boolean = false
     var isKey : Boolean = false
-
+    var isClock : Boolean = false
 
     var linedCell : List[Point] = List[Point]()
 

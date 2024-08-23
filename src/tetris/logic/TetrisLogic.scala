@@ -98,9 +98,17 @@ class TetrisLogic(val randomGen: RandomGenerator,
     }
   }
 
+  def checkClockCollision(): Unit = {
+    if (mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isClock && mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isPlayerOn) {
+      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isClock = false
+      gameState = gameState.copy(timeLeft = gameState.timeLeft + 6)
+    }
+  }
+
   def checkCollisions(): Unit = {
     checkKeyCollision()
     checkCoinCollision()
+    checkClockCollision()
   }
 
   def leaveRoom(): Unit = {
@@ -129,6 +137,10 @@ class TetrisLogic(val randomGen: RandomGenerator,
   }
 
   def getCellType(p : Point): CellType = {
+
+    if (mazeGrid(p.y)(p.x).isClock) {
+      return Clock
+    }
 
     if (mazeGrid(p.y)(p.x).isKey) {
       return Key
@@ -159,7 +171,7 @@ class TetrisLogic(val randomGen: RandomGenerator,
 
 object TetrisLogic {
 
-  val FramesPerSecond: Int = 5 // change this to speed up or slow down the game
+  val FramesPerSecond: Int = 30 // change this to speed up or slow down the game
 
   val DrawSizeFactor = 1.0 // increase this to make the game bigger (for high-res screens)
   // or decrease to make game smaller

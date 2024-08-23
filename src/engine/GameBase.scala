@@ -127,6 +127,11 @@ class GameBase   extends PApplet {
     image(go, r.left, r.top, r.width, r.height)
   }
 
+  def drawClock(r: Rectangle): Unit = {
+    val go : PImage = loadImage("src/tetris/assets/clocko.png")
+    image(go, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
+  }
+
   def drawEllipse(r: Rectangle): Unit =
     ellipse(r.center.x, r.center.y, r.width, r.height)
 

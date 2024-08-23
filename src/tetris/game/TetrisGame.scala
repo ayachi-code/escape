@@ -92,6 +92,7 @@ class TetrisGame extends GameBase {
           changeState = true
         }
         case Key => drawKey(area)
+        case Clock => drawClock(area)
         case _ => Empty
       }
       drawMazeCell(area, walls)
