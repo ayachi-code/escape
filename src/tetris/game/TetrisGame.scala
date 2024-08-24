@@ -130,6 +130,7 @@ class TetrisGame extends GameBase {
         case Key => drawKey(area)
         case Clock => drawClock(area)
         case Enemy => drawEnemy(area, food)
+        case SwordCell => drawMiniSword(area)
         case _ => Empty
       }
       drawMazeCell(area, walls)
@@ -198,7 +199,7 @@ class TetrisGame extends GameBase {
         gameLogic.maze = new Maze(10,10)
         gameLogic.mazeGrid = gameLogic.maze.generateMaze()
         gameLogic.gameState.player.nextRound()
-        gameLogic.gameState = gameLogic.gameState.copy(timeLeft = 20, transits = false)
+        gameLogic.gameState = gameLogic.gameState.copy(timeLeft = 20, transits = false, level = gameLogic.gameState.level + 1)
         changeState = false
       }
       updateTimer.advanceFrame()

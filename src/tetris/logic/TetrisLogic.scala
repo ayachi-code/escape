@@ -138,12 +138,18 @@ class TetrisLogic(val randomGen: RandomGenerator,
     }
   }
 
+  def checkSwordCollision(): Unit = {
+    if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isWeapon && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn && gameState.player.playersWeapons.length <= 9) {
+      mazeGrid(gameState.player.position.y)(gameState.player.position.x).isWeapon = false
+      gameState.player.playersWeapons = gameState.player.playersWeapons :+ Sword(gameState.player)
+    }
+  }
 
   def checkCollisions(): Unit = {
     checkKeyCollision()
     checkCoinCollision()
     checkClockCollision()
-//    checkEnemyCollision()
+    checkSwordCollision()
   }
 
   def leaveRoom(): Unit = {
@@ -173,6 +179,8 @@ class TetrisLogic(val randomGen: RandomGenerator,
   }
 
   def getCellType(p : Point): CellType = {
+
+    if (mazeGrid(p.y)(p.x).isWeapon) return SwordCell
 
     if (mazeGrid(p.y)(p.x).isEnemyOn) {
       return Enemy

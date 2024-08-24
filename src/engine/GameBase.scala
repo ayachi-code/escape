@@ -105,6 +105,11 @@ class GameBase   extends PApplet {
     image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
   }
 
+  def drawMiniSword(r: Rectangle): Unit = {
+    val img : PImage = loadImage("src/tetris/assets/weapons/sword/sword_1.png")
+    image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
+  }
+
   def drawPlayerOnDoor(r: Rectangle): Unit = {
     drawPortal(r)
     drawPlayer(r)

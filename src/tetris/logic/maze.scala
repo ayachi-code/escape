@@ -177,12 +177,19 @@ class Maze(width: Int, height: Int) {
       val randomX = rand.nextInt(mazeCells.length - 1) + 1
       val randomY = rand.nextInt(mazeCells.length - 1) + 1
 
-      if(!coords.contains(Point(randomX, randomY)) && !mazeCells(randomY)(randomX).isClock && !mazeCells(randomY)(randomX).isEnemyOn) {
+      if(!coords.contains(Point(randomX, randomY)) && !mazeCells(randomY)(randomX).isClock && !mazeCells(randomY)(randomX).isEnemyOn && !mazeCells(randomY)(randomX).isKey) {
         state = false
         return Point(randomX, randomY)
       }
     }
     Point(0,0)
+  }
+
+  def generateWeapons(): Unit = {
+    for (i <- 0 until 2) {
+      val swordLocation = uniqueCoin()
+      mazeCells(swordLocation.y)(swordLocation.x).isWeapon = true
+    }
   }
 
   def generateCoins(): Unit = {
@@ -243,6 +250,7 @@ class Maze(width: Int, height: Int) {
     generateCoins()
     generateClock()
     generateEnemy()
+    generateWeapons()
 
     mazeCells(rand.nextInt(height - 1) + 1)(rand.nextInt(width - 1)).isKey = true // Spawns key
 
@@ -293,6 +301,8 @@ class Maze(width: Int, height: Int) {
     var isCoin : Boolean = false
     var isKey : Boolean = false
     var isClock : Boolean = false
+
+    var isWeapon : Boolean = false
 
     var visitByEnemy : List[Int] = List[Int]() // Int = ID of enemy
 
