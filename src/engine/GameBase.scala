@@ -6,6 +6,7 @@ package engine
 import engine.graphics.Color.Black
 import engine.graphics.{Color, Point, Rectangle, Triangle}
 import processing.core.{PApplet, PConstants, PImage}
+import tetris.logic.TetrisLogic
 
 class GameBase   extends PApplet {
 
@@ -94,6 +95,30 @@ class GameBase   extends PApplet {
     fill(255, 165, 0)
     strokeWeight(1)
     ellipse(r.center.x, r.center.y, r.width / 2, r.height / 2)
+  }
+
+  def drawAttackSword(r: Rectangle, game: TetrisLogic): Unit = {
+    game.gameState.player.playersWeapons.last.direction match {
+      case 'e' => {
+        val img : PImage = loadImage("src/tetris/assets/weapons/sword/attackEast.png")
+        image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
+      }
+      case 'w' => {
+        val img : PImage = loadImage("src/tetris/assets/weapons/sword/attackWest.png")
+        image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
+      }
+      case 's' => {
+        val img : PImage = loadImage("src/tetris/assets/weapons/sword/attackSouth.png")
+        image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
+      }
+      case 'n' => {
+        val img : PImage = loadImage("src/tetris/assets/weapons/sword/attackNorth.png")
+        image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
+      }
+
+    }
+//    val img : PImage = loadImage("src/tetris/assets/weapons/sword/attack.png")
+//    image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
   }
 
 

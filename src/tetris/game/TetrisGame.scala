@@ -63,12 +63,30 @@ class TetrisGame extends GameBase {
     drawWeapon(Rectangle(Point(150 + 10, screenArea.height - 45), 30,30))
   }
 
+  def showAttackAnimation(): Unit = {
+    gameLogic.gameState.player.playersWeapons.last.animation(gameLogic.maze)
+    //    drawMiniSword(Rectangle(Point(120,120), 10,20))
+  }
+
   override def draw(): Unit = {
     background(48,25,52) // clears old frame
     updateState()
+
+    if (gameLogic.gameState.attackAnimation) {
+      showAttackAnimation()
+    }
+
     drawGrid()
     menu()
     weaponMenu()
+
+
+
+    if (gameLogic.gameState.attackAnimation && millis() - time >= 1000) {
+      gameLogic.gameState = gameLogic.gameState.copy(attackAnimation = false)
+      gameLogic.maze.mazeCells(gameLogic.gameState.player.playersWeapons.last.attackCell.y)(gameLogic.gameState.player.playersWeapons.last.attackCell.x).isAttacked = false
+      gameLogic.gameState.player.playersWeapons = gameLogic.gameState.player.playersWeapons.dropRight(1)
+    }
 
     if (immunityCooldownActive && millis() - time >= 1000) {
         immunityCooldownActive = false
@@ -78,7 +96,6 @@ class TetrisGame extends GameBase {
       if (enmy.point == gameLogic.gameState.player.position) {
         if (!immunityCooldownActive) {
           gameLogic.gameState.player.setHp(gameLogic.gameState.player.hp - 1)
-          //          gameLogic.gameState = gameLogic.gameState.copy(lives = gameLogic.gameState.lives - 1)
           immunityCooldownActive = true
       }}
     })
@@ -131,6 +148,7 @@ class TetrisGame extends GameBase {
         case Clock => drawClock(area)
         case Enemy => drawEnemy(area, food)
         case SwordCell => drawMiniSword(area)
+        case SwordAttack => drawAttackSword(area, gameLogic)
         case _ => Empty
       }
       drawMazeCell(area, walls)

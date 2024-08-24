@@ -304,6 +304,8 @@ class Maze(width: Int, height: Int) {
 
     var isWeapon : Boolean = false
 
+    var isAttacked : Boolean = false
+
     var visitByEnemy : List[Int] = List[Int]() // Int = ID of enemy
 
     var currentEnemyOn : List[Int] = List[Int]()

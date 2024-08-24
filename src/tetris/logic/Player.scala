@@ -12,16 +12,18 @@ class Player() {
   var gotKey : Boolean = false
   var position : Point = Point(0,0)
 
-  def possibleAttack(maze: Maze): List[Point] = {
-    var positions: List[Point] = List[Point]()
+  case class attackPair(point: Point, direction: Char)
 
-    if (maze.inBound(Point(position.x + 1, position.y))  && !maze.mazeCells(position.y)(position.x).walls('e') &&  !maze.mazeCells(position.y)(position.x + 1).walls('w') )  positions = positions :+ (Point(position.x + 1, position.y))
+  def possibleAttack(maze: Maze): List[attackPair] = {
+    var positions: List[attackPair] = List[attackPair]()
 
-    if (maze.inBound(Point(position.x, position.y + 1)) && !maze.mazeCells(position.y)(position.x).walls('s') &&  !maze.mazeCells(position.y + 1)(position.x).walls('n')) positions = positions :+ (Point(position.x, position.y + 1))
+    if (maze.inBound(Point(position.x + 1, position.y))  && !maze.mazeCells(position.y)(position.x).walls('e') &&  !maze.mazeCells(position.y)(position.x + 1).walls('w') )  positions = positions :+  attackPair((Point(position.x + 1, position.y)), 'e')
 
-    if (maze.inBound(Point(position.x - 1, position.y)) && !maze.mazeCells(position.y)(position.x).walls('w') &&  !maze.mazeCells(position.y)(position.x - 1).walls('e')) positions = positions :+ (Point(position.x - 1, position.y))
+    if (maze.inBound(Point(position.x, position.y + 1)) && !maze.mazeCells(position.y)(position.x).walls('s') &&  !maze.mazeCells(position.y + 1)(position.x).walls('n')) positions = positions :+ attackPair((Point(position.x, position.y + 1)), 's')
 
-    if (maze.inBound(Point(position.x, position.y - 1)) && !maze.mazeCells(position.y)(position.x).walls('n') &&  !maze.mazeCells(position.y - 1)(position.x).walls('s')) positions = positions :+ (Point(position.x, position.y - 1))
+    if (maze.inBound(Point(position.x - 1, position.y)) && !maze.mazeCells(position.y)(position.x).walls('w') &&  !maze.mazeCells(position.y)(position.x - 1).walls('e')) positions = positions :+ attackPair((Point(position.x - 1, position.y)), 'w')
+
+    if (maze.inBound(Point(position.x, position.y - 1)) && !maze.mazeCells(position.y)(position.x).walls('n') &&  !maze.mazeCells(position.y - 1)(position.x).walls('s')) positions = positions :+ attackPair((Point(position.x, position.y - 1)), 'n')
 
     positions
   }

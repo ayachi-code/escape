@@ -13,7 +13,7 @@ class TetrisLogic(val randomGen: RandomGenerator,
                   val initialBoard: Seq[Seq[CellType]], val mazeDim: Dimensions) {
 
 
-  var gameState: GameState = GameState(new Player(), 20,gameDone = false, leaveRoomButtonPressed = false, 1, transits = false)
+  var gameState: GameState = GameState(false, new Player(), 20,gameDone = false, leaveRoomButtonPressed = false, 1, transits = false)
 
   var maze = new Maze(10,10)
 
@@ -33,11 +33,12 @@ class TetrisLogic(val randomGen: RandomGenerator,
   // TODO implement me
   def rotateRight(): Unit = ()
 
-
   def attack(): Unit = {
-    if (gameState.player.playersWeapons.length > 0) {
-      gameState.player.playersWeapons(0).attack(maze)
-      gameState.player.playersWeapons = gameState.player.playersWeapons.dropRight(1)
+    if (gameState.player.playersWeapons.length > 0 && !gameState.attackAnimation) {
+      println(gameState.attackAnimation)
+      gameState.player.playersWeapons(gameState.player.playersWeapons.length - 1).attack(maze)
+//      gameState.player.playersWeapons = gameState.player.playersWeapons.dropRight(1)
+      gameState = gameState.copy(attackAnimation = true)
     }
     1
   }
@@ -97,10 +98,8 @@ class TetrisLogic(val randomGen: RandomGenerator,
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).setPlayer(false)
       mazeGrid(gameState.player.position.y)(gameState.player.position.x + 1).setPlayer(true)
       gameState.player.move('e')
-      //      gameState = gameState.copy(playerPosition = Point(gameState.player.position.x + 1, gameState.player.position.y), gameDone = false)
 
       maze.playerPosition = gameState.player.position
-
 
       checkCollisions()
     }
@@ -180,6 +179,8 @@ class TetrisLogic(val randomGen: RandomGenerator,
 
   def getCellType(p : Point): CellType = {
 
+
+    if (mazeGrid(p.y)(p.x).isAttacked) return SwordAttack
     if (mazeGrid(p.y)(p.x).isWeapon) return SwordCell
 
     if (mazeGrid(p.y)(p.x).isEnemyOn) {
