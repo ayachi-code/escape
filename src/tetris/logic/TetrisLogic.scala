@@ -13,9 +13,10 @@ class TetrisLogic(val randomGen: RandomGenerator,
                   val initialBoard: Seq[Seq[CellType]], val mazeDim: Dimensions) {
 
 
-  var gameState: GameState = GameState(false, new Player(), 20,gameDone = false, leaveRoomButtonPressed = false, 1, transits = false)
+  var gameState: GameState = GameState(false, new Player, 20, gameDone = false, leaveRoomButtonPressed = false, 1, transits = false)
 
-  var maze = new Maze(10,10)
+
+  var maze = new Maze(10,10, gameState.player)
 
   var mazeGrid = maze.generateMaze()
 
@@ -144,11 +145,19 @@ class TetrisLogic(val randomGen: RandomGenerator,
     }
   }
 
+  def checkHeartCollision(): Unit = {
+    if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isHeart && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn && gameState.player.playersWeapons.length <= 9) {
+      mazeGrid(gameState.player.position.y)(gameState.player.position.x).isHeart = false
+      gameState.player.setHp(gameState.player.hp + 1)
+    }
+  }
+
   def checkCollisions(): Unit = {
     checkKeyCollision()
     checkCoinCollision()
     checkClockCollision()
     checkSwordCollision()
+    checkHeartCollision()
   }
 
   def leaveRoom(): Unit = {
@@ -180,6 +189,7 @@ class TetrisLogic(val randomGen: RandomGenerator,
   def getCellType(p : Point): CellType = {
 
 
+    if (mazeGrid(p.y)(p.x).isHeart) return Heart
     if (mazeGrid(p.y)(p.x).isAttacked) return SwordAttack
     if (mazeGrid(p.y)(p.x).isWeapon) return SwordCell
 

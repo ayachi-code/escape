@@ -65,7 +65,6 @@ class TetrisGame extends GameBase {
 
   def showAttackAnimation(): Unit = {
     gameLogic.gameState.player.playersWeapons.last.animation(gameLogic.maze)
-    //    drawMiniSword(Rectangle(Point(120,120), 10,20))
   }
 
   override def draw(): Unit = {
@@ -82,7 +81,7 @@ class TetrisGame extends GameBase {
 
 
 
-    if (gameLogic.gameState.attackAnimation && millis() - time >= 700) {
+    if (gameLogic.gameState.attackAnimation && millis() - time >= 500) {
       gameLogic.gameState = gameLogic.gameState.copy(attackAnimation = false)
       gameLogic.maze.mazeCells(gameLogic.gameState.player.playersWeapons.last.attackCell.y)(gameLogic.gameState.player.playersWeapons.last.attackCell.x).isAttacked = false
       gameLogic.gameState.player.playersWeapons = gameLogic.gameState.player.playersWeapons.dropRight(1)
@@ -149,6 +148,7 @@ class TetrisGame extends GameBase {
         case Enemy => drawEnemy(area, food)
         case SwordCell => drawMiniSword(area)
         case SwordAttack => drawAttackSword(area, gameLogic)
+        case Heart => drawHeart(area)
         case _ => Empty
       }
       drawMazeCell(area, walls)
@@ -214,7 +214,7 @@ class TetrisGame extends GameBase {
     if (updateTimer.timeForNextFrame()) {
       if (changeState) {
         delay(1000)
-        gameLogic.maze = new Maze(10,10)
+        gameLogic.maze = new Maze(10,10, gameLogic.gameState.player)
         gameLogic.mazeGrid = gameLogic.maze.generateMaze()
         gameLogic.gameState.player.nextRound()
         gameLogic.gameState = gameLogic.gameState.copy(timeLeft = 20, transits = false, level = gameLogic.gameState.level + 1)

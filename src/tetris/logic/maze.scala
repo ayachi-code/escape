@@ -6,7 +6,7 @@ import collection.mutable.Stack
 import collection.mutable.ArrayBuffer
 import scala.util.Random
 
-class Maze(width: Int, height: Int) {
+class Maze(width: Int, height: Int, player: Player) {
   val area: Int = width * height
   var mazeCells : ArrayBuffer[ArrayBuffer[Cell]] = ArrayBuffer[ArrayBuffer[Cell]]()
   var visitedCells : Int = 1
@@ -229,18 +229,14 @@ class Maze(width: Int, height: Int) {
       }
 
     }
-
     for (i <- 0 until height) {
-
       for (j <- 0 until width) {
         var neigb = neighb(Point(j, i))
-
         for (cell <- neigb) {
           if (!mazeCells(i)(j).linedCell.contains(cell) && !mazeCells(cell.y)(cell.x).linedCell.contains(Point(j, i))) {
             addwall(mazeCells(i)(j).pos, cell)
           }
         }
-
       }
 
     }
@@ -251,10 +247,21 @@ class Maze(width: Int, height: Int) {
     generateClock()
     generateEnemy()
     generateWeapons()
+    generateHeart()
 
     mazeCells(rand.nextInt(height - 1) + 1)(rand.nextInt(width - 1)).isKey = true // Spawns key
 
     mazeCells
+  }
+
+  def generateHeart(): Unit = {
+    if (player.hp < player.maxHP) {
+      val rng : Int = rand.nextInt(3)
+      if (rng == 1) {
+        var uniquePoint = uniqueCoin()
+        mazeCells(uniquePoint.y)(uniquePoint.x).isHeart = true
+      }
+    }
   }
 
   def generateEnemy(): Unit = {
@@ -301,10 +308,9 @@ class Maze(width: Int, height: Int) {
     var isCoin : Boolean = false
     var isKey : Boolean = false
     var isClock : Boolean = false
-
     var isWeapon : Boolean = false
-
     var isAttacked : Boolean = false
+    var isHeart : Boolean = false
 
     var visitByEnemy : List[Int] = List[Int]() // Int = ID of enemy
 

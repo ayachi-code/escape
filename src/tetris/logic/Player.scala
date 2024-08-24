@@ -7,6 +7,8 @@ import scala.collection.mutable.Stack
 class Player() {
   var playersWeapons: List[Weapon] = List[Weapon](Sword(this), Sword(this), Sword(this))
 
+  val maxHP : Int = 3
+
   var gold : Int = 0
   var hp : Int = 3
   var gotKey : Boolean = false

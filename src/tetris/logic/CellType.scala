@@ -16,6 +16,7 @@ case object Clock extends  CellType
 case object Enemy extends CellType
 case object SwordCell extends CellType
 case object SwordAttack extends CellType
+case object Heart extends CellType
 //case object SwordRightCell extends CellType
 //case object ICell  extends CellType
 //case object JCell  extends CellType
