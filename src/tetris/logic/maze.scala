@@ -160,7 +160,7 @@ class Maze(width: Int, height: Int, player: Player) {
 
     if (Point(currentCell.x - 1, currentCell.y) == otherCell && !mazeCells(otherCell.y)(otherCell.x).walls('e')) {
       mazeCells(currentCell.y)(currentCell.x).walls('w') = true
-    }
+    } // add
 
 
     if (Point(currentCell.x, currentCell.y - 1) == otherCell && !mazeCells(otherCell.y)(otherCell.x).walls('s')) {
