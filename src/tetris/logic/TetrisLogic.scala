@@ -4,7 +4,7 @@ import engine.random.{RandomGenerator, ScalaRandomGen}
 import tetris.logic.TetrisLogic._
 
 //Morgen
-//TODO: Add weapons + rare heart spawn 1/5 + testing d
+//TODO: Add difficulty curve + 9 gold coin reward
 
 //TODO: Gamestate manager + progression levels + timer + highscore + voorkom dat als je knop niet kan ingedrukt houden om te lopen
 
@@ -186,45 +186,46 @@ class TetrisLogic(val randomGen: RandomGenerator,
     mazeGrid(p.y)(p.x).getWalls()
   }
 
-  def getCellType(p : Point): CellType = {
+  def getCellType(p : Point): Array[CellType] = {
 
-
-    if (mazeGrid(p.y)(p.x).isHeart) return Heart
-    if (mazeGrid(p.y)(p.x).isAttacked) return SwordAttack
-    if (mazeGrid(p.y)(p.x).isWeapon) return SwordCell
-
-    if (mazeGrid(p.y)(p.x).isEnemyOn) {
-      return Enemy
-    }
-
-    if (mazeGrid(p.y)(p.x).isClock) {
-      return Clock
-    }
-
-    if (mazeGrid(p.y)(p.x).isKey) {
-      return Key
-    }
-
-    if (mazeGrid(p.y)(p.x).isPlayerOn && mazeGrid(p.y)(p.x).isPortal && !gameState.transits) {
-      return PlayerOnDoor
-    }
+    var array = Array[CellType]()
 
     if (mazeGrid(p.y)(p.x).isPortal) {
-      if (gameState.transits) {
-        return OpenPortal
-      }
-      return Portal
+        if (gameState.transits) {
+          array = array :+ OpenPortal
+          return array
+        }
+        else array = array :+ Portal
     }
 
-    if (mazeGrid(p.y)(p.x).isPlayerOn) {
-      return PlayerCell
-    }
+    if (mazeGrid(p.y)(p.x).isHeart) array = array :+ Heart //return Heart
+    if (mazeGrid(p.y)(p.x).isAttacked) array = array :+ SwordAttack //return SwordAttack
+    if (mazeGrid(p.y)(p.x).isWeapon) array = array :+ SwordCell  //return SwordCell
 
-    if (mazeGrid(p.y)(p.x).isCoin) {
-      return Coin
-    }
+    if (mazeGrid(p.y)(p.x).isEnemyOn) array = array :+ Enemy //return Enemy
 
-    Empty
+    if (mazeGrid(p.y)(p.x).isClock) array = array :+ Clock //return Clock
+
+    if (mazeGrid(p.y)(p.x).isKey) array = array :+ Key //return Key
+
+    if (mazeGrid(p.y)(p.x).isPlayerOn) array = array :+ PlayerCell
+    //return PlayerCell
+
+    if (mazeGrid(p.y)(p.x).isCoin) array = array :+ Coin //return Coin
+
+
+
+
+//
+//    if (mazeGrid(p.y)(p.x).isPortal) {
+//      if (gameState.transits) {
+//        return OpenPortal
+//      }
+//      return Portal
+//    }
+
+
+    array
   }
 }
 

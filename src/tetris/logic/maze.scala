@@ -177,7 +177,7 @@ class Maze(width: Int, height: Int, player: Player) {
       val randomX = rand.nextInt(mazeCells.length - 1) + 1
       val randomY = rand.nextInt(mazeCells.length - 1) + 1
 
-      if(!coords.contains(Point(randomX, randomY)) && !mazeCells(randomY)(randomX).isClock && !mazeCells(randomY)(randomX).isEnemyOn && !mazeCells(randomY)(randomX).isKey) {
+      if(!coords.contains(Point(randomX, randomY)) && !mazeCells(randomY)(randomX).isClock && !mazeCells(randomY)(randomX).isEnemyOn && !mazeCells(randomY)(randomX).isKey && !mazeCells(randomY)(randomX).isWeapon) {
         state = false
         return Point(randomX, randomY)
       }
@@ -266,8 +266,22 @@ class Maze(width: Int, height: Int, player: Player) {
 
   def generateEnemy(): Unit = {
     for (i <- 0 until enemyCap) {
-      var randomPos = uniqueCoin()
-//      randomPos = Point(0, height - 1)
+
+      var state : Boolean = true
+      var randomPos = Point(0,0)
+
+      while (state) {
+        randomPos = uniqueCoin()
+        if (enemys.isEmpty) {
+          state = false
+        } else {
+          enemys.foreach(enemy => {
+            if (enemy.point.distance(randomPos) > width/5) state = false
+          })
+        }
+
+      }
+
       val id = rand.nextInt(100000)
       enemys = enemys :+ Enemy(randomPos, Point(playerPosition.x, playerPosition.y), id)
       mazeCells(randomPos.y)(randomPos.x).isEnemyOn = true

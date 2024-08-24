@@ -105,6 +105,10 @@ class TetrisGame extends GameBase {
 
     if (gameLogic.isGameOver) drawGameOverScreen()
 
+//    if (millis() - time >= 1) {
+//      gameLogic.maze.enemyPath()
+//    }
+
     if(millis() - time >= 1000){
       gameLogic.maze.enemyPath()
       gameLogic.gameState = gameLogic.gameState.copy(timeLeft = gameLogic.gameState.timeLeft - 1)
@@ -133,8 +137,8 @@ class TetrisGame extends GameBase {
       Rectangle(leftUp, widthPerCell, heightPerCell)
     }
 
-    def drawCell(area: Rectangle, walls: List[Char], typeOfCell: CellType): Unit = {
-      typeOfCell match {
+    def drawCell(area: Rectangle, walls: List[Char], typeOfCell: Array[CellType]): Unit = {
+      typeOfCell.foreach {
         case PlayerCell => drawPlayer(area)
         case Portal => drawPortal(area)
         case Coin => drawCoin(area)
@@ -151,6 +155,23 @@ class TetrisGame extends GameBase {
         case Heart => drawHeart(area)
         case _ => Empty
       }
+//      typeOfCell match {
+//        case PlayerCell => drawPlayer(area)
+//        case Portal => drawPortal(area)
+//        case Coin => drawCoin(area)
+//        case PlayerOnDoor => drawPlayerOnDoor(area)
+//        case OpenPortal => {
+//          drawOpenDoor(area)
+//          changeState = true
+//        }
+//        case Key => drawKey(area)
+//        case Clock => drawClock(area)
+//        case Enemy => drawEnemy(area, food)
+//        case SwordCell => drawMiniSword(area)
+//        case SwordAttack => drawAttackSword(area, gameLogic)
+//        case Heart => drawHeart(area)
+//        case _ => Empty
+//      }
       drawMazeCell(area, walls)
     }
 
