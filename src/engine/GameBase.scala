@@ -101,19 +101,19 @@ class GameBase   extends PApplet {
     game.gameState.player.playersWeapons.last.direction match {
       case 'e' => {
         val img : PImage = loadImage("src/tetris/assets/weapons/sword/attackEast.png")
-        image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
+        image(img, (r.left + r.right - r.width/2 - 40) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
       }
       case 'w' => {
         val img : PImage = loadImage("src/tetris/assets/weapons/sword/attackWest.png")
-        image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
+        image(img, (r.left + r.right - r.width/2 + 40) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
       }
       case 's' => {
         val img : PImage = loadImage("src/tetris/assets/weapons/sword/attackSouth.png")
-        image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
+        image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2 - 40) / 2, r.width / 2, r.height / 2)
       }
       case 'n' => {
         val img : PImage = loadImage("src/tetris/assets/weapons/sword/attackNorth.png")
-        image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
+        image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2 + 40) / 2, r.width / 2, r.height / 2)
       }
 
     }

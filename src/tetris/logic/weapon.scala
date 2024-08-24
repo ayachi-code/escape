@@ -36,6 +36,11 @@ case class Sword(player: Player) extends Weapon {
 
 
   override def animation(maze: Maze): Unit = {
+    if (attackCell == null) {
+      var at = player.possibleAttack(maze)
+      attackCell = at(0).point
+      direction = at(0).direction
+    }
     maze.mazeCells(attackCell.y)(attackCell.x).isAttacked = true
     println("foo")
   }

@@ -82,7 +82,7 @@ class TetrisGame extends GameBase {
 
 
 
-    if (gameLogic.gameState.attackAnimation && millis() - time >= 1000) {
+    if (gameLogic.gameState.attackAnimation && millis() - time >= 700) {
       gameLogic.gameState = gameLogic.gameState.copy(attackAnimation = false)
       gameLogic.maze.mazeCells(gameLogic.gameState.player.playersWeapons.last.attackCell.y)(gameLogic.gameState.player.playersWeapons.last.attackCell.x).isAttacked = false
       gameLogic.gameState.player.playersWeapons = gameLogic.gameState.player.playersWeapons.dropRight(1)
@@ -177,12 +177,12 @@ class TetrisGame extends GameBase {
     event.getKeyCode match {
       case VK_A     => gameLogic.rotateLeft()
       case VK_S     => gameLogic.rotateRight()
-      case VK_UP    => gameLogic.moveUp()
-      case VK_DOWN  => gameLogic.moveDown()
-      case VK_LEFT  => gameLogic.moveLeft()
-      case VK_RIGHT => gameLogic.moveRight()
+      case VK_UP if !gameLogic.gameState.attackAnimation    => gameLogic.moveUp()
+      case VK_DOWN if !gameLogic.gameState.attackAnimation  => gameLogic.moveDown()
+      case VK_LEFT if !gameLogic.gameState.attackAnimation  => gameLogic.moveLeft()
+      case VK_RIGHT if !gameLogic.gameState.attackAnimation => gameLogic.moveRight()
       case VK_SPACE => gameLogic.leaveRoom()
-      case VK_V => gameLogic.attack()
+      case VK_V if !gameLogic.gameState.attackAnimation => gameLogic.attack()
       case _        => ()
     }
 
