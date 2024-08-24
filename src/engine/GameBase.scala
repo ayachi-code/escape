@@ -136,10 +136,12 @@ class GameBase   extends PApplet {
 
 
 
+  def drawWeapon(r: Rectangle): Unit = {
+    val img : PImage = loadImage("src/tetris/assets/weapons/sword/sword_1.png")
+    image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width, r.height)
+  }
+
   def drawEnemy(r: Rectangle, img: PImage): Unit = {
-//    fill(255, 165, 0)
-//    strokeWeight(1)
-//    ellipse(r.center.x, r.center.y, r.width / 2, r.height / 2)
     image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
   }
 

@@ -13,7 +13,7 @@ class TetrisLogic(val randomGen: RandomGenerator,
                   val initialBoard: Seq[Seq[CellType]], val mazeDim: Dimensions) {
 
 
-  var gameState = GameState(20,3, gotKey = false, Point(0, 0), gameDone = false, 0, leaveRoomButtonPressed = false, 1, transits = false)
+  var gameState: GameState = GameState(new Player(), 20,gameDone = false, leaveRoomButtonPressed = false, 1, transits = false)
 
   var maze = new Maze(10,10)
 
@@ -34,6 +34,14 @@ class TetrisLogic(val randomGen: RandomGenerator,
   def rotateRight(): Unit = ()
 
 
+  def attack(): Unit = {
+    if (gameState.player.playersWeapons.length > 0) {
+      gameState.player.playersWeapons(0).attack(maze)
+      gameState.player.playersWeapons = gameState.player.playersWeapons.dropRight(1)
+    }
+    1
+  }
+
   def enemyPath(p: Point): Unit = {
     mazeGrid(p.y)(p.x).isEnemyOn = false
     var z = enemyPath(p)
@@ -41,16 +49,18 @@ class TetrisLogic(val randomGen: RandomGenerator,
   }
 
   def moveUp(): Unit = {
-    if (isMovePossible(gameState.playerPosition, 'n')) {
-      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
-      mazeGrid(gameState.playerPosition.y - 1)(gameState.playerPosition.x).setPlayer(true)
-      gameState = gameState.copy(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y - 1), gameDone = false)
+    if (isMovePossible(gameState.player.position, 'n')) {
+      mazeGrid(gameState.player.position.y)(gameState.player.position.x).setPlayer(false)
+      mazeGrid(gameState.player.position.y - 1)(gameState.player.position.x).setPlayer(true)
+      gameState.player.move('n')
+      //gameState = gameState.copy()//gameState.player.copy(position = )// Point(gameState.player.position.x, gameState.player.position.y - 1))) // Point(gameState.player.position.x, gameState.player.position.y - 1), gameDone = false)
 
-      maze.playerPosition = gameState.playerPosition
+      maze.playerPosition = gameState.player.position
 
-      if (mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isCoin && mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isPlayerOn) {
-        gameState = gameState.copy(score = gameState.score + 1)
-        mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isCoin = false
+      if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isCoin && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn) {
+        gameState.player.increaseScore(1)
+        //        gameState = gameState.copy(player = gameState.player.gold + 1)
+        mazeGrid(gameState.player.position.y)(gameState.player.position.x).isCoin = false
       }
 
       checkCollisions()
@@ -60,12 +70,13 @@ class TetrisLogic(val randomGen: RandomGenerator,
 
   // TODO implement me
   def moveLeft(): Unit = {
-    if (isMovePossible(gameState.playerPosition, 'w')) {
-      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
-      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x - 1).setPlayer(true)
-      gameState = gameState.copy(playerPosition = Point(gameState.playerPosition.x - 1, gameState.playerPosition.y), gameDone = false)
+    if (isMovePossible(gameState.player.position, 'w')) {
+      mazeGrid(gameState.player.position.y)(gameState.player.position.x).setPlayer(false)
+      mazeGrid(gameState.player.position.y)(gameState.player.position.x - 1).setPlayer(true)
+      gameState.player.move('w')
+      //      gameState = gameState.copy(playerPosition = Point(gameState.player.position.x - 1, gameState.player.position.y), gameDone = false)
 
-      maze.playerPosition = gameState.playerPosition
+      maze.playerPosition = gameState.player.position
 
 
       checkCollisions()
@@ -74,19 +85,21 @@ class TetrisLogic(val randomGen: RandomGenerator,
   }
 
   def checkCoinCollision(): Unit = {
-    if (mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isCoin && mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isPlayerOn) {
-      gameState = gameState.copy(score = gameState.score + 1)
-      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isCoin = false
+    if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isCoin && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn) {
+      gameState.player.increaseScore(1)
+      //      gameState = gameState.copy(score = gameState.score + 1)
+      mazeGrid(gameState.player.position.y)(gameState.player.position.x).isCoin = false
     }
   }
 
   def moveRight(): Unit = {
-    if (isMovePossible(gameState.playerPosition, 'e')) {
-      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
-      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x + 1).setPlayer(true)
-      gameState = gameState.copy(playerPosition = Point(gameState.playerPosition.x + 1, gameState.playerPosition.y), gameDone = false)
+    if (isMovePossible(gameState.player.position, 'e')) {
+      mazeGrid(gameState.player.position.y)(gameState.player.position.x).setPlayer(false)
+      mazeGrid(gameState.player.position.y)(gameState.player.position.x + 1).setPlayer(true)
+      gameState.player.move('e')
+      //      gameState = gameState.copy(playerPosition = Point(gameState.player.position.x + 1, gameState.player.position.y), gameDone = false)
 
-      maze.playerPosition = gameState.playerPosition
+      maze.playerPosition = gameState.player.position
 
 
       checkCollisions()
@@ -106,20 +119,21 @@ class TetrisLogic(val randomGen: RandomGenerator,
 
 
   def moveDown(): Unit = {
-    if (isMovePossible(gameState.playerPosition, 's')) {
-      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).setPlayer(false)
-      mazeGrid(gameState.playerPosition.y + 1)(gameState.playerPosition.x).setPlayer(true)
-      gameState = gameState.copy(playerPosition = Point(gameState.playerPosition.x, gameState.playerPosition.y + 1), gameDone = false)
+    if (isMovePossible(gameState.player.position, 's')) {
+      mazeGrid(gameState.player.position.y)(gameState.player.position.x).setPlayer(false)
+      mazeGrid(gameState.player.position.y + 1)(gameState.player.position.x).setPlayer(true)
+      gameState.player.move('s')
+      //      gameState = gameState.copy(playerPosition = Point(gameState.player.position.x, gameState.player.position.y + 1), gameDone = false)
 
-      maze.playerPosition = gameState.playerPosition
+      maze.playerPosition = gameState.player.position
 
       checkCollisions()
     }
   }
 
   def checkClockCollision(): Unit = {
-    if (mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isClock && mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isPlayerOn) {
-      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isClock = false
+    if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isClock && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn) {
+      mazeGrid(gameState.player.position.y)(gameState.player.position.x).isClock = false
       gameState = gameState.copy(timeLeft = gameState.timeLeft + 6)
     }
   }
@@ -133,16 +147,17 @@ class TetrisLogic(val randomGen: RandomGenerator,
   }
 
   def leaveRoom(): Unit = {
-    if (gameState.playerPosition == maze.portalLocation && gameState.gotKey) {
+    if (gameState.player.position == maze.portalLocation && gameState.player.gotKey) {
       gameState = gameState.copy(transits = true)
     }
   }
 
 
   def checkKeyCollision(): Unit = {
-    if (mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isKey && mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isPlayerOn) {
-      gameState = gameState.copy(gotKey = true)
-      mazeGrid(gameState.playerPosition.y)(gameState.playerPosition.x).isKey = false
+    if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isKey && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn) {
+      gameState.player.keyState(true)
+      //      gameState = gameState.copy(gotKey = true)
+      mazeGrid(gameState.player.position.y)(gameState.player.position.x).isKey = false
     }
   }
 
@@ -209,7 +224,7 @@ object TetrisLogic {
 
   val DefaultWidth: Int = 30
   val NrTopInvisibleLines: Int = 4
-  val DefaultVisibleHeight: Int = 33
+  val DefaultVisibleHeight: Int = 36
   val DefaultHeight: Int = DefaultVisibleHeight //+ NrTopInvisibleLines
   val DefaultDims : Dimensions = Dimensions(width = DefaultWidth, height = DefaultHeight)
   val mazeDims : Dimensions = Dimensions(width = 30, height = 30)

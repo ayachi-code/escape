@@ -48,9 +48,13 @@ class Maze(width: Int, height: Int) {
 
   case class Direction(position: Point, neigb: Stack[Point])
 
+  case class EnemyPair(isEnemyOn: Boolean, enemyId: Int)
+
   def enemyPath(): Unit = {
 
     enemys.foreach(enemy => {
+
+      mazeCells(enemy.point.y)(enemy.point.x).currentEnemyOn = mazeCells(enemy.point.y)(enemy.point.x).currentEnemyOn :+ enemy.id
 
       enemy.destination = playerPosition
 
@@ -70,17 +74,30 @@ class Maze(width: Int, height: Int) {
             enemy.stack.push(Direction(enemy.point, enemy.possibleMove()))
           } else {
             mazeCells(enemy.point.y)(enemy.point.x).isEnemyOn = false
+
+            mazeCells(enemy.point.y)(enemy.point.x).enemyIds = mazeCells(enemy.point.y)(enemy.point.x).visitByEnemy.filterNot(elm => elm == enemy.id)
+
+//            mazeCells(enemy.point.y)(enemy.point.x).updateIsEnemyOn = EnemyPair(false, -1)
+
             var mov = enemy.stack.top
             enemy.point = mov.position
             mazeCells(mov.position.y)(mov.position.x).isEnemyOn = true
+            mazeCells(enemy.point.y)(enemy.point.x).enemyIds = mazeCells(enemy.point.y)(enemy.point.x).enemyIds :+ enemy.id
+
+//            mazeCells(enemy.point.y)(enemy.point.x).updateIsEnemyOn = EnemyPair(false, -1)
           }
           state = false
         } else {
           if (!mazeCells(neigbours.top.y)(neigbours.top.x).visitByEnemy.contains(enemy.id)) {
             mazeCells(enemy.point.y)(enemy.point.x).isEnemyOn = false
+
+            mazeCells(enemy.point.y)(enemy.point.x).enemyIds = mazeCells(enemy.point.y)(enemy.point.x).visitByEnemy.filterNot(elm => elm == enemy.id)
+
             var move = neigbours.top
             enemy.point = move
             mazeCells(move.y)(move.x).isEnemyOn = true
+
+            mazeCells(enemy.point.y)(enemy.point.x).enemyIds = mazeCells(enemy.point.y)(enemy.point.x).enemyIds :+ enemy.id
 
             enemy.stack.top.neigb.pop()
             enemy.stack.push(Direction(move, enemy.possibleMove()))
@@ -91,10 +108,13 @@ class Maze(width: Int, height: Int) {
         }
       }
 
+      var xz = mazeCells(enemy.point.y)(enemy.point.x).currentEnemyOn.filterNot(elm => elm == enemy.id)
+      mazeCells(enemy.point.y)(enemy.point.x).currentEnemyOn = xz
+
     })
   }
 
-  private def inBound(point: Point): Boolean = {
+  def inBound(point: Point): Boolean = {
     if (point.x >= 0 && point.y <= height-1 && point.x <= width-1 && point.y >= 0) true
     else false
   }
@@ -233,8 +253,12 @@ class Maze(width: Int, height: Int) {
     for (i <- 0 until enemyCap) {
       var randomPos = uniqueCoin()
 //      randomPos = Point(0, height - 1)
-      enemys = enemys :+ Enemy(randomPos, Point(playerPosition.x, playerPosition.y), rand.nextInt(100000))
+      val id = rand.nextInt(100000)
+      enemys = enemys :+ Enemy(randomPos, Point(playerPosition.x, playerPosition.y), id)
       mazeCells(randomPos.y)(randomPos.x).isEnemyOn = true
+
+      mazeCells(randomPos.y)(randomPos.x).enemyIds = mazeCells(randomPos.y)(randomPos.x).enemyIds :+ id
+
     }
   }
 
@@ -272,7 +296,14 @@ class Maze(width: Int, height: Int) {
 
     var visitByEnemy : List[Int] = List[Int]() // Int = ID of enemy
 
+    var currentEnemyOn : List[Int] = List[Int]()
+
     var isEnemyOn : Boolean = false
+
+
+    var enemyIds : List[Int] = List[Int]()
+
+    //var updateIsEnemyOn : EnemyPair = EnemyPair(false, -1)
 
     var linedCell : List[Point] = List[Point]()
 

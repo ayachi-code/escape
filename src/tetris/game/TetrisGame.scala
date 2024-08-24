@@ -40,13 +40,13 @@ class TetrisGame extends GameBase {
 
   def menu(): Unit = {
     fill(169, 139, 53)
-    drawTextCentered("Gold: " + gameLogic.gameState.score, 23, Point(45, ((screenArea.height / gridDims.height) * 3) / 2))
+    drawTextCentered("Gold: " + gameLogic.gameState.player.gold, 23, Point(45, ((screenArea.height / gridDims.height) * 3) / 2))
     drawTextCentered("Depth: " + gameLogic.gameState.level, 23, Point(screenArea.width - 49, ((screenArea.height / gridDims.height) * 3) / 2))
-    if (gameLogic.gameState.gotKey) {
+    if (gameLogic.gameState.player.gotKey) {
       drawKey(Rectangle(Point(100,(screenArea.height / gridDims.height) - 20), 45,45))
     }
 
-    for (i <- 0 until gameLogic.gameState.lives) {
+    for (i <- 0 until gameLogic.gameState.player.hp) {
       drawHeart(Rectangle(Point(150 + i * 35,(screenArea.height / gridDims.height) - 20), 45,45))
     }
 
@@ -55,20 +55,30 @@ class TetrisGame extends GameBase {
 
   }
 
+  def weaponMenu(): Unit = {
+    fill(192,192,192)
+    drawTextCentered("Weapons: ", 23, Point(60, ((screenArea.height - 15))))
+
+    drawTextCentered(gameLogic.gameState.player.playersWeapons.length.toString, 23, Point(150, ((screenArea.height - 15))))
+    drawWeapon(Rectangle(Point(150 + 10, screenArea.height - 45), 30,30))
+  }
+
   override def draw(): Unit = {
     background(48,25,52) // clears old frame
     updateState()
     drawGrid()
     menu()
+    weaponMenu()
 
     if (immunityCooldownActive && millis() - time >= 1000) {
         immunityCooldownActive = false
     }
 
     gameLogic.maze.enemys.foreach(enmy => {
-      if (enmy.point == gameLogic.gameState.playerPosition) {
+      if (enmy.point == gameLogic.gameState.player.position) {
         if (!immunityCooldownActive) {
-          gameLogic.gameState = gameLogic.gameState.copy(lives = gameLogic.gameState.lives - 1)
+          gameLogic.gameState.player.setHp(gameLogic.gameState.player.hp - 1)
+          //          gameLogic.gameState = gameLogic.gameState.copy(lives = gameLogic.gameState.lives - 1)
           immunityCooldownActive = true
       }}
     })
@@ -153,6 +163,7 @@ class TetrisGame extends GameBase {
       case VK_LEFT  => gameLogic.moveLeft()
       case VK_RIGHT => gameLogic.moveRight()
       case VK_SPACE => gameLogic.leaveRoom()
+      case VK_V => gameLogic.attack()
       case _        => ()
     }
 
@@ -186,7 +197,8 @@ class TetrisGame extends GameBase {
         delay(1000)
         gameLogic.maze = new Maze(10,10)
         gameLogic.mazeGrid = gameLogic.maze.generateMaze()
-        gameLogic.gameState = gameLogic.gameState.copy(timeLeft = 20, gotKey = false,level = gameLogic.gameState.level + 1,transits = false, playerPosition = tetris.logic.Point(0,0))
+        gameLogic.gameState.player.nextRound()
+        gameLogic.gameState = gameLogic.gameState.copy(timeLeft = 20, transits = false)
         changeState = false
       }
       updateTimer.advanceFrame()
