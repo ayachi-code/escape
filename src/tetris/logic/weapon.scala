@@ -31,6 +31,8 @@ case class Sword(player: Player) extends Weapon {
          maze.enemys = maze.enemys.filterNot(id => id.id == enemyId)
         })
       }
+
+      1
     })
   }
 

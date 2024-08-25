@@ -4,29 +4,29 @@ import engine.random.{RandomGenerator, ScalaRandomGen}
 import tetris.logic.TetrisLogic._
 
 //Morgen
-//TODO: Add difficulty curve + 9 gold coin reward
+//TODO: 9 coin reward + Gamestate manager
+
 
 //TODO: Gamestate manager + progression levels + timer + highscore + voorkom dat als je knop niet kan ingedrukt houden om te lopen
 
-class TetrisLogic(val randomGen: RandomGenerator,
-                  val gridDims : Dimensions,
-                  val initialBoard: Seq[Seq[CellType]], val mazeDim: Dimensions) {
+class TetrisLogic() {
 
 
   var gameState: GameState = GameState(false, new Player, 20, gameDone = false, leaveRoomButtonPressed = false, 1, transits = false)
-
 
   var maze = new Maze(10,10, gameState.player)
 
   var mazeGrid = maze.generateMaze()
 
-  println("debug")
+  var gridDims = Dimensions(maze.width * 3, maze.height * 3 + 6)
 
-  def this(random: RandomGenerator, gridDims : Dimensions) =
-    this(random, gridDims, makeEmptyBoard(gridDims), Dimensions(30,30))
+  var mazeDim = Dimensions(maze.width * 3, maze.height * 3)
 
-  def this() =
-    this(new ScalaRandomGen(), DefaultDims, makeEmptyBoard(DefaultDims), Dimensions(30,30))
+//  def this(random: RandomGenerator, gridDims : Dimensions) =
+//    this(random, gridDims, makeEmptyBoard(gridDims), Dimensions(30,30))
+//
+//  def this() =
+//    this(new ScalaRandomGen(), DefaultDims, makeEmptyBoard(DefaultDims), Dimensions(30,30))
 
   // TODO implement me
   def rotateLeft(): Unit = ()
@@ -42,6 +42,18 @@ class TetrisLogic(val randomGen: RandomGenerator,
       gameState = gameState.copy(attackAnimation = true)
     }
     1
+  }
+
+  // 10,10 = first stage(1 -- 3), 12,12 = second Stage (4 -- 6) 15,15 = third Stage ( 7 -- 10) fourth Stage = (11 - 13) 16,16  Fifth Stage (14 -- 16) 17,17, Final stage(6) (17 --> 100000) 20,17
+  def difficultyCurve(level: Int): Dimensions = {
+//    if (level == 2) return Dimensions(20, 20)
+    if (level >= 1 && level <= 3) return Dimensions(10, 10)
+    if (level >= 4 && level <= 6) return Dimensions(12, 12)
+    if (level >= 7 && level <= 10) return Dimensions(15, 15)
+    if (level >= 11 && level <= 13) return Dimensions(16, 16)
+    if (level >= 14 && level <= 16) return Dimensions(17, 17)
+
+    Dimensions(18, 18)
   }
 
   def enemyPath(p: Point): Unit = {
@@ -213,25 +225,13 @@ class TetrisLogic(val randomGen: RandomGenerator,
 
     if (mazeGrid(p.y)(p.x).isCoin) array = array :+ Coin //return Coin
 
-
-
-
-//
-//    if (mazeGrid(p.y)(p.x).isPortal) {
-//      if (gameState.transits) {
-//        return OpenPortal
-//      }
-//      return Portal
-//    }
-
-
     array
   }
 }
 
 object TetrisLogic {
 
-  val FramesPerSecond: Int = 120 // change this to speed up or slow down the game
+  val FramesPerSecond: Int = 60 // change this to speed up or slow down the game
 
   val DrawSizeFactor = 1.0 // increase this to make the game bigger (for high-res screens)
   // or decrease to make game smaller
@@ -243,14 +243,18 @@ object TetrisLogic {
   }
 
   val DefaultWidth: Int = 30
-  val NrTopInvisibleLines: Int = 4
+  //val NrTopInvisibleLines: Int = 4
   val DefaultVisibleHeight: Int = 36
-  val DefaultHeight: Int = DefaultVisibleHeight //+ NrTopInvisibleLines
-  val DefaultDims : Dimensions = Dimensions(width = DefaultWidth, height = DefaultHeight)
-  val mazeDims : Dimensions = Dimensions(width = 30, height = 30)
 
-  def apply() = new TetrisLogic(new ScalaRandomGen(),
-    DefaultDims,
-    makeEmptyBoard(DefaultDims), mazeDims)
+  def apply() = new TetrisLogic
+
+
+//  val DefaultHeight: Int = DefaultVisibleHeight //+ NrTopInvisibleLines
+//  val DefaultDims : Dimensions = Dimensions(width = DefaultWidth, height = DefaultHeight)
+//  val mazeDims : Dimensions = Dimensions(width = 30, height = 30)
+//
+//  def apply() = new TetrisLogic(new ScalaRandomGen(),
+//    DefaultDims,
+//    makeEmptyBoard(DefaultDims), mazeDims)
 
 }

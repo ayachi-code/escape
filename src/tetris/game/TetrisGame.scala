@@ -17,23 +17,29 @@ import tetris.logic.{Point => GridPoint}
 class TetrisGame extends GameBase {
 
   var gameLogic : TetrisLogic = TetrisLogic()
-  val mazeDims: Dimensions = gameLogic.mazeDim
+  var mazeDims: Dimensions = gameLogic.mazeDim
+
   val updateTimer = new UpdateTimer(TetrisLogic.FramesPerSecond.toFloat)
 
-  val gridDims : Dimensions = gameLogic.gridDims
-  val widthInPixels: Int = (WidthCellInPixels * gridDims.width).ceil.toInt
-  val heightInPixels: Int = (HeightCellInPixels * gridDims.height).ceil.toInt
-  val screenArea: Rectangle = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
+  var gridDims: Dimensions = gameLogic.gridDims
+
+
+  var widthInPixels: Int = (WidthCellInPixels * gridDims.width).ceil.toInt
+  var heightInPixels: Int = (HeightCellInPixels * gridDims.height).ceil.toInt
+
+  var screenArea: Rectangle = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
 
   var changeState = false
-
-  var waitBo = 1000
   var time = 0
 
   var food : PImage = null
+  var coin: PImage = null
+  var clock: PImage = null
+  var sword: PImage = null
+
+
 
   var immunityCooldownActive = false
-
 
   var immunityCooldown = 0
 
@@ -80,7 +86,6 @@ class TetrisGame extends GameBase {
     weaponMenu()
 
 
-
     if (gameLogic.gameState.attackAnimation && millis() - time >= 500) {
       gameLogic.gameState = gameLogic.gameState.copy(attackAnimation = false)
       gameLogic.maze.mazeCells(gameLogic.gameState.player.playersWeapons.last.attackCell.y)(gameLogic.gameState.player.playersWeapons.last.attackCell.x).isAttacked = false
@@ -99,15 +104,9 @@ class TetrisGame extends GameBase {
       }}
     })
 
-//    if (millis() - time >= 500) {
-//      gameLogic.maze.enemyPath()
-//    }
-
     if (gameLogic.isGameOver) drawGameOverScreen()
 
-//    if (millis() - time >= 1) {
-//      gameLogic.maze.enemyPath()
-//    }
+//    gameLogic.maze.enemyPath()
 
     if(millis() - time >= 1000){
       gameLogic.maze.enemyPath()
@@ -141,37 +140,20 @@ class TetrisGame extends GameBase {
       typeOfCell.foreach {
         case PlayerCell => drawPlayer(area)
         case Portal => drawPortal(area)
-        case Coin => drawCoin(area)
+        case Coin => drawEnemy(area, coin)
         case PlayerOnDoor => drawPlayerOnDoor(area)
         case OpenPortal => {
           drawOpenDoor(area)
           changeState = true
         }
         case Key => drawKey(area)
-        case Clock => drawClock(area)
+        case Clock => drawEnemy(area, clock)
         case Enemy => drawEnemy(area, food)
-        case SwordCell => drawMiniSword(area)
+        case SwordCell => drawEnemy(area, sword)
         case SwordAttack => drawAttackSword(area, gameLogic)
         case Heart => drawHeart(area)
         case _ => Empty
       }
-//      typeOfCell match {
-//        case PlayerCell => drawPlayer(area)
-//        case Portal => drawPortal(area)
-//        case Coin => drawCoin(area)
-//        case PlayerOnDoor => drawPlayerOnDoor(area)
-//        case OpenPortal => {
-//          drawOpenDoor(area)
-//          changeState = true
-//        }
-//        case Key => drawKey(area)
-//        case Clock => drawClock(area)
-//        case Enemy => drawEnemy(area, food)
-//        case SwordCell => drawMiniSword(area)
-//        case SwordAttack => drawAttackSword(area, gameLogic)
-//        case Heart => drawHeart(area)
-//        case _ => Empty
-//      }
       drawMazeCell(area, walls)
     }
 
@@ -223,6 +205,11 @@ class TetrisGame extends GameBase {
     text("", 0, 0)
 
     food = loadImage("src/tetris/assets/ghost.png")
+    coin = loadImage("src/tetris/assets/x.png")
+    clock = loadImage("src/tetris/assets/clocko.png")
+    sword = loadImage("src/tetris/assets/weapons/sword/sword_1.png")
+
+
 
     // This should be called last, since the game
     // clock is officially ticking at this point
@@ -235,10 +222,25 @@ class TetrisGame extends GameBase {
     if (updateTimer.timeForNextFrame()) {
       if (changeState) {
         delay(1000)
-        gameLogic.maze = new Maze(10,10, gameLogic.gameState.player)
+
+        // 10,10 = first stage(1 -- 3), 12,12 = second Stage (4 -- 6) 15,15 = third Stage ( 7 -- 10) fourth Stage = (11 - 13) 16,16  Fifth Stage (14 -- 16) 17,17, Final stage(6) (17 --> 100000) 20,17
+
+
+        val newSize = gameLogic.difficultyCurve(gameLogic.gameState.level + 1)
+        gameLogic.maze = Maze(newSize.width,newSize.height, gameLogic.gameState.player)
         gameLogic.mazeGrid = gameLogic.maze.generateMaze()
         gameLogic.gameState.player.nextRound()
+
+        gridDims = Dimensions(gameLogic.maze.width * 3, gameLogic.maze.height * 3 + 6)
+        mazeDims = Dimensions(gameLogic.maze.width * 3, gameLogic.maze.height * 3)
         gameLogic.gameState = gameLogic.gameState.copy(timeLeft = 20, transits = false, level = gameLogic.gameState.level + 1)
+
+
+        widthInPixels = (WidthCellInPixels * gridDims.width).ceil.toInt
+        heightInPixels = (HeightCellInPixels * gridDims.height).ceil.toInt
+        screenArea = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
+        surface.setSize(widthInPixels, heightInPixels)
+
         changeState = false
       }
       updateTimer.advanceFrame()

@@ -5,7 +5,7 @@ import engine.graphics.Color
 import scala.collection.mutable.Stack
 
 class Player() {
-  var playersWeapons: List[Weapon] = List[Weapon](Sword(this), Sword(this), Sword(this))
+  var playersWeapons: List[Weapon] = List[Weapon](Sword(this), Sword(this), Sword(this), Sword(this), Sword(this), Sword(this), Sword(this), Sword(this), Sword(this))
 
   val maxHP : Int = 3
 

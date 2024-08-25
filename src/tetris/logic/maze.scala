@@ -6,7 +6,7 @@ import collection.mutable.Stack
 import collection.mutable.ArrayBuffer
 import scala.util.Random
 
-class Maze(width: Int, height: Int, player: Player) {
+case class Maze(width: Int, height: Int, player: Player) {
   val area: Int = width * height
   var mazeCells : ArrayBuffer[ArrayBuffer[Cell]] = ArrayBuffer[ArrayBuffer[Cell]]()
   var visitedCells : Int = 1
@@ -17,7 +17,8 @@ class Maze(width: Int, height: Int, player: Player) {
 
   val portalLocation : Point = Point(width - 1, height - 1)
 
-  var enemyCap : Int = 2
+  //2^(10/5)
+  var enemyCap : Int =  (math.ceil(math.pow(2, width / 5)).toInt) * 3
 
   var enemys: Array[Enemy] = Array[Enemy]()
 
@@ -53,8 +54,9 @@ class Maze(width: Int, height: Int, player: Player) {
   def enemyPath(): Unit = {
 
     enemys.foreach(enemy => {
+      var xcz = mazeCells(enemy.point.y)(enemy.point.x).enemyIds.filterNot(elm => elm == enemy.id)
+      mazeCells(enemy.point.y)(enemy.point.x).enemyIds = xcz
 
-      mazeCells(enemy.point.y)(enemy.point.x).currentEnemyOn = mazeCells(enemy.point.y)(enemy.point.x).currentEnemyOn :+ enemy.id
 
       enemy.destination = playerPosition
 
@@ -69,29 +71,25 @@ class Maze(width: Int, height: Int, player: Player) {
           var x = mazeCells(enemy.point.y)(enemy.point.x).visitByEnemy.filterNot(elm => elm == enemy.id)
           mazeCells(enemy.point.y)(enemy.point.x).visitByEnemy = x
 
-          if (enemy.stack.nonEmpty) enemy.stack.pop()
-          if (enemy.stack.isEmpty) {
-            enemy.stack.push(Direction(enemy.point, enemy.possibleMove()))
-          } else {
+          if (enemy.stack.nonEmpty) {
+            enemy.stack.pop()
+
             mazeCells(enemy.point.y)(enemy.point.x).isEnemyOn = false
+            var newPositon = enemy.stack.top
+            enemy.point = newPositon.position
 
-            mazeCells(enemy.point.y)(enemy.point.x).enemyIds = mazeCells(enemy.point.y)(enemy.point.x).visitByEnemy.filterNot(elm => elm == enemy.id)
-
-//            mazeCells(enemy.point.y)(enemy.point.x).updateIsEnemyOn = EnemyPair(false, -1)
-
-            var mov = enemy.stack.top
-            enemy.point = mov.position
-            mazeCells(mov.position.y)(mov.position.x).isEnemyOn = true
+            mazeCells(newPositon.position.y)(newPositon.position.x).isEnemyOn = true
             mazeCells(enemy.point.y)(enemy.point.x).enemyIds = mazeCells(enemy.point.y)(enemy.point.x).enemyIds :+ enemy.id
-
-//            mazeCells(enemy.point.y)(enemy.point.x).updateIsEnemyOn = EnemyPair(false, -1)
+          } else {
+            enemy.stack.push(Direction(enemy.point, enemy.possibleMove()))
           }
+
           state = false
         } else {
           if (!mazeCells(neigbours.top.y)(neigbours.top.x).visitByEnemy.contains(enemy.id)) {
             mazeCells(enemy.point.y)(enemy.point.x).isEnemyOn = false
 
-            mazeCells(enemy.point.y)(enemy.point.x).enemyIds = mazeCells(enemy.point.y)(enemy.point.x).visitByEnemy.filterNot(elm => elm == enemy.id)
+//            mazeCells(enemy.point.y)(enemy.point.x).enemyIds = mazeCells(enemy.point.y)(enemy.point.x).visitByEnemy.filterNot(elm => elm == enemy.id)
 
             var move = neigbours.top
             enemy.point = move
@@ -107,9 +105,6 @@ class Maze(width: Int, height: Int, player: Player) {
           }
         }
       }
-
-      var xz = mazeCells(enemy.point.y)(enemy.point.x).currentEnemyOn.filterNot(elm => elm == enemy.id)
-      mazeCells(enemy.point.y)(enemy.point.x).currentEnemyOn = xz
 
     })
   }
@@ -186,14 +181,14 @@ class Maze(width: Int, height: Int, player: Player) {
   }
 
   def generateWeapons(): Unit = {
-    for (i <- 0 until 2) {
+    for (i <- 0 until math.ceil(math.pow(2, width / 5)).toInt) {
       val swordLocation = uniqueCoin()
       mazeCells(swordLocation.y)(swordLocation.x).isWeapon = true
     }
   }
 
   def generateCoins(): Unit = {
-    for (i <- 0 until 2) {
+    for (i <- 0 until math.ceil(math.pow(2, width / 6)).toInt) {
       val coinLocation = uniqueCoin()
       mazeCells(coinLocation.y)(coinLocation.x).isCoin = true
     }
@@ -201,7 +196,7 @@ class Maze(width: Int, height: Int, player: Player) {
   }
 
   def generateClock(): Unit = {
-    for (i <- 0 until 2) {
+    for (i <- 0 until math.ceil(math.pow(2, width / 5)).toInt) {
       val coinLocation = uniqueCoin()
       mazeCells(coinLocation.y)(coinLocation.x).isClock = true
     }
@@ -283,6 +278,7 @@ class Maze(width: Int, height: Int, player: Player) {
       }
 
       val id = rand.nextInt(100000)
+      println("ID: " + id)
       enemys = enemys :+ Enemy(randomPos, Point(playerPosition.x, playerPosition.y), id)
       mazeCells(randomPos.y)(randomPos.x).isEnemyOn = true
 
@@ -328,10 +324,7 @@ class Maze(width: Int, height: Int, player: Player) {
 
     var visitByEnemy : List[Int] = List[Int]() // Int = ID of enemy
 
-    var currentEnemyOn : List[Int] = List[Int]()
-
     var isEnemyOn : Boolean = false
-
 
     var enemyIds : List[Int] = List[Int]()
 
