@@ -18,7 +18,7 @@ case class Maze(width: Int, height: Int, player: Player) {
   val portalLocation : Point = Point(width - 1, height - 1)
 
   //2^(10/5)
-  var enemyCap : Int =  (math.ceil(math.pow(2, width / 5)).toInt) * 3
+  var enemyCap : Int =  (math.ceil(math.pow(2, width / 5)).toInt)
 
   var enemys: Array[Enemy] = Array[Enemy]()
 

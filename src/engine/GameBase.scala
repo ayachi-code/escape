@@ -6,9 +6,10 @@ package engine
 import engine.graphics.Color.Black
 import engine.graphics.{Color, Point, Rectangle, Triangle}
 import processing.core.{PApplet, PConstants, PImage}
+
 import tetris.logic.TetrisLogic
 
-class GameBase   extends PApplet {
+class GameBase extends PApplet {
 
   // inner class: can call current time of outer class
   class UpdateTimer(val framesPerSecond: Float) {
