@@ -18,8 +18,8 @@ class Button(PApplet: PApplet, point: Point, width: Int, height: Int, textOnButt
 
     PApplet.textFont(font)
     PApplet.textSize(50)
-    PApplet.fill(255, 255, 255)
-    PApplet.text(textOnButton, point.x + width / 2 - 60, point.y + 50 )
+    PApplet.fill(255, 36, 0)
+    PApplet.text(textOnButton, point.x + width / 2 - 80, point.y + 50 )
   }
 
 

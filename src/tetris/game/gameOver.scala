@@ -3,24 +3,23 @@
 
 package tetris.game
 
-//import java.awt.event
-import java.awt.event.KeyEvent._
+
 import engine.GameBase
 import engine.graphics.{Color, Point, Rectangle}
 import processing.core.{PApplet, PConstants, PFont, PImage}
 import tetris.logic._
-import ddf.minim
 import ddf.minim.{AudioPlayer, Minim}
 
 
-class mainMenu extends GameBase {
+class gameOver extends GameBase {
 
   var mono : PFont = null
   var fontNumber : PFont = _
 
 
   var button : Button = _
-  var bg : PImage = _
+
+  var gameOverAudio: AudioPlayer = _
   var minmin : ddf.minim.Minim = _
   var audio : AudioPlayer = _
   var clickAudio : AudioPlayer = _
@@ -32,25 +31,26 @@ class mainMenu extends GameBase {
 
     fill(255, 36, 0)
     textFont(mono)
-    textSize(150)
-    text("Escape",width / 2 - 200,200)
+    textSize(105)
+    text("Game over",width / 2 - 200,175)
 
     textFont(mono)
     textSize(75)
     fill(255,0,0)
-    text("Highscore ",50,200 + 100)
+    text("Depth ",width / 2 - 120,200 + 100)
 
     textFont(fontNumber)
     textSize(75)
     fill(255,0,0)
-    text(":",width / 2 + 100,200 + 75)
+    text(":",width / 2 + 50,200 + 75)
 
     textFont(fontNumber)
     textSize(75)
     fill(255,0,0)
-    text("0",width / 2 + 150,200 + 95)
+    text("0",width / 2 + 90,200 + 95)
 
     if (button.pressed()) {
+      println(clickAudio.getVolume)
       clickAudio.play()
       println("change")
       clickAudio.rewind()
@@ -85,24 +85,22 @@ class mainMenu extends GameBase {
 
     mono = createFont("src/tetris/assets/horror.ttf", 200)
     fontNumber = createFont("src/tetris/assets/number.ttf", 75)
-    bg = loadImage("src/tetris/assets/cc1.png")
-    button = new Button(this, Point(width/2 - width/4,height/2 + height/5),width/2,50, "Descend", mono)
+
+    button = new Button(this, Point(width/2 - width/4,height/2 + height/5),width/2,50, "  Restart", mono)
 
     minmin = new Minim(this)
     audio = minmin.loadFile("src/tetris/assets/main.mp3")
     clickAudio = minmin.loadFile("src/tetris/assets/audioClick2.mp3")
+    gameOverAudio = minmin.loadFile("src/tetris/assets/scaryman.mp3")
 
     audio.loop()
+    gameOverAudio.play()
   }
 
 }
 
-object mainMenu {
-//  val WidthCellInPixels: Double = 15 * 1
-//  val HeightCellInPixels: Double = WidthCellInPixels
-
+object gameOver {
   def main(args:Array[String]): Unit = {
-    PApplet.main("tetris.game.mainMenu")
+    PApplet.main("tetris.game.gameOver")
   }
-
 }
