@@ -74,7 +74,8 @@ class TetrisGame extends GameBase {
   }
 
   override def draw(): Unit = {
-    background(48,25,52) // clears old frame
+//    background(48,25,52) // clears old frame
+    background(0)
     updateState()
 
     if (gameLogic.gameState.attackAnimation) {
