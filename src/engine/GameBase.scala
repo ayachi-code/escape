@@ -20,7 +20,6 @@ class GameBase extends PApplet {
     def init(): Unit = nextFrame = currentTime() + frameDuration
     def timeForNextFrame(): Boolean = currentTime() >= nextFrame
     def advanceFrame(): Unit = nextFrame = nextFrame + frameDuration
-
   }
 
   val foo = None
