@@ -3,21 +3,27 @@
 
 package tetris.game
 
+import ddf.minim.Minim
+
 import java.awt.event
 import java.awt.event.KeyEvent._
-import engine.GameBase
 import engine.graphics.{Color, Point, Rectangle}
-import processing.core.{PApplet, PConstants, PImage}
+import processing.core.{PApplet, PConstants, PImage, PSurface}
 import processing.event.KeyEvent
 import tetris.logic._
 import tetris.game.TetrisGame._
-import tetris.logic
 import tetris.logic.{Point => GridPoint}
+import engine.GameBase
+import processing.core
+import sun.java2d.Surface
 
-class TetrisGame extends GameBase {
+
+
+class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, assets: Map[String, PImage]) extends GameBase(PApplet) with Scene{
 
   var gameLogic : TetrisLogic = TetrisLogic()
   var mazeDims: Dimensions = gameLogic.mazeDim
+
 
   val updateTimer = new UpdateTimer(TetrisLogic.FramesPerSecond.toFloat)
 
@@ -32,12 +38,11 @@ class TetrisGame extends GameBase {
   var changeState = false
   var time = 0
 
-  var food : PImage = null
-  var coin: PImage = null
-  var clock: PImage = null
-  var sword: PImage = null
 
-
+  // This should be called last, since the game
+  // clock is officially ticking at this point
+  updateTimer.init()
+  time = millis()
 
   var immunityCooldownActive = false
 
@@ -45,7 +50,7 @@ class TetrisGame extends GameBase {
 
 
   def menu(): Unit = {
-    fill(169, 139, 53)
+    PApplet.fill(169, 139, 53)
     drawTextCentered("Gold: " + gameLogic.gameState.player.gold, 23, Point(45, ((screenArea.height / gridDims.height) * 3) / 2))
     drawTextCentered("Depth: " + gameLogic.gameState.level, 23, Point(screenArea.width - 49, ((screenArea.height / gridDims.height) * 3) / 2))
     if (gameLogic.gameState.player.gotKey) {
@@ -56,13 +61,13 @@ class TetrisGame extends GameBase {
       drawHeart(Rectangle(Point(150 + i * 35,(screenArea.height / gridDims.height) - 20), 45,45))
     }
 
-    fill(255, 0, 0)
+    PApplet.fill(255, 0, 0)
     drawTextCentered(gameLogic.gameState.timeLeft.toString, 23, Point(screenArea.width - 49 - 100, ((screenArea.height / gridDims.height) * 3) / 2))
 
   }
 
   def weaponMenu(): Unit = {
-    fill(192,192,192)
+    PApplet.fill(192,192,192)
     drawTextCentered("Weapons: ", 23, Point(60, ((screenArea.height - 15))))
 
     drawTextCentered(gameLogic.gameState.player.playersWeapons.length.toString, 23, Point(150, ((screenArea.height - 15))))
@@ -73,10 +78,9 @@ class TetrisGame extends GameBase {
     gameLogic.gameState.player.playersWeapons.last.animation(gameLogic.maze)
   }
 
-  override def draw(): Unit = {
-//    background(48,25,52) // clears old frame
-    background(0)
-    updateState()
+  def run(surface: processing.core.PSurface): Unit = {
+    PApplet.background(0)
+    updateState(surface)
 
     if (gameLogic.gameState.attackAnimation) {
       showAttackAnimation()
@@ -87,13 +91,13 @@ class TetrisGame extends GameBase {
     weaponMenu()
 
 
-    if (gameLogic.gameState.attackAnimation && millis() - time >= 500) {
+    if (gameLogic.gameState.attackAnimation && PApplet.millis() - time >= 500) {
       gameLogic.gameState = gameLogic.gameState.copy(attackAnimation = false)
       gameLogic.maze.mazeCells(gameLogic.gameState.player.playersWeapons.last.attackCell.y)(gameLogic.gameState.player.playersWeapons.last.attackCell.x).isAttacked = false
       gameLogic.gameState.player.playersWeapons = gameLogic.gameState.player.playersWeapons.dropRight(1)
     }
 
-    if (immunityCooldownActive && millis() - time >= 1000) {
+    if (immunityCooldownActive && PApplet.millis() - time >= 1000) {
         immunityCooldownActive = false
     }
 
@@ -107,12 +111,10 @@ class TetrisGame extends GameBase {
 
     if (gameLogic.isGameOver) drawGameOverScreen()
 
-//    gameLogic.maze.enemyPath()
-
-    if(millis() - time >= 1000){
+    if(PApplet.millis() - time >= 1000){
       gameLogic.maze.enemyPath()
       gameLogic.gameState = gameLogic.gameState.copy(timeLeft = gameLogic.gameState.timeLeft - 1)
-      time = millis();
+      time = PApplet.millis();
     }
   }
 
@@ -141,16 +143,16 @@ class TetrisGame extends GameBase {
       typeOfCell.foreach {
         case PlayerCell => drawPlayer(area)
         case Portal => drawPortal(area)
-        case Coin => drawEnemy(area, coin)
+        case Coin => drawEnemy(area, assets("coin"))
         case PlayerOnDoor => drawPlayerOnDoor(area)
         case OpenPortal => {
           drawOpenDoor(area)
           changeState = true
         }
         case Key => drawKey(area)
-        case Clock => drawEnemy(area, clock)
-        case Enemy => drawEnemy(area, food)
-        case SwordCell => drawEnemy(area, sword)
+        case Clock => drawEnemy(area, assets("clock"))
+        case Enemy => drawEnemy(area, assets("ghost"))
+        case SwordCell => drawEnemy(area, assets("sword"))
         case SwordAttack => drawAttackSword(area, gameLogic)
         case Heart => drawHeart(area)
         case _ => Empty
@@ -160,28 +162,9 @@ class TetrisGame extends GameBase {
 
   }
 
-
-  override def keyReleased(event: KeyEvent): Unit = {
+  def keyEvent(event: KeyEvent): Unit = {
     event.getKeyCode match {
-      case VK_S     => {
-        println("test")
-      }
-      case _        => ()
-    }
-  }
-
-  /** Method that calls handlers for different key press events.
-   * You may add extra functionality for other keys here.
-   * See [[event.KeyEvent]] for all defined keycodes.
-   *
-   * @param event The key press event to handle
-   */
-  override def keyPressed(event: KeyEvent): Unit = {
-
-    event.getKeyCode match {
-      case VK_A     => gameLogic.rotateLeft()
-      case VK_S     => gameLogic.rotateRight()
-      case VK_UP if !gameLogic.gameState.attackAnimation    => gameLogic.moveUp()
+      case VK_UP if !gameLogic.gameState.attackAnimation => gameLogic.moveUp()
       case VK_DOWN if !gameLogic.gameState.attackAnimation  => gameLogic.moveDown()
       case VK_LEFT if !gameLogic.gameState.attackAnimation  => gameLogic.moveLeft()
       case VK_RIGHT if !gameLogic.gameState.attackAnimation => gameLogic.moveRight()
@@ -189,43 +172,35 @@ class TetrisGame extends GameBase {
       case VK_V if !gameLogic.gameState.attackAnimation => gameLogic.attack()
       case _        => ()
     }
-
   }
+
+//  override def keyReleased(event: KeyEvent): Unit = {
+//    event.getKeyCode match {
+//      case VK_S     => {
+//        println("test")
+//      }
+//      case _        => ()
+//    }
+//  }
+
+  /** Method that calls handlers for different key press events.
+   * You may add extra functionality for other keys here.
+   * See [[event.KeyEvent]] for all defined keycodes.
+   *
+   * @param event The key press event to handle
+   */
 
   override def settings(): Unit = {
     pixelDensity(displayDensity())
     // If line below gives errors try size(widthInPixels, heightInPixels, PConstants.P2D)
-    size(widthInPixels, heightInPixels)
+    size(1, 1)
   }
 
-  override def setup(): Unit = {
 
-    // Fonts are loaded lazily, so when we call text()
-    // for the first time, there is significant lag.
-    // This prevents it from happening during gameplay.
-    text("", 0, 0)
-
-    food = loadImage("src/tetris/assets/ghost.png")
-    coin = loadImage("src/tetris/assets/x.png")
-    clock = loadImage("src/tetris/assets/clocko.png")
-    sword = loadImage("src/tetris/assets/weapons/sword/sword_1.png")
-
-
-
-    // This should be called last, since the game
-    // clock is officially ticking at this point
-    updateTimer.init()
-
-    time = millis()
-  }
-
-  def updateState(): Unit = {
+  def updateState(surface: PSurface): Unit = {
     if (updateTimer.timeForNextFrame()) {
       if (changeState) {
         delay(1000)
-
-        // 10,10 = first stage(1 -- 3), 12,12 = second Stage (4 -- 6) 15,15 = third Stage ( 7 -- 10) fourth Stage = (11 - 13) 16,16  Fifth Stage (14 -- 16) 17,17, Final stage(6) (17 --> 100000) 20,17
-
 
         val newSize = gameLogic.difficultyCurve(gameLogic.gameState.level + 1)
         gameLogic.maze = Maze(newSize.width,newSize.height, gameLogic.gameState.player)
@@ -240,7 +215,8 @@ class TetrisGame extends GameBase {
         widthInPixels = (WidthCellInPixels * gridDims.width).ceil.toInt
         heightInPixels = (HeightCellInPixels * gridDims.height).ceil.toInt
         screenArea = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
-        surface.setSize(widthInPixels, heightInPixels)
+
+       surface.setSize(widthInPixels, heightInPixels)
 
         changeState = false
       }

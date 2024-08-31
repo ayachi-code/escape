@@ -3,7 +3,7 @@ import engine.GameBase
 import engine.graphics.{Color, Point, Rectangle}
 import processing.core.{PApplet, PFont}
 
-class Button(PApplet: PApplet, point: Point, width: Int, height: Int, textOnButton: String, font: PFont) extends GameBase {
+class Button(PApplet: PApplet, point: Point, width: Int, height: Int, textOnButton: String, font: PFont) {
   def display(): Unit = {
 
     if (onButton()) {

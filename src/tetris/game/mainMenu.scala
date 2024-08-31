@@ -3,14 +3,14 @@
 
 package tetris.game
 
-
 import engine.graphics.Point
 import processing.core.PApplet
 import tetris.logic._
 import ddf.minim.Minim
+import engine.GameBase
+import processing.event.KeyEvent
 
-
-class mainMenu(PApplet: PApplet, minmin: Minim) extends Scene {
+class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager) extends Scene {
 
   val mono = PApplet.createFont("src/tetris/assets/horror.ttf", 200)
   val fontNumber = PApplet.createFont("src/tetris/assets/number.ttf", 75)
@@ -21,7 +21,7 @@ class mainMenu(PApplet: PApplet, minmin: Minim) extends Scene {
 
   backgroundAudio.loop()
 
-  def run(): Unit = {
+  def run(surface: processing.core.PSurface): Unit = {
     PApplet.background(0)
     button.display()
 
@@ -47,15 +47,15 @@ class mainMenu(PApplet: PApplet, minmin: Minim) extends Scene {
 
     if (button.pressed()) {
       clickAudio.play()
-      println("change")
       clickAudio.rewind()
+      backgroundAudio.close()
+      state.setGameState("gameOver")
+      PApplet.delay(100)
     }
   }
 
-}
+  override def keyEvent(event: KeyEvent): Unit = {
 
-object mainMenu {
-  def main(args: Array[String]): Unit = {
-    PApplet.main("tetris.game.mainMenu")
   }
+
 }

@@ -1,6 +1,6 @@
 package tetris.game
 
-class gameStateManager {
+class GameStateManager {
   var currentGameState : String = ""
 
   def getGameState() : String = currentGameState
