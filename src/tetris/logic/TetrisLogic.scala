@@ -12,7 +12,7 @@ import ddf.minim.{AudioPlayer, Minim}
 class TetrisLogic(minim: Minim) {
 
 
-  var gameState: GameState = GameState(false, new Player, 20, gameDone = false, leaveRoomButtonPressed = false, 1, transits = false)
+  var gameState: GameState = GameState(false, new Player, 20, gameDone = false, leaveRoomButtonPressed = false, 0, transits = false)
 
   var maze = new Maze(10,10, gameState.player)
 
@@ -51,7 +51,7 @@ class TetrisLogic(minim: Minim) {
   // 10,10 = first stage(1 -- 3), 12,12 = second Stage (4 -- 6) 15,15 = third Stage ( 7 -- 10) fourth Stage = (11 - 13) 16,16  Fifth Stage (14 -- 16) 17,17, Final stage(6) (17 --> 100000) 20,17
   def difficultyCurve(level: Int): Dimensions = {
 //    if (level == 2) return Dimensions(20, 20)
-    if (level >= 1 && level <= 3) return Dimensions(10, 10)
+    if (level >= 0 && level <= 3) return Dimensions(10, 10)
     if (level >= 4 && level <= 6) return Dimensions(12, 12)
     if (level >= 7 && level <= 10) return Dimensions(15, 15)
     if (level >= 11 && level <= 13) return Dimensions(16, 16)

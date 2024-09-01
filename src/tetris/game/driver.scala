@@ -17,6 +17,7 @@ class driver extends PApplet{
 
   override def draw(): Unit = {
     gameState = allScenes(gameState.currentGameState).run(surface, gameState)
+    var x = 11
   }
 
   override def settings(): Unit = {

@@ -63,7 +63,14 @@ class gameOver(PApplet: PApplet, min: Minim, state: GameStateManager) extends Ga
     PApplet.textFont(fontNumber)
     PApplet.textSize(75)
     PApplet.fill(255, 0, 0)
-    PApplet.text(state.score.toString, PApplet.width / 2 + 90, 200 + 95)
+
+
+
+    var counter = 0
+   state.score.toString.split("").foreach(char => {
+     PApplet.text(char, PApplet.width / 2 + 100 + counter, 200 + 95)
+     counter -= 30
+   })
 
     if (button.pressed()) {
       clickAudio.play()

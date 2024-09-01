@@ -128,16 +128,15 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
       }}
     })
 
-
-
     if (gameLogic.gameState.gameDone) {
       state.setGameState("gameOver")
 
+      state.score = gameLogic.gameState.level
+
       gameLogic.maze = Maze(10,10, new Player)
       gameLogic.mazeGrid = gameLogic.maze.generateMaze()
-      gameLogic.gameState = gameLogic.gameState.copy(gameDone = false, player = new Player, level = 1, timeLeft = 20, attackAnimation = false)
+      gameLogic.gameState = gameLogic.gameState.copy(gameDone = false, player = new Player, level = 0, timeLeft = 20, attackAnimation = false)
 
-      state.score = gameLogic.gameState.level
 
       if (state.score > state.highScore) {
         state.highScore = state.score
