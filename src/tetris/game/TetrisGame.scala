@@ -114,7 +114,10 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
 
     if (gameLogic.gameState.gameDone) {
       state.setGameState("gameOver")
-      gameLogic.gameState = gameLogic.gameState.copy(gameDone = false, player = new Player)
+      gameLogic.maze = new Maze(10,10, new Player)
+      gameLogic.mazeGrid = gameLogic.maze.generateMaze()
+//      gameLogic.mazeGrid(gameLogic.gameState.player.position.y)(gameLogic.gameState.player.position.x).isPlayerOn = false
+      gameLogic.gameState = gameLogic.gameState.copy(gameDone = false, player = new Player, level = 1, timeLeft = 20, attackAnimation = false)
       return state
     }
 
@@ -187,16 +190,9 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
 //    }
 //  }
 
-  /** Method that calls handlers for different key press events.
-   * You may add extra functionality for other keys here.
-   * See [[event.KeyEvent]] for all defined keycodes.
-   *
-   * @param event The key press event to handle
-   */
 
   override def settings(): Unit = {
     pixelDensity(displayDensity())
-    // If line below gives errors try size(widthInPixels, heightInPixels, PConstants.P2D)
     size(1, 1)
   }
 

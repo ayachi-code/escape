@@ -10,13 +10,12 @@ import processing.event.KeyEvent
 
 class driver extends PApplet{
   var gameState = new GameStateManager
-  gameState.setGameState("gameOver")
+  gameState.setGameState("start")
 
   var allScenes = Map[String, Scene]()
 
   override def draw(): Unit = {
     gameState = allScenes(gameState.currentGameState).run(surface, gameState)
-    println("rwar")
   }
 
   override def settings(): Unit = {
@@ -34,7 +33,7 @@ class driver extends PApplet{
     surface.setTitle("Escape");
     val min = new Minim(this)
 
-    var assets = Map[String, PImage]("ghost" -> loadImage("src/tetris/assets/ghost.png"), "coin" -> loadImage("src/tetris/assets/x.png"), "clock" -> loadImage("src/tetris/assets/clocko.png"), "sword" -> loadImage("src/tetris/assets/weapons/sword/sword_1.png")   )
+    var assets = Map[String, PImage]("ghost" -> loadImage("src/tetris/assets/ghost.png"), "coin" -> loadImage("src/tetris/assets/x.png"), "clock" -> loadImage("src/tetris/assets/clocko.png"), "sword" -> loadImage("src/tetris/assets/weapons/sword/sword_1.png") )
 
     allScenes = Map[String, Scene]("start" -> new mainMenu(this, min, gameState), "gameOver" -> new gameOver(this, min, gameState), "game" -> new TetrisGame(this, min, gameState, assets))
 

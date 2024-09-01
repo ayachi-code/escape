@@ -172,7 +172,7 @@ class GameBase(PApplet: PApplet) extends driver  {
   }
 
   def drawEnemy(r: Rectangle, img: PImage): Unit = {
-    PApplet.image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
+    PApplet.image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2 )
   }
 
   def drawEllipse(r: Rectangle): Unit =
