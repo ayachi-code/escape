@@ -4,7 +4,7 @@ import ddf.minim.{AudioPlayer, Minim}
 
 
 //Morgen
-//TODO: 9 coin reward + Gamestate manager
+//TODO: 9 coin reward + Highscore
 
 
 //TODO: Gamestate manager + progression levels + timer + highscore + voorkom dat als je knop niet kan ingedrukt houden om te lopen
@@ -71,7 +71,6 @@ class TetrisLogic(minim: Minim) {
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).setPlayer(false)
       mazeGrid(gameState.player.position.y - 1)(gameState.player.position.x).setPlayer(true)
       gameState.player.move('n')
-      //gameState = gameState.copy()//gameState.player.copy(position = )// Point(gameState.player.position.x, gameState.player.position.y - 1))) // Point(gameState.player.position.x, gameState.player.position.y - 1), gameDone = false)
 
       maze.playerPosition = gameState.player.position
 
@@ -260,14 +259,5 @@ object TetrisLogic {
   val DefaultVisibleHeight: Int = 36
 
 //  def apply() = new TetrisLogic()
-
-
-//  val DefaultHeight: Int = DefaultVisibleHeight //+ NrTopInvisibleLines
-//  val DefaultDims : Dimensions = Dimensions(width = DefaultWidth, height = DefaultHeight)
-//  val mazeDims : Dimensions = Dimensions(width = 30, height = 30)
-//
-//  def apply() = new TetrisLogic(new ScalaRandomGen(),
-//    DefaultDims,
-//    makeEmptyBoard(DefaultDims), mazeDims)
 
 }

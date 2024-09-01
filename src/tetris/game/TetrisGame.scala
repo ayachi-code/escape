@@ -14,8 +14,6 @@ import tetris.logic._
 import tetris.game.TetrisGame._
 import tetris.logic.{Point => GridPoint}
 import engine.GameBase
-import processing.core
-import sun.java2d.Surface
 
 import scala.util.Random
 
@@ -51,6 +49,9 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
   var backgroundAudios : List[AudioPlayer] = List[AudioPlayer](minmin.loadFile("src/tetris/assets/dungeonOST/bg1.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg2.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg3.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg4.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg5.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg6.mp3"))
 
   var bgAudio : AudioPlayer = null
+
+  var hitByEnemySF : AudioPlayer = minmin.loadFile("src/tetris/assets/soundeffects/hit.mp3")
+
 
   def menu(): Unit = {
     PApplet.fill(169, 139, 53)
@@ -118,6 +119,8 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
       if (enmy.point == gameLogic.gameState.player.position) {
         if (!immunityCooldownActive) {
           gameLogic.gameState.player.setHp(gameLogic.gameState.player.hp - 1)
+          hitByEnemySF.play()
+          hitByEnemySF.rewind()
           if (gameLogic.gameState.player.hp <= 0) gameLogic.gameState = gameLogic.gameState.copy(gameDone = true)
           immunityCooldownActive = true
       }}
@@ -130,6 +133,7 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
       gameLogic.maze = Maze(10,10, new Player)
       gameLogic.mazeGrid = gameLogic.maze.generateMaze()
       gameLogic.gameState = gameLogic.gameState.copy(gameDone = false, player = new Player, level = 1, timeLeft = 20, attackAnimation = false)
+      state.score = gameLogic.gameState.level
       surface.setSize(470, 540)
       bgAudio.pause()
       audioStartState = false
@@ -139,6 +143,7 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
       widthInPixels = (WidthCellInPixels * gridDims.width).ceil.toInt
       heightInPixels = (HeightCellInPixels * gridDims.height).ceil.toInt
       screenArea = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
+
       return state
     }
 
