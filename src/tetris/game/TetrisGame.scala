@@ -23,7 +23,7 @@ import scala.util.Random
 
 class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, assets: Map[String, PImage]) extends GameBase(PApplet) with Scene{
 
-  var gameLogic : TetrisLogic = TetrisLogic()
+  var gameLogic : TetrisLogic = new TetrisLogic(minmin)
   var mazeDims: Dimensions = gameLogic.mazeDim
   var rand = new Random()
 

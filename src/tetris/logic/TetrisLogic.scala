@@ -1,8 +1,7 @@
 package tetris.logic
 
-import ddf.minim.AudioPlayer
-import engine.random.{RandomGenerator, ScalaRandomGen}
-import tetris.logic.TetrisLogic._
+import ddf.minim.{AudioPlayer, Minim}
+
 
 //Morgen
 //TODO: 9 coin reward + Gamestate manager
@@ -10,7 +9,7 @@ import tetris.logic.TetrisLogic._
 
 //TODO: Gamestate manager + progression levels + timer + highscore + voorkom dat als je knop niet kan ingedrukt houden om te lopen
 
-class TetrisLogic() {
+class TetrisLogic(minim: Minim) {
 
 
   var gameState: GameState = GameState(false, new Player, 20, gameDone = false, leaveRoomButtonPressed = false, 1, transits = false)
@@ -23,11 +22,14 @@ class TetrisLogic() {
 
   var mazeDim = Dimensions(maze.width * 3, maze.height * 3)
 
-//  def this(random: RandomGenerator, gridDims : Dimensions) =
-//    this(random, gridDims, makeEmptyBoard(gridDims), Dimensions(30,30))
-//
-//  def this() =
-//    this(new ScalaRandomGen(), DefaultDims, makeEmptyBoard(DefaultDims), Dimensions(30,30))
+  val clockSF = minim.loadFile("src/tetris/assets/soundeffects/clock.mp3")
+  val coinSF = minim.loadFile("src/tetris/assets/soundeffects/coin.mp3")
+  val lootSF = minim.loadFile("src/tetris/assets/soundeffects/loot.mp3")
+  val openDoorSF = minim.loadFile("src/tetris/assets/soundeffects/opendoor.mp3")
+  val attackSF = minim.loadFile("src/tetris/assets/soundeffects/attack.mp3")
+  val hpSF = minim.loadFile("src/tetris/assets/soundeffects/hp.mp3")
+
+
 
   // TODO implement me
   def rotateLeft(): Unit = ()
@@ -40,6 +42,8 @@ class TetrisLogic() {
       println(gameState.attackAnimation)
       gameState.player.playersWeapons(gameState.player.playersWeapons.length - 1).attack(maze)
       gameState = gameState.copy(attackAnimation = true)
+      attackSF.play()
+      attackSF.rewind()
     }
     1
   }
@@ -100,8 +104,9 @@ class TetrisLogic() {
 
   def checkCoinCollision(): Unit = {
     if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isCoin && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn) {
+      coinSF.play()
+      coinSF.rewind()
       gameState.player.increaseScore(1)
-      //      gameState = gameState.copy(score = gameState.score + 1)
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).isCoin = false
     }
   }
@@ -146,6 +151,8 @@ class TetrisLogic() {
     if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isClock && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn) {
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).isClock = false
       gameState = gameState.copy(timeLeft = gameState.timeLeft + 6)
+      clockSF.play()
+      clockSF.rewind()
     }
   }
 
@@ -153,6 +160,8 @@ class TetrisLogic() {
     if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isWeapon && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn && gameState.player.playersWeapons.length <= 9) {
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).isWeapon = false
       gameState.player.playersWeapons = gameState.player.playersWeapons :+ Sword(gameState.player)
+      lootSF.play()
+      lootSF.rewind()
     }
   }
 
@@ -160,6 +169,8 @@ class TetrisLogic() {
     if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isHeart && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn && gameState.player.playersWeapons.length <= 9) {
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).isHeart = false
       gameState.player.setHp(gameState.player.hp + 1)
+      hpSF.play()
+      hpSF.rewind()
     }
   }
 
@@ -173,6 +184,8 @@ class TetrisLogic() {
 
   def leaveRoom(): Unit = {
     if (gameState.player.position == maze.portalLocation && gameState.player.gotKey) {
+      openDoorSF.play()
+      openDoorSF.rewind()
       gameState = gameState.copy(transits = true)
     }
   }
@@ -181,8 +194,9 @@ class TetrisLogic() {
   def checkKeyCollision(): Unit = {
     if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isKey && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn) {
       gameState.player.keyState(true)
-      //      gameState = gameState.copy(gotKey = true)
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).isKey = false
+      lootSF.play()
+      lootSF.rewind()
     }
   }
 
@@ -245,7 +259,7 @@ object TetrisLogic {
   //val NrTopInvisibleLines: Int = 4
   val DefaultVisibleHeight: Int = 36
 
-  def apply() = new TetrisLogic
+//  def apply() = new TetrisLogic()
 
 
 //  val DefaultHeight: Int = DefaultVisibleHeight //+ NrTopInvisibleLines
