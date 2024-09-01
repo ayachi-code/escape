@@ -15,6 +15,8 @@ import tetris.game.TetrisGame._
 import tetris.logic.{Point => GridPoint}
 import engine.GameBase
 
+import java.io
+import java.io.{File, FileWriter}
 import scala.util.Random
 
 
@@ -130,10 +132,20 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
 
     if (gameLogic.gameState.gameDone) {
       state.setGameState("gameOver")
+
       gameLogic.maze = Maze(10,10, new Player)
       gameLogic.mazeGrid = gameLogic.maze.generateMaze()
       gameLogic.gameState = gameLogic.gameState.copy(gameDone = false, player = new Player, level = 1, timeLeft = 20, attackAnimation = false)
+
       state.score = gameLogic.gameState.level
+
+      if (state.score > state.highScore) {
+        state.highScore = state.score
+        val fileWriter = new FileWriter(new File("src/tetris/logic/highscore"))
+        fileWriter.write(state.score.toString)
+        fileWriter.close()
+      }
+
       surface.setSize(470, 540)
       bgAudio.pause()
       audioStartState = false

@@ -3,10 +3,11 @@
 
 package tetris.game
 
-import engine.GameBase
 import processing.core.{PApplet, PConstants, PFont, PImage}
 import ddf.minim.{AudioPlayer, Minim}
 import processing.event.KeyEvent
+import scala.io.Source
+
 
 class driver extends PApplet{
   var gameState = new GameStateManager
@@ -36,6 +37,14 @@ class driver extends PApplet{
     var assets = Map[String, PImage]("ghost" -> loadImage("src/tetris/assets/ghost.png"), "coin" -> loadImage("src/tetris/assets/x.png"), "clock" -> loadImage("src/tetris/assets/clocko.png"), "sword" -> loadImage("src/tetris/assets/weapons/sword/sword_1.png") )
 
     allScenes = Map[String, Scene]("start" -> new mainMenu(this, min, gameState), "gameOver" -> new gameOver(this, min, gameState), "game" -> new TetrisGame(this, min, gameState, assets))
+
+
+    val testTxtSource = scala.io.Source.fromFile("src/tetris/logic/highscore")
+    val highScore = testTxtSource.mkString
+
+    gameState.highScore = highScore.toInt
+
+    testTxtSource.close()
 
   }
 }

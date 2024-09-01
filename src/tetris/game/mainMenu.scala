@@ -52,7 +52,7 @@ class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager) extends
     PApplet.textFont(fontNumber)
     PApplet.textSize(75)
     PApplet.fill(255,0,0)
-    PApplet.text("0",PApplet.width / 2 + 150,200 + 95)
+    PApplet.text(state.highScore.toString,PApplet.width / 2 + 150,200 + 95)
 
     if (button.pressed()) {
       clickAudio.play()

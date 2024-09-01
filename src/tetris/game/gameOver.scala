@@ -32,7 +32,7 @@ class gameOver(PApplet: PApplet, min: Minim, state: GameStateManager) extends Ga
 
   def run(surface: processing.core.PSurface, state: GameStateManager): GameStateManager = {
 
-    if (state.currentGameState == "gameOver" && stateStart) {
+    if (stateStart) {
       backgroundAudio.rewind()
       gameOverAudio.rewind()
       backgroundAudio.loop()
@@ -63,7 +63,7 @@ class gameOver(PApplet: PApplet, min: Minim, state: GameStateManager) extends Ga
     PApplet.textFont(fontNumber)
     PApplet.textSize(75)
     PApplet.fill(255, 0, 0)
-    PApplet.text("0", PApplet.width / 2 + 90, 200 + 95)
+    PApplet.text(state.score.toString, PApplet.width / 2 + 90, 200 + 95)
 
     if (button.pressed()) {
       clickAudio.play()
@@ -75,5 +75,5 @@ class gameOver(PApplet: PApplet, min: Minim, state: GameStateManager) extends Ga
       backgroundAudio.pause()
     }
     state
-      }
+  }
 }
