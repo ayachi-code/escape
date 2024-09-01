@@ -76,7 +76,6 @@ class TetrisLogic(minim: Minim) {
 
       if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isCoin && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn) {
         gameState.player.increaseScore(1)
-        //        gameState = gameState.copy(player = gameState.player.gold + 1)
         mazeGrid(gameState.player.position.y)(gameState.player.position.x).isCoin = false
       }
 
