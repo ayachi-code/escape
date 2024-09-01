@@ -3,7 +3,7 @@
 
 package tetris.game
 
-import ddf.minim.Minim
+import ddf.minim.{AudioPlayer, Minim}
 
 import java.awt.event
 import java.awt.event.KeyEvent._
@@ -17,18 +17,20 @@ import engine.GameBase
 import processing.core
 import sun.java2d.Surface
 
+import scala.util.Random
+
 
 
 class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, assets: Map[String, PImage]) extends GameBase(PApplet) with Scene{
 
   var gameLogic : TetrisLogic = TetrisLogic()
   var mazeDims: Dimensions = gameLogic.mazeDim
+  var rand = new Random()
 
 
   val updateTimer = new UpdateTimer(TetrisLogic.FramesPerSecond.toFloat)
 
   var gridDims: Dimensions = gameLogic.gridDims
-
 
   var widthInPixels: Int = (WidthCellInPixels * gridDims.width).ceil.toInt
   var heightInPixels: Int = (HeightCellInPixels * gridDims.height).ceil.toInt
@@ -39,15 +41,16 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
   var time = 0
 
 
-  // This should be called last, since the game
-  // clock is officially ticking at this point
   updateTimer.init()
   time = millis()
 
   var immunityCooldownActive = false
 
-  var immunityCooldown = 0
+  var audioStartState = false
 
+  var backgroundAudios : List[AudioPlayer] = List[AudioPlayer](minmin.loadFile("src/tetris/assets/dungeonOST/bg1.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg2.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg3.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg4.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg5.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg6.mp3"))
+
+  var bgAudio : AudioPlayer = null
 
   def menu(): Unit = {
     PApplet.fill(169, 139, 53)
@@ -79,6 +82,16 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
   }
 
   def run(surface: processing.core.PSurface, state: GameStateManager): GameStateManager = {
+
+    if (!audioStartState) {
+      audioStartState = true
+      val index : Int = rand.nextInt(backgroundAudios.length - 1)
+      if (bgAudio != null) bgAudio.pause()
+      bgAudio = backgroundAudios(index)
+      backgroundAudios = backgroundAudios.patch(index, Nil, 1)
+      bgAudio.loop()
+    }
+
     PApplet.background(0)
     updateState(surface)
 
@@ -114,10 +127,18 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
 
     if (gameLogic.gameState.gameDone) {
       state.setGameState("gameOver")
-      gameLogic.maze = new Maze(10,10, new Player)
+      gameLogic.maze = Maze(10,10, new Player)
       gameLogic.mazeGrid = gameLogic.maze.generateMaze()
-//      gameLogic.mazeGrid(gameLogic.gameState.player.position.y)(gameLogic.gameState.player.position.x).isPlayerOn = false
       gameLogic.gameState = gameLogic.gameState.copy(gameDone = false, player = new Player, level = 1, timeLeft = 20, attackAnimation = false)
+      surface.setSize(470, 540)
+      bgAudio.pause()
+      audioStartState = false
+      mazeDims = gameLogic.mazeDim
+      backgroundAudios = List[AudioPlayer](minmin.loadFile("src/tetris/assets/dungeonOST/bg1.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg2.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg3.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg4.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg5.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg6.mp3"))
+      gridDims = Dimensions(gameLogic.maze.width * 3, gameLogic.maze.height * 3 + 6)
+      widthInPixels = (WidthCellInPixels * gridDims.width).ceil.toInt
+      heightInPixels = (HeightCellInPixels * gridDims.height).ceil.toInt
+      screenArea = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
       return state
     }
 
@@ -170,6 +191,7 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
   }
 
   def keyEvent(event: KeyEvent): Unit = {
+
     event.getKeyCode match {
       case VK_UP if !gameLogic.gameState.attackAnimation => gameLogic.moveUp()
       case VK_DOWN if !gameLogic.gameState.attackAnimation  => gameLogic.moveDown()
@@ -203,6 +225,11 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
         delay(1000)
 
         val newSize = gameLogic.difficultyCurve(gameLogic.gameState.level + 1)
+
+        if (newSize.width != gameLogic.maze.width) {
+          audioStartState = false // Make sure we get a new background audio when we increase maze size
+        }
+
         gameLogic.maze = Maze(newSize.width,newSize.height, gameLogic.gameState.player)
         gameLogic.mazeGrid = gameLogic.maze.generateMaze()
         gameLogic.gameState.player.nextRound()

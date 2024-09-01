@@ -1,5 +1,6 @@
 package tetris.logic
 
+import ddf.minim.AudioPlayer
 import engine.random.{RandomGenerator, ScalaRandomGen}
 import tetris.logic.TetrisLogic._
 

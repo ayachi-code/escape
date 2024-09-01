@@ -21,7 +21,16 @@ class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager) extends
 
   backgroundAudio.loop()
 
+  var audioStartState = false
+
   def run(surface: processing.core.PSurface, state: GameStateManager) : GameStateManager = {
+
+    if (!audioStartState) {
+      audioStartState = true
+      backgroundAudio.rewind()
+      backgroundAudio.play()
+    }
+
     PApplet.background(0)
     button.display()
 
@@ -48,9 +57,10 @@ class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager) extends
     if (button.pressed()) {
       clickAudio.play()
       clickAudio.rewind()
-      backgroundAudio.close()
+      backgroundAudio.pause()
       state.setGameState("game")
       PApplet.delay(100)
+      audioStartState = false
     }
     state
   }

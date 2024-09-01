@@ -72,6 +72,7 @@ class gameOver(PApplet: PApplet, min: Minim, state: GameStateManager) extends Ga
       PApplet.delay(100)
       stateStart = true
       gameOverAudio.pause()
+      backgroundAudio.pause()
     }
     state
       }
