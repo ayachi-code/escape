@@ -21,7 +21,7 @@ class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager) extends
 
   backgroundAudio.loop()
 
-  def run(surface: processing.core.PSurface): Unit = {
+  def run(surface: processing.core.PSurface, state: GameStateManager) : GameStateManager = {
     PApplet.background(0)
     button.display()
 
@@ -49,9 +49,10 @@ class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager) extends
       clickAudio.play()
       clickAudio.rewind()
       backgroundAudio.close()
-      state.setGameState("gameOver")
+      state.setGameState("game")
       PApplet.delay(100)
     }
+    state
   }
 
   override def keyEvent(event: KeyEvent): Unit = {

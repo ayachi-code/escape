@@ -8,21 +8,15 @@ import processing.core.{PApplet, PConstants, PFont, PImage}
 import ddf.minim.{AudioPlayer, Minim}
 import processing.event.KeyEvent
 
-import java.awt.event.KeyEvent.{VK_A, VK_DOWN, VK_LEFT, VK_RIGHT, VK_S, VK_SPACE, VK_UP, VK_V}
-
-
 class driver extends PApplet{
   var gameState = new GameStateManager
-  gameState.setGameState("game")
+  gameState.setGameState("gameOver")
 
   var allScenes = Map[String, Scene]()
 
-  def resz(width: Int, heigth: Int): Unit = {
-    surface.setSize(100,100)
-  }
-
   override def draw(): Unit = {
-    allScenes(gameState.currentGameState).run(surface)
+    gameState = allScenes(gameState.currentGameState).run(surface, gameState)
+    println("rwar")
   }
 
   override def settings(): Unit = {
@@ -39,8 +33,6 @@ class driver extends PApplet{
 
     surface.setTitle("Escape");
     val min = new Minim(this)
-
-    frame.setResizable(true)
 
     var assets = Map[String, PImage]("ghost" -> loadImage("src/tetris/assets/ghost.png"), "coin" -> loadImage("src/tetris/assets/x.png"), "clock" -> loadImage("src/tetris/assets/clocko.png"), "sword" -> loadImage("src/tetris/assets/weapons/sword/sword_1.png")   )
 

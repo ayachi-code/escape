@@ -38,7 +38,6 @@ class TetrisLogic() {
     if (gameState.player.playersWeapons.length > 0 && !gameState.attackAnimation) {
       println(gameState.attackAnimation)
       gameState.player.playersWeapons(gameState.player.playersWeapons.length - 1).attack(maze)
-//      gameState.player.playersWeapons = gameState.player.playersWeapons.dropRight(1)
       gameState = gameState.copy(attackAnimation = true)
     }
     1
@@ -135,7 +134,6 @@ class TetrisLogic() {
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).setPlayer(false)
       mazeGrid(gameState.player.position.y + 1)(gameState.player.position.x).setPlayer(true)
       gameState.player.move('s')
-      //      gameState = gameState.copy(playerPosition = Point(gameState.player.position.x, gameState.player.position.y + 1), gameDone = false)
 
       maze.playerPosition = gameState.player.position
 

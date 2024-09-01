@@ -78,7 +78,7 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
     gameLogic.gameState.player.playersWeapons.last.animation(gameLogic.maze)
   }
 
-  def run(surface: processing.core.PSurface): Unit = {
+  def run(surface: processing.core.PSurface, state: GameStateManager): GameStateManager = {
     PApplet.background(0)
     updateState(surface)
 
@@ -105,22 +105,26 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
       if (enmy.point == gameLogic.gameState.player.position) {
         if (!immunityCooldownActive) {
           gameLogic.gameState.player.setHp(gameLogic.gameState.player.hp - 1)
+          if (gameLogic.gameState.player.hp <= 0) gameLogic.gameState = gameLogic.gameState.copy(gameDone = true)
           immunityCooldownActive = true
       }}
     })
 
-    if (gameLogic.isGameOver) drawGameOverScreen()
+
+
+    if (gameLogic.gameState.gameDone) {
+      state.setGameState("gameOver")
+      gameLogic.gameState = gameLogic.gameState.copy(gameDone = false, player = new Player)
+      return state
+    }
 
     if(PApplet.millis() - time >= 1000){
       gameLogic.maze.enemyPath()
       gameLogic.gameState = gameLogic.gameState.copy(timeLeft = gameLogic.gameState.timeLeft - 1)
       time = PApplet.millis();
     }
-  }
 
-  def drawGameOverScreen(): Unit = {
-    setFillColor(Color.Red)
-    drawTextCentered("GAME OVER!", 20, screenArea.center)
+    state
   }
 
   def drawGrid(): Unit = {
