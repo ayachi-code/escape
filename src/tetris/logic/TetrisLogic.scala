@@ -1,6 +1,10 @@
 package tetris.logic
 
 import ddf.minim.{AudioPlayer, Minim}
+import tetris.game.GameStateManager
+
+import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 
 
 //Morgen
@@ -14,20 +18,23 @@ class TetrisLogic(minim: Minim) {
 
   var gameState: GameState = GameState(false, new Player, 20, gameDone = false, leaveRoomButtonPressed = false, 0, transits = false)
 
-  var maze = new Maze(10,10, gameState.player)
+  var maze: Maze = Maze(10,10, gameState.player)
 
   var mazeGrid = maze.generateMaze()
 
-  var gridDims = Dimensions(maze.width * 3, maze.height * 3 + 6)
+  var gridDims: Dimensions = Dimensions(maze.width * 3, maze.height * 3 + 6)
 
-  var mazeDim = Dimensions(maze.width * 3, maze.height * 3)
+  var mazeDim: Dimensions = Dimensions(maze.width * 3, maze.height * 3)
 
-  val clockSF = minim.loadFile("src/tetris/assets/soundeffects/clock.mp3")
-  val coinSF = minim.loadFile("src/tetris/assets/soundeffects/coin.mp3")
-  val lootSF = minim.loadFile("src/tetris/assets/soundeffects/loot.mp3")
-  val openDoorSF = minim.loadFile("src/tetris/assets/soundeffects/opendoor.mp3")
-  val attackSF = minim.loadFile("src/tetris/assets/soundeffects/attack.mp3")
-  val hpSF = minim.loadFile("src/tetris/assets/soundeffects/hp.mp3")
+  var audioEnabled : Boolean = true
+
+
+  val clockSF = new Audio("src/tetris/assets/soundeffects/clock.mp3", minim)
+  val coinSF = new Audio("src/tetris/assets/soundeffects/coin.mp3", minim)
+  val lootSF = new Audio("src/tetris/assets/soundeffects/loot.mp3", minim)
+  val openDoorSF = new Audio("src/tetris/assets/soundeffects/opendoor.mp3", minim)
+  val attackSF = new Audio("src/tetris/assets/soundeffects/attack.mp3", minim)
+  val hpSF = new Audio("src/tetris/assets/soundeffects/hp.mp3", minim)
 
 
 
@@ -38,19 +45,15 @@ class TetrisLogic(minim: Minim) {
   def rotateRight(): Unit = ()
 
   def attack(): Unit = {
-    if (gameState.player.playersWeapons.length > 0 && !gameState.attackAnimation) {
-      println(gameState.attackAnimation)
-      gameState.player.playersWeapons(gameState.player.playersWeapons.length - 1).attack(maze)
+    if (gameState.player.playersWeapons.nonEmpty && !gameState.attackAnimation) {
+      gameState.player.playersWeapons.last.attack(maze)
       gameState = gameState.copy(attackAnimation = true)
-      attackSF.play()
-      attackSF.rewind()
+
+      if (audioEnabled) attackSF.play()
     }
-    1
   }
 
-  // 10,10 = first stage(1 -- 3), 12,12 = second Stage (4 -- 6) 15,15 = third Stage ( 7 -- 10) fourth Stage = (11 - 13) 16,16  Fifth Stage (14 -- 16) 17,17, Final stage(6) (17 --> 100000) 20,17
   def difficultyCurve(level: Int): Dimensions = {
-//    if (level == 2) return Dimensions(20, 20)
     if (level >= 0 && level <= 3) return Dimensions(10, 10)
     if (level >= 4 && level <= 6) return Dimensions(12, 12)
     if (level >= 7 && level <= 10) return Dimensions(15, 15)
@@ -60,25 +63,12 @@ class TetrisLogic(minim: Minim) {
     Dimensions(18, 18)
   }
 
-  def enemyPath(p: Point): Unit = {
-    mazeGrid(p.y)(p.x).isEnemyOn = false
-    var z = enemyPath(p)
-    mazeGrid(p.y)(p.x).isEnemyOn = true
-  }
-
   def moveUp(): Unit = {
     if (isMovePossible(gameState.player.position, 'n')) {
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).setPlayer(false)
       mazeGrid(gameState.player.position.y - 1)(gameState.player.position.x).setPlayer(true)
       gameState.player.move('n')
-
       maze.playerPosition = gameState.player.position
-
-      if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isCoin && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn) {
-        gameState.player.increaseScore(1)
-        mazeGrid(gameState.player.position.y)(gameState.player.position.x).isCoin = false
-      }
-
       checkCollisions()
 
     }
@@ -90,20 +80,14 @@ class TetrisLogic(minim: Minim) {
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).setPlayer(false)
       mazeGrid(gameState.player.position.y)(gameState.player.position.x - 1).setPlayer(true)
       gameState.player.move('w')
-      //      gameState = gameState.copy(playerPosition = Point(gameState.player.position.x - 1, gameState.player.position.y), gameDone = false)
-
       maze.playerPosition = gameState.player.position
-
-
       checkCollisions()
-
     }
   }
 
   def checkCoinCollision(): Unit = {
     if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isCoin && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn) {
-      coinSF.play()
-      coinSF.rewind()
+      if (audioEnabled) coinSF.play()
       gameState.player.increaseScore(1)
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).isCoin = false
     }
@@ -114,9 +98,7 @@ class TetrisLogic(minim: Minim) {
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).setPlayer(false)
       mazeGrid(gameState.player.position.y)(gameState.player.position.x + 1).setPlayer(true)
       gameState.player.move('e')
-
       maze.playerPosition = gameState.player.position
-
       checkCollisions()
     }
   }
@@ -149,8 +131,8 @@ class TetrisLogic(minim: Minim) {
     if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isClock && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn) {
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).isClock = false
       gameState = gameState.copy(timeLeft = gameState.timeLeft + 6)
-      clockSF.play()
-      clockSF.rewind()
+
+      if (audioEnabled) clockSF.play()
     }
   }
 
@@ -158,8 +140,8 @@ class TetrisLogic(minim: Minim) {
     if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isWeapon && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn && gameState.player.playersWeapons.length <= 9) {
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).isWeapon = false
       gameState.player.playersWeapons = gameState.player.playersWeapons :+ Sword(gameState.player)
-      lootSF.play()
-      lootSF.rewind()
+
+      if (audioEnabled) lootSF.play()
     }
   }
 
@@ -167,8 +149,8 @@ class TetrisLogic(minim: Minim) {
     if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isHeart && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn && gameState.player.playersWeapons.length <= 9) {
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).isHeart = false
       gameState.player.setHp(gameState.player.hp + 1)
-      hpSF.play()
-      hpSF.rewind()
+
+      if (audioEnabled) hpSF.play()
     }
   }
 
@@ -182,8 +164,8 @@ class TetrisLogic(minim: Minim) {
 
   def leaveRoom(): Unit = {
     if (gameState.player.position == maze.portalLocation && gameState.player.gotKey) {
-      openDoorSF.play()
-      openDoorSF.rewind()
+
+      if (audioEnabled) openDoorSF.play()
       gameState = gameState.copy(transits = true)
     }
   }
@@ -193,17 +175,12 @@ class TetrisLogic(minim: Minim) {
     if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isKey && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn) {
       gameState.player.keyState(true)
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).isKey = false
-      lootSF.play()
-      lootSF.rewind()
+
+      if (audioEnabled) lootSF.play()
     }
   }
 
-  def isGameOver: Boolean = {
-    if (gameState.timeLeft <= 0 && !gameState.transits) {
-      return true
-    }
-    false
-  }
+  def isGameOver: Boolean = if (gameState.timeLeft <= 0 && !gameState.transits) true else false
 
   def getWalls(p : Point): List[Char] = {
     mazeGrid(p.y)(p.x).getWalls()
@@ -221,20 +198,14 @@ class TetrisLogic(minim: Minim) {
         else array = array :+ Portal
     }
 
-    if (mazeGrid(p.y)(p.x).isHeart) array = array :+ Heart //return Heart
-    if (mazeGrid(p.y)(p.x).isAttacked) array = array :+ SwordAttack //return SwordAttack
-    if (mazeGrid(p.y)(p.x).isWeapon) array = array :+ SwordCell  //return SwordCell
-
-    if (mazeGrid(p.y)(p.x).isEnemyOn) array = array :+ Enemy //return Enemy
-
-    if (mazeGrid(p.y)(p.x).isClock) array = array :+ Clock //return Clock
-
-    if (mazeGrid(p.y)(p.x).isKey) array = array :+ Key //return Key
-
+    if (mazeGrid(p.y)(p.x).isHeart) array = array :+ Heart
+    if (mazeGrid(p.y)(p.x).isAttacked) array = array :+ SwordAttack
+    if (mazeGrid(p.y)(p.x).isWeapon) array = array :+ SwordCell
+    if (mazeGrid(p.y)(p.x).isEnemyOn) array = array :+ Enemy
+    if (mazeGrid(p.y)(p.x).isClock) array = array :+ Clock
+    if (mazeGrid(p.y)(p.x).isKey) array = array :+ Key
     if (mazeGrid(p.y)(p.x).isPlayerOn) array = array :+ PlayerCell
-    //return PlayerCell
-
-    if (mazeGrid(p.y)(p.x).isCoin) array = array :+ Coin //return Coin
+    if (mazeGrid(p.y)(p.x).isCoin) array = array :+ Coin
 
     array
   }

@@ -8,6 +8,7 @@ import tetris.logic._
 import ddf.minim.{AudioPlayer, Minim}
 import engine.GameBase
 import processing.event.KeyEvent
+import tetris.logic.buttons.{Button, RectangleButton}
 
 
 class gameOver(PApplet: PApplet, min: Minim, state: GameStateManager) extends GameBase(PApplet) with Scene {
@@ -15,7 +16,7 @@ class gameOver(PApplet: PApplet, min: Minim, state: GameStateManager) extends Ga
   val mono: PFont = PApplet.createFont("src/tetris/assets/horror.ttf", 200)
   val fontNumber: PFont = PApplet.createFont("src/tetris/assets/number.ttf", 75)
 
-  val button = new Button(PApplet, Point(PApplet.width / 2 - PApplet.width / 4, PApplet.height / 2 + PApplet.height / 5), PApplet.width / 2, 50, "  Restart", mono)
+  val button = new RectangleButton(PApplet, Point(PApplet.width / 2 - PApplet.width / 4, PApplet.height / 2 + PApplet.height / 5), PApplet.width / 2, 50, "  Restart", mono)
 
   val backgroundAudio = new Audio("src/tetris/assets/main.mp3", min)
   val clickAudio = new Audio("src/tetris/assets/audioClick2.mp3", min)
@@ -37,6 +38,7 @@ class gameOver(PApplet: PApplet, min: Minim, state: GameStateManager) extends Ga
     PApplet.background(0)
     button.display()
 
+    PApplet.textAlign(PConstants.LEFT, PConstants.BASELINE)
     drawText("Game over",Point(PApplet.width / 2 - 200, 175), (255, 36, 0), mono, 105)
     drawText("Depth ",Point(PApplet.width / 2 - 120, 300), (255, 0, 0), mono, 75)
     drawText(":",Point( PApplet.width / 2 + 50, 200 + 75), (255, 0, 0), fontNumber, 75)
@@ -45,11 +47,11 @@ class gameOver(PApplet: PApplet, min: Minim, state: GameStateManager) extends Ga
 
     if (button.pressed()) {
       clickAudio.play()
-      state.setGameState("start")
       PApplet.delay(100)
       stateStart = true
       gameOverAudio.pause()
       backgroundAudio.pause()
+      return state.copy(scene = "start")
     }
     state
   }

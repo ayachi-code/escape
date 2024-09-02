@@ -23,7 +23,10 @@ class GameBase(PApplet: PApplet) extends driver  {
     def advanceFrame(): Unit = nextFrame = nextFrame + frameDuration
   }
 
-  val foo = None
+  def drawImage(img: PImage, position: Point, width: Int, height: Int): Unit = {
+    PApplet.image(img, position.x, position.y, width, height)
+  }
+
 
 
   // ===Processing Wrappers & Abstractions===

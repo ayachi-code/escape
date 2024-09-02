@@ -52,8 +52,7 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
 
   var bgAudio : AudioPlayer = null
 
-  var hitByEnemySF : AudioPlayer = minmin.loadFile("src/tetris/assets/soundeffects/hit.mp3")
-
+  var hitByEnemySF: Audio = new Audio("src/tetris/assets/soundeffects/hit.mp3", minmin)
 
   def menu(): Unit = {
     PApplet.fill(169, 139, 53)
@@ -86,7 +85,9 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
 
   def run(surface: processing.core.PSurface, state: GameStateManager): GameStateManager = {
 
-    if (!audioStartState) {
+    gameLogic.audioEnabled = state.audioEnabled
+
+    if (!audioStartState && state.audioEnabled) {
       audioStartState = true
       val index : Int = rand.nextInt(backgroundAudios.length - 1)
       if (bgAudio != null) bgAudio.pause()
@@ -98,14 +99,11 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
     PApplet.background(0)
     updateState(surface)
 
-    if (gameLogic.gameState.attackAnimation) {
-      showAttackAnimation()
-    }
+    if (gameLogic.gameState.attackAnimation) showAttackAnimation()
 
     drawGrid()
     menu()
     weaponMenu()
-
 
     if (gameLogic.gameState.attackAnimation && PApplet.millis() - time >= 500) {
       gameLogic.gameState = gameLogic.gameState.copy(attackAnimation = false)
@@ -121,16 +119,14 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
       if (enmy.point == gameLogic.gameState.player.position) {
         if (!immunityCooldownActive) {
           gameLogic.gameState.player.setHp(gameLogic.gameState.player.hp - 1)
-          hitByEnemySF.play()
-          hitByEnemySF.rewind()
+          if (state.audioEnabled) hitByEnemySF.play()
           if (gameLogic.gameState.player.hp <= 0) gameLogic.gameState = gameLogic.gameState.copy(gameDone = true)
           immunityCooldownActive = true
       }}
     })
 
     if (gameLogic.gameState.gameDone) {
-      state.setGameState("gameOver")
-
+      state.scene = "gameOver"
       state.score = gameLogic.gameState.level
 
       gameLogic.maze = Maze(10,10, new Player)
@@ -146,7 +142,9 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
       }
 
       surface.setSize(470, 540)
-      bgAudio.pause()
+
+
+      if (state.audioEnabled) bgAudio.pause()
       audioStartState = false
       mazeDims = gameLogic.mazeDim
       backgroundAudios = List[AudioPlayer](minmin.loadFile("src/tetris/assets/dungeonOST/bg1.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg2.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg3.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg4.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg5.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg6.mp3"))

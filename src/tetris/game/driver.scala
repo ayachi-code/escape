@@ -11,13 +11,13 @@ import javax.sound.sampled.AudioSystem.getMixerInfo
 //TODO: Clean code --> Audio class, load all assets once!, Error handling(no audio) + no audio mode
 
 class driver extends PApplet{
-  var gameState = new GameStateManager
-  gameState.setGameState("start")
+  var gameState = GameStateManager("start", 0, 0, audioEnabled = true)
+//  gameState.setGameState("start")
 
   var allScenes: Map[String, Scene] = Map[String, Scene]()
 
   override def draw(): Unit = {
-    gameState = allScenes(gameState.currentGameState).run(surface, gameState)
+    gameState = allScenes(gameState.scene).run(surface, gameState)
     var x = 11
   }
 
@@ -27,7 +27,7 @@ class driver extends PApplet{
   }
 
   override def keyPressed(event: KeyEvent): Unit = {
-    allScenes(gameState.currentGameState).keyEvent(event)
+    allScenes(gameState.scene).keyEvent(event)
   }
 
   override def setup(): Unit = {
@@ -44,8 +44,8 @@ class driver extends PApplet{
     val mixers = getMixerInfo // If lenght is 0, no possible output for audio found
 
     val highScoreFile = scala.io.Source.fromFile("src/tetris/logic/highscore")
-    val highScore = highScoreFile.mkString
-    gameState.highScore = highScore.toInt
+    val oldHighScore = highScoreFile.mkString
+    gameState = gameState.copy(highScore = oldHighScore.toInt )
     highScoreFile.close()
 
   }

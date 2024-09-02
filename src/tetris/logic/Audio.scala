@@ -9,6 +9,10 @@ class Audio(var url: String, minim: Minim) {
     audio.rewind()
   }
 
+  def continue(): Unit = {
+    audio.play()
+  }
+
   def pause(): Unit = audio.pause()
 
   def loop(): Unit = audio.loop()
