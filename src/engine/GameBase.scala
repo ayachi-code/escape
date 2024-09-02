@@ -23,7 +23,7 @@ class GameBase(PApplet: PApplet) extends driver  {
     def advanceFrame(): Unit = nextFrame = nextFrame + frameDuration
   }
 
-  def drawImage(img: PImage, position: Point, width: Int, height: Int): Unit = {
+  def drawImage(img: PImage, position: Point, width: Float, height: Float): Unit = {
     PApplet.image(img, position.x, position.y, width, height)
   }
 
@@ -47,7 +47,7 @@ class GameBase(PApplet: PApplet) extends driver  {
 
 
 
-  def drawText(string: String, pos: Point, color: (Int, Int, Int), font: PFont, size: Int): Unit = {
+  def drawText(string: String, pos: Point, color: (Float, Float, Float), font: PFont, size: Float): Unit = {
     PApplet.textFont(font)
     PApplet.textSize(size)
     PApplet.fill(color._1, color._2, color._3)

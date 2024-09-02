@@ -21,7 +21,7 @@ import scala.util.Random
 
 
 
-class TetrisGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  var backgroundSounds: List[Audio], soundEffects: Map[String, Audio]) extends GameBase(PApplet) with Scene{
+class TetrisGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val backgroundSounds: List[Audio], soundEffects: Map[String, Audio]) extends GameBase(PApplet) with Scene{
 
   var gameLogic : TetrisLogic = new TetrisLogic(min, soundEffects)
   var mazeDims: Dimensions = gameLogic.mazeDim
@@ -48,27 +48,21 @@ class TetrisGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  var
 
   var audioStartState = false
 
-//  var backgroundAudios : List[AudioPlayer] = List[AudioPlayer](minmin.loadFile("src/tetris/assets/dungeonOST/bg1.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg2.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg3.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg4.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg5.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg6.mp3"))
-
   var bgAudio : Audio = null
 
-//  var hitByEnemySF: Audio = new Audio("src/tetris/assets/soundeffects/hit.mp3", minmin)
+  var backgroundMusic = backgroundSounds
+
 
   def menu(): Unit = {
     PApplet.fill(169, 139, 53)
     drawTextCentered("Gold: " + gameLogic.gameState.player.gold, 23, Point(45, ((screenArea.height / gridDims.height) * 3) / 2))
     drawTextCentered("Depth: " + gameLogic.gameState.level, 23, Point(screenArea.width - 49, ((screenArea.height / gridDims.height) * 3) / 2))
-    if (gameLogic.gameState.player.gotKey) {
-      drawKey(Rectangle(Point(100,(screenArea.height / gridDims.height) - 20), 45,45))
-    }
+    if (gameLogic.gameState.player.gotKey) drawKey(Rectangle(Point(100,(screenArea.height / gridDims.height) - 20), 45,45))
 
-    for (i <- 0 until gameLogic.gameState.player.hp) {
-      drawHeart(Rectangle(Point(150 + i * 35,(screenArea.height / gridDims.height) - 20), 45,45))
-    }
+    for (i <- 0 until gameLogic.gameState.player.hp) drawHeart(Rectangle(Point(150 + i * 35,(screenArea.height / gridDims.height) - 20), 45,45))
 
     PApplet.fill(255, 0, 0)
     drawTextCentered(gameLogic.gameState.timeLeft.toString, 23, Point(screenArea.width - 49 - 100, ((screenArea.height / gridDims.height) * 3) / 2))
-
   }
 
   def weaponMenu(): Unit = {
@@ -92,7 +86,7 @@ class TetrisGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  var
       val index : Int = rand.nextInt(backgroundSounds.length - 1)
       if (bgAudio != null) bgAudio.pause()
       bgAudio = backgroundSounds(index)
-      backgroundSounds = backgroundSounds.patch(index, Nil, 1)
+      backgroundMusic = backgroundSounds.patch(index, Nil, 1)
       bgAudio.loop()
     }
 
@@ -148,7 +142,7 @@ class TetrisGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  var
       audioStartState = false
       mazeDims = gameLogic.mazeDim
 
-      if (backgroundSounds != null) backgroundSounds = List[Audio](new Audio("src/tetris/assets/dungeonOST/bg1.mp3", min), new Audio("src/tetris/assets/dungeonOST/bg2.mp3", min), new Audio("src/tetris/assets/dungeonOST/bg3.mp3",min), new Audio("src/tetris/assets/dungeonOST/bg4.mp3",min), new Audio("src/tetris/assets/dungeonOST/bg5.mp3",min), new Audio("src/tetris/assets/dungeonOST/bg6.mp3", min))
+      if (backgroundSounds != null) backgroundMusic = backgroundSounds
       gridDims = Dimensions(gameLogic.maze.width * 3, gameLogic.maze.height * 3 + 6)
       widthInPixels = (WidthCellInPixels * gridDims.width).ceil.toInt
       heightInPixels = (HeightCellInPixels * gridDims.height).ceil.toInt
@@ -218,21 +212,10 @@ class TetrisGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  var
     }
   }
 
-//  override def keyReleased(event: KeyEvent): Unit = {
-//    event.getKeyCode match {
-//      case VK_S     => {
-//        println("test")
-//      }
-//      case _        => ()
-//    }
-//  }
-
-
   override def settings(): Unit = {
     pixelDensity(displayDensity())
     size(1, 1)
   }
-
 
   def updateState(surface: PSurface): Unit = {
     if (updateTimer.timeForNextFrame()) {
@@ -275,5 +258,4 @@ object TetrisGame {
   def main(args:Array[String]): Unit = {
     PApplet.main("tetris.game.TetrisGame")
   }
-
 }

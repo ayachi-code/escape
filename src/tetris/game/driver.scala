@@ -15,7 +15,6 @@ import javax.sound.sampled.Mixer
 
 class driver extends PApplet{
   var gameState = GameStateManager("start", 0, 0, audioEnabled = true, audioSupport = true)
-//  gameState.setGameState("start")
 
   var allScenes: Map[String, Scene] = Map[String, Scene]()
 
@@ -39,9 +38,9 @@ class driver extends PApplet{
 
     val assets = Map[String, PImage]("ghost" -> loadImage("src/tetris/assets/ghost.png"), "coin" -> loadImage("src/tetris/assets/x.png"), "clock" -> loadImage("src/tetris/assets/clocko.png"), "sword" -> loadImage("src/tetris/assets/weapons/sword/sword_1.png"))
 
-    val mixers = getMixerInfo // If lenght is 0, no possible output for audio found
+    val mixers = getMixerInfo
 
-    if (mixers.length <= 0) {
+    if (mixers.length <= 0) { // No audio port found if true
       gameState = gameState.copy(audioSupport = false)
       allScenes = Map[String, Scene]("start" -> new mainMenu(this, null, gameState, null), "gameOver" -> new gameOver(this, null, null), "game" -> new TetrisGame(this, null, assets, null, null))
     } else {
