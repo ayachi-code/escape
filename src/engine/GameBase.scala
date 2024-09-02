@@ -5,7 +5,7 @@ package engine
 
 import engine.graphics.Color.Black
 import engine.graphics.{Color, Point, Rectangle, Triangle}
-import processing.core.{PApplet, PConstants, PImage}
+import processing.core.{PApplet, PConstants, PImage, PFont}
 import tetris.game.driver
 import tetris.logic.TetrisLogic
 
@@ -25,6 +25,7 @@ class GameBase(PApplet: PApplet) extends driver  {
 
   val foo = None
 
+
   // ===Processing Wrappers & Abstractions===
 
   /** An alias for the obscurely named function millis()
@@ -37,10 +38,17 @@ class GameBase(PApplet: PApplet) extends driver  {
     val (x, y) = (center.x, center.y-(size/2))
     PApplet.textAlign(PConstants.CENTER, PConstants.CENTER)
     PApplet.textSize(size)
-    drawText(string, Point(x, y))
+    //drawText(string, Point(x, y))
+    PApplet.text(string, x, y)
   }
 
-  def drawText(string: String, pos: Point, withShadow: Boolean = true): Unit = {
+
+
+  def drawText(string: String, pos: Point, color: (Int, Int, Int), font: PFont, size: Int): Unit = {
+    PApplet.textFont(font)
+    PApplet.textSize(size)
+    PApplet.fill(color._1, color._2, color._3)
+    PApplet.text(string, pos.x,pos.y)
     //if (withShadow) drawTextShadow(string, pos)
     PApplet.text(string, pos.x, pos.y)
   }
@@ -57,7 +65,6 @@ class GameBase(PApplet: PApplet) extends driver  {
 
 
   def drawLine(p1 : Point, p2 : Point) : Unit = {
-//    strokeWeight(5)
     PApplet.line(p1.x,p1.y, p2.x,p2.y )
   }
 

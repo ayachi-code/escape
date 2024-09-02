@@ -4,20 +4,20 @@
 package tetris.game
 
 import engine.graphics.Point
-import processing.core.PApplet
+import processing.core.{PApplet, PFont}
 import tetris.logic._
 import ddf.minim.Minim
 import engine.GameBase
 import processing.event.KeyEvent
 
-class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager) extends Scene {
+class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager) extends GameBase(PApplet) with Scene {
 
-  val mono = PApplet.createFont("src/tetris/assets/horror.ttf", 200)
-  val fontNumber = PApplet.createFont("src/tetris/assets/number.ttf", 75)
+  val mono: PFont = PApplet.createFont("src/tetris/assets/horror.ttf", 200)
+  val fontNumber: PFont = PApplet.createFont("src/tetris/assets/number.ttf", 75)
   val button = new Button(PApplet, Point(PApplet.width/2 - PApplet.width/4,PApplet.height/2 + PApplet.height/5),PApplet.width/2,50, "Descend", mono)
 
-  val backgroundAudio = minmin.loadFile("src/tetris/assets/main.mp3")
-  var clickAudio = minmin.loadFile("src/tetris/assets/audioClick2.mp3")
+  val backgroundAudio: Audio = new Audio("src/tetris/assets/main.mp3", minmin)
+  val clickAudio: Audio = new Audio("src/tetris/assets/audioClick2.mp3", minmin)
 
   backgroundAudio.loop()
 
@@ -27,46 +27,26 @@ class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager) extends
 
     if (!audioStartState) {
       audioStartState = true
-      backgroundAudio.rewind()
       backgroundAudio.play()
     }
 
     PApplet.background(0)
     button.display()
 
-    PApplet.fill(255, 36, 0)
-    PApplet.textFont(mono)
-    PApplet.textSize(150)
-    PApplet.text("Escape",PApplet.width / 2 - 200,200)
-
-    PApplet.textFont(mono)
-    PApplet.textSize(75)
-    PApplet.fill(255,0,0)
-    PApplet.text("Highscore ",50,200 + 100)
-
-    PApplet.textFont(fontNumber)
-    PApplet.textSize(75)
-    PApplet.fill(255,0,0)
-    PApplet.text(":",PApplet.width / 2 + 100,200 + 75)
-
-    PApplet.textFont(fontNumber)
-    PApplet.textSize(75)
-    PApplet.fill(255,0,0)
-    PApplet.text(state.highScore.toString,PApplet.width / 2 + 150,200 + 95)
+    drawText("Escape", Point(PApplet.width / 2 - 200,200), (255,36,0), mono, 150)
+    drawText("Highscore ", Point(50, 200 + 100), (255,0,0), mono, 75)
+    drawText(":", Point(PApplet.width / 2 + 125, 200 + 75), (255,0,0), fontNumber, 75)
+    drawText(state.highScore.toString, Point(PApplet.width / 2 + 150, 200 + 95), (255,0,0), fontNumber, 75)
 
     if (button.pressed()) {
       clickAudio.play()
-      clickAudio.rewind()
       backgroundAudio.pause()
-      state.setGameState("game")
+      state.setGameState("gameOver")
       PApplet.delay(100)
       audioStartState = false
     }
     state
   }
 
-  override def keyEvent(event: KeyEvent): Unit = {
-
-  }
-
+  override def keyEvent(event: KeyEvent): Unit = {}
 }
