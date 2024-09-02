@@ -17,10 +17,10 @@ class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager, sounds:
   val fontNumber: PFont = PApplet.createFont("src/tetris/assets/number.ttf", 75)
 
 
-  val startGameButton = new RectangleButton(PApplet, Point(PApplet.width/2 - PApplet.width/4,PApplet.height/2 + PApplet.height/5),PApplet.width/2,50, "Descend", mono)
+  val startGameButton = new RectangleButton(PApplet, Point(PApplet.width.toFloat/2 - PApplet.width.toFloat/4,PApplet.height.toFloat/2 + PApplet.height.toFloat/5),PApplet.width.toFloat/2,50, "Descend", mono)
 
-  val audioTurnOnButton = new ImageButton(PApplet, Point(PApplet.width - 100, PApplet.height - 100), 100, 100, PApplet.loadImage("src/tetris/assets/audioImages/audio.png"))
-  val audioTurnOffButton = new ImageButton(PApplet, Point(PApplet.width - 100, PApplet.height - 100), 100, 100, PApplet.loadImage("src/tetris/assets/audioImages/noAudio.png"))
+  val audioTurnOnButton = new ImageButton(PApplet, Point(PApplet.width.toFloat - 100, PApplet.height.toFloat - 100), 100, 100, PApplet.loadImage("src/tetris/assets/audioImages/audio.png"))
+  val audioTurnOffButton = new ImageButton(PApplet, Point(PApplet.width.toFloat - 100, PApplet.height.toFloat - 100), 100, 100, PApplet.loadImage("src/tetris/assets/audioImages/noAudio.png"))
 
   if (sounds != null) sounds("background").loop()
 
@@ -58,10 +58,10 @@ class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager, sounds:
       audioEnabledState = false
     }
 
-    drawText("Escape", Point(PApplet.width / 2 - 200,200), (255,36,0), mono, 150)
+    drawText("Escape", Point(PApplet.width.toFloat / 2 - 200,200), (255,36,0), mono, 150)
     drawText("Highscore ", Point(50, 200 + 100), (255,0,0), mono, 75)
-    drawText(":", Point(PApplet.width / 2 + 125, 200 + 75), (255,0,0), fontNumber, 75)
-    drawText(state.highScore.toString, Point(PApplet.width / 2 + 150, 200 + 95), (255,0,0), fontNumber, 75)
+    drawText(":", Point(PApplet.width.toFloat / 2 + 125, 200 + 75), (255,0,0), fontNumber, 75)
+    drawText(state.highScore.toString, Point(PApplet.width.toFloat / 2 + 150, 200 + 95), (255,0,0), fontNumber, 75)
 
     if (startGameButton.pressed()) {
       if (sounds != null)  sounds("clickAudio").play()

@@ -15,13 +15,7 @@ class gameOver(PApplet: PApplet, min: Minim, sounds: Map[String, Audio]) extends
 
   val mono: PFont = PApplet.createFont("src/tetris/assets/horror.ttf", 200)
   val fontNumber: PFont = PApplet.createFont("src/tetris/assets/number.ttf", 75)
-
-  val button = new RectangleButton(PApplet, Point(PApplet.width / 2 - PApplet.width / 4, PApplet.height / 2 + PApplet.height / 5), PApplet.width / 2, 50, "  Restart", mono)
-
-//  val backgroundAudio = new Audio("src/tetris/assets/main.mp3", min)
-//  val clickAudio = new Audio("src/tetris/assets/audioClick2.mp3", min)
-//  val gameOverAudio = new Audio("src/tetris/assets/scaryman.mp3", min)
-
+  val button = new RectangleButton(PApplet, Point(PApplet.width.toFloat / 2 - PApplet.width.toFloat / 4, PApplet.height.toFloat / 2 + PApplet.height.toFloat / 5), PApplet.width.toFloat / 2, 50, "  Restart", mono)
   var stateStart: Boolean = true
 
 
@@ -39,10 +33,10 @@ class gameOver(PApplet: PApplet, min: Minim, sounds: Map[String, Audio]) extends
     button.display()
 
     PApplet.textAlign(PConstants.LEFT, PConstants.BASELINE)
-    drawText("Game over",Point(PApplet.width / 2 - 200, 175), (255, 36, 0), mono, 105)
-    drawText("Depth ",Point(PApplet.width / 2 - 120, 300), (255, 0, 0), mono, 75)
-    drawText(":",Point( PApplet.width / 2 + 50, 200 + 75), (255, 0, 0), fontNumber, 75)
-    drawText(state.score.toString,Point( PApplet.width / 2 + 100, 200 + 95), (255, 0, 0), fontNumber, 75)
+    drawText("Game over",Point(PApplet.width.toFloat / 2 - 200, 175), (255, 36, 0), mono, 105)
+    drawText("Depth ",Point(PApplet.width.toFloat / 2 - 120, 300), (255, 0, 0), mono, 75)
+    drawText(":",Point( PApplet.width.toFloat / 2 + 50, 200 + 75), (255, 0, 0), fontNumber, 75)
+    drawText(state.score.toString,Point( PApplet.width.toFloat / 2 + 100, 200 + 95), (255, 0, 0), fontNumber, 75)
 
 
     if (button.pressed()) {
@@ -57,5 +51,4 @@ class gameOver(PApplet: PApplet, min: Minim, sounds: Map[String, Audio]) extends
   }
 
   def keyEvent(event: KeyEvent): Unit = {}
-
 }

@@ -20,23 +20,13 @@ class TetrisLogic(minim: Minim, soundEffects: Map[String, Audio]) {
 
   var maze: Maze = Maze(10,10, gameState.player)
 
-  var mazeGrid = maze.generateMaze()
+  var mazeGrid: ArrayBuffer[ArrayBuffer[Cell]] = maze.generateMaze()
 
   var gridDims: Dimensions = Dimensions(maze.width * 3, maze.height * 3 + 6)
 
   var mazeDim: Dimensions = Dimensions(maze.width * 3, maze.height * 3)
 
   var audioEnabled : Boolean = true
-
-
-//  val clockSF = new Audio("src/tetris/assets/soundeffects/clock.mp3", minim)
-//  val coinSF = new Audio("src/tetris/assets/soundeffects/coin.mp3", minim)
-//  val lootSF = new Audio("src/tetris/assets/soundeffects/loot.mp3", minim)
-//  val openDoorSF = new Audio("src/tetris/assets/soundeffects/opendoor.mp3", minim)
-//  val attackSF = new Audio("src/tetris/assets/soundeffects/attack.mp3", minim)
-//  val hpSF = new Audio("src/tetris/assets/soundeffects/hp.mp3", minim)
-
-
 
   // TODO implement me
   def rotateLeft(): Unit = ()
@@ -182,7 +172,7 @@ class TetrisLogic(minim: Minim, soundEffects: Map[String, Audio]) {
   def isGameOver: Boolean = if (gameState.timeLeft <= 0 && !gameState.transits) true else false
 
   def getWalls(p : Point): List[Char] = {
-    mazeGrid(p.y)(p.x).getWalls()
+    mazeGrid(p.y)(p.x).getWalls
   }
 
   def getCellType(p : Point): Array[CellType] = {

@@ -4,7 +4,7 @@ import engine.graphics.Point
 import processing.core.{PApplet, PFont, PImage}
 
 
-class ImageButton(pApplet: PApplet, point: Point, width: Int, height: Int, img: PImage) extends Button {
+class ImageButton(pApplet: PApplet, point: Point, width: Float, height: Float, img: PImage) extends Button {
 
   var enabled = true
 

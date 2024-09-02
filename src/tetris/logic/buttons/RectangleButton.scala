@@ -3,7 +3,7 @@ package tetris.logic.buttons
 import engine.graphics.Point
 import processing.core.{PApplet, PFont}
 
-class RectangleButton(pApplet: PApplet, point: Point, width: Int, height: Int, textOnButton: String, font: PFont) extends Button {
+class RectangleButton(pApplet: PApplet, point: Point, width: Float, height: Float, textOnButton: String, font: PFont) extends Button {
 
   override def display(): Unit = {
     if (onButton()) {

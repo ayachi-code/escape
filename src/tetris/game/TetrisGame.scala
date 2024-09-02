@@ -23,34 +23,31 @@ import scala.util.Random
 
 class TetrisGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val backgroundSounds: List[Audio], soundEffects: Map[String, Audio]) extends GameBase(PApplet) with Scene{
 
-  var gameLogic : TetrisLogic = new TetrisLogic(min, soundEffects)
-  var mazeDims: Dimensions = gameLogic.mazeDim
+  private var gameLogic : TetrisLogic = new TetrisLogic(min, soundEffects)
+  private var mazeDims: Dimensions = gameLogic.mazeDim
   var rand = new Random()
 
 
-  val updateTimer = new UpdateTimer(TetrisLogic.FramesPerSecond.toFloat)
+  private val updateTimer = new UpdateTimer(TetrisLogic.FramesPerSecond.toFloat)
 
   var gridDims: Dimensions = gameLogic.gridDims
 
-  var widthInPixels: Int = (WidthCellInPixels * gridDims.width).ceil.toInt
-  var heightInPixels: Int = (HeightCellInPixels * gridDims.height).ceil.toInt
+  private var widthInPixels: Int = (WidthCellInPixels * gridDims.width).ceil.toInt
+  private var heightInPixels: Int = (HeightCellInPixels * gridDims.height).ceil.toInt
+  private var screenArea: Rectangle = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
 
-  var screenArea: Rectangle = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
-
-  var changeState = false
-  var time = 0
-
-
+  private var changeState = false
+  var time: Int = millis()
   updateTimer.init()
-  time = millis()
+//  time = millis()
 
-  var immunityCooldownActive = false
+  private var immunityCooldownActive = false
 
   var audioStartState = false
 
-  var bgAudio : Audio = null
+  private var bgAudio : Audio = null
 
-  var backgroundMusic = backgroundSounds
+  private var backgroundMusic: List[Audio] = backgroundSounds
 
 
   def menu(): Unit = {
@@ -59,7 +56,7 @@ class TetrisGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     drawTextCentered("Depth: " + gameLogic.gameState.level, 23, Point(screenArea.width - 49, ((screenArea.height / gridDims.height) * 3) / 2))
     if (gameLogic.gameState.player.gotKey) drawKey(Rectangle(Point(100,(screenArea.height / gridDims.height) - 20), 45,45))
 
-    for (i <- 0 until gameLogic.gameState.player.hp) drawHeart(Rectangle(Point(150 + i * 35,(screenArea.height / gridDims.height) - 20), 45,45))
+    for (i <- 0 until gameLogic.gameState.player.hp) drawHeart(Rectangle(Point(150 + i * 35, (screenArea.height / gridDims.height.toFloat) - 20), 45, 45))
 
     PApplet.fill(255, 0, 0)
     drawTextCentered(gameLogic.gameState.timeLeft.toString, 23, Point(screenArea.width - 49 - 100, ((screenArea.height / gridDims.height) * 3) / 2))
@@ -109,8 +106,8 @@ class TetrisGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
         immunityCooldownActive = false
     }
 
-    gameLogic.maze.enemys.foreach(enmy => {
-      if (enmy.point == gameLogic.gameState.player.position) {
+    gameLogic.maze.enemys.foreach(enemy => {
+      if (enemy.point == gameLogic.gameState.player.position) {
         if (!immunityCooldownActive) {
           gameLogic.gameState.player.setHp(gameLogic.gameState.player.hp - 1)
           if (state.audioEnabled) soundEffects("hit").play()

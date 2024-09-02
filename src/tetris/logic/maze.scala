@@ -9,7 +9,7 @@ import scala.util.Random
 case class Maze(width: Int, height: Int, player: Player) {
   val area: Int = width * height
   var mazeCells : ArrayBuffer[ArrayBuffer[Cell]] = ArrayBuffer[ArrayBuffer[Cell]]()
-  var visitedCells : Int = 1
+  private var visitedCells : Int = 1
 
   val rand = new Random()
 
@@ -24,12 +24,12 @@ case class Maze(width: Int, height: Int, player: Player) {
 
   private def initMaze(): Unit = {
 
-    var roof = ArrayBuffer[Cell]().append(Cell(Point(0,0)).addWall('n').addWall('w'))
+    val roof = ArrayBuffer[Cell]().append(Cell(Point(0, 0)).addWall('n').addWall('w'))
     for (i <- 1 until width-1) roof.append(Cell(Point(i,0)).addWall('n'))
     mazeCells.append(roof.append(Cell(Point(width-1,0)).addWall('n').addWall('e')))
 
     for (i <- 1 until height-1) {
-      var row: ArrayBuffer[Cell] = ArrayBuffer[Cell]()
+      val row: ArrayBuffer[Cell] = ArrayBuffer[Cell]()
       for (j <- 0 until width) {
         if (j == 0) {
           row.append(Cell(Point(j,i)).addWall('w'))
@@ -48,8 +48,6 @@ case class Maze(width: Int, height: Int, player: Player) {
   }
 
   case class Direction(position: Point, neigb: Stack[Point])
-
-  case class EnemyPair(isEnemyOn: Boolean, enemyId: Int)
 
   def enemyPath(): Unit = {
 
@@ -89,9 +87,7 @@ case class Maze(width: Int, height: Int, player: Player) {
           if (!mazeCells(neigbours.top.y)(neigbours.top.x).visitByEnemy.contains(enemy.id)) {
             mazeCells(enemy.point.y)(enemy.point.x).isEnemyOn = false
 
-//            mazeCells(enemy.point.y)(enemy.point.x).enemyIds = mazeCells(enemy.point.y)(enemy.point.x).visitByEnemy.filterNot(elm => elm == enemy.id)
-
-            var move = neigbours.top
+            val move = neigbours.top
             enemy.point = move
             mazeCells(move.y)(move.x).isEnemyOn = true
 
@@ -115,16 +111,16 @@ case class Maze(width: Int, height: Int, player: Player) {
   }
 
 
-  private def possibleNeigbours(point: Point): Array[Point] = {
+  private def possibleNeighbours(point: Point): Array[Point] = {
     var positions: Array[Point] = Array[Point]()
 
-    if (inBound(Point(point.x + 1, point.y)) && !mazeCells(point.y)(point.x + 1).isVisited())  positions = positions :+ Point(point.x + 1, point.y)
+    if (inBound(Point(point.x + 1, point.y)) && !mazeCells(point.y)(point.x + 1).isVisited)  positions = positions :+ Point(point.x + 1, point.y)
 
-    if (inBound(Point(point.x, point.y + 1)) && !mazeCells(point.y + 1)(point.x).isVisited()) positions = positions :+ Point(point.x, point.y + 1)
+    if (inBound(Point(point.x, point.y + 1)) && !mazeCells(point.y + 1)(point.x).isVisited) positions = positions :+ Point(point.x, point.y + 1)
 
-    if (inBound(Point(point.x - 1, point.y)) && !mazeCells(point.y)(point.x - 1).isVisited()) positions = positions :+ Point(point.x - 1, point.y)
+    if (inBound(Point(point.x - 1, point.y)) && !mazeCells(point.y)(point.x - 1).isVisited) positions = positions :+ Point(point.x - 1, point.y)
 
-    if (inBound(Point(point.x, point.y - 1)) && !mazeCells(point.y - 1)(point.x).isVisited()) positions = positions :+ Point(point.x, point.y - 1)
+    if (inBound(Point(point.x, point.y - 1)) && !mazeCells(point.y - 1)(point.x).isVisited) positions = positions :+ Point(point.x, point.y - 1)
 
     positions
   }
@@ -155,16 +151,14 @@ case class Maze(width: Int, height: Int, player: Player) {
 
     if (Point(currentCell.x - 1, currentCell.y) == otherCell && !mazeCells(otherCell.y)(otherCell.x).walls('e')) {
       mazeCells(currentCell.y)(currentCell.x).walls('w') = true
-    } // add
-
+    }
 
     if (Point(currentCell.x, currentCell.y - 1) == otherCell && !mazeCells(otherCell.y)(otherCell.x).walls('s')) {
       mazeCells(currentCell.y)(currentCell.x).walls('n') = true
     }
-
   }
 
-  def uniqueCoin(): Point = {
+  def uniqueLocation(): Point = {
     var state : Boolean = true
     var coords = List[Point]()
 
@@ -182,14 +176,14 @@ case class Maze(width: Int, height: Int, player: Player) {
 
   def generateWeapons(): Unit = {
     for (i <- 0 until math.ceil(math.pow(2, width / 5)).toInt) {
-      val swordLocation = uniqueCoin()
+      val swordLocation = uniqueLocation()
       mazeCells(swordLocation.y)(swordLocation.x).isWeapon = true
     }
   }
 
   def generateCoins(): Unit = {
     for (i <- 0 until math.ceil(math.pow(2, width / 6)).toInt) {
-      val coinLocation = uniqueCoin()
+      val coinLocation = uniqueLocation()
       mazeCells(coinLocation.y)(coinLocation.x).isCoin = true
     }
 
@@ -197,7 +191,7 @@ case class Maze(width: Int, height: Int, player: Player) {
 
   def generateClock(): Unit = {
     for (i <- 0 until math.ceil(math.pow(2, width / 5)).toInt) {
-      val coinLocation = uniqueCoin()
+      val coinLocation = uniqueLocation()
       mazeCells(coinLocation.y)(coinLocation.x).isClock = true
     }
   }
@@ -208,25 +202,23 @@ case class Maze(width: Int, height: Int, player: Player) {
     var theStack = Stack[Cell](mazeCells(0)(0).setVisited(true).setPlayer(true))
 
     while (visitedCells < area) {
-      var possibleNeigh = possibleNeigbours(theStack.top.pos)
+      val possibleNeigh = possibleNeighbours(theStack.top.pos)
 
       if (possibleNeigh.length <= 0) {
         theStack.pop()
       } else {
-        val x = rand.nextInt(possibleNeigh.length)
-        val newCell = possibleNeigh(x)
+        val newCell = possibleNeigh(rand.nextInt(possibleNeigh.length))
 
-        mazeCells(theStack.top.pos.y)(theStack.top.pos.x).addLinkedCell(Point(newCell.x, newCell.y)) //.linedCell = mazeCells(newCell.y)(newCell.x)
+        mazeCells(theStack.top.pos.y)(theStack.top.pos.x).addLinkedCell(Point(newCell.x, newCell.y))
 
         theStack = theStack.push(mazeCells(newCell.y)(newCell.x).setVisited(true))
         visitedCells += 1
-
       }
-
     }
+
     for (i <- 0 until height) {
       for (j <- 0 until width) {
-        var neigb = neighb(Point(j, i))
+        val neigb = neighb(Point(j, i))
         for (cell <- neigb) {
           if (!mazeCells(i)(j).linedCell.contains(cell) && !mazeCells(cell.y)(cell.x).linedCell.contains(Point(j, i))) {
             addwall(mazeCells(i)(j).pos, cell)
@@ -237,52 +229,48 @@ case class Maze(width: Int, height: Int, player: Player) {
     }
 
     mazeCells(height - 1)(width - 1).isPortal = true
-
     generateCoins()
     generateClock()
     generateEnemy()
     generateWeapons()
     generateHeart()
-
-    mazeCells(rand.nextInt(height - 1) + 1)(rand.nextInt(width - 1)).isKey = true // Spawns key
+    mazeCells(rand.nextInt(height - 1) + 1)(rand.nextInt(width - 1)).isKey = true
 
     mazeCells
   }
 
-  def generateHeart(): Unit = {
+  private def generateHeart(): Unit = {
     if (player.hp < player.maxHP) {
       val rng : Int = rand.nextInt(3)
       if (rng == 1) {
-        var uniquePoint = uniqueCoin()
+        var uniquePoint = uniqueLocation()
         mazeCells(uniquePoint.y)(uniquePoint.x).isHeart = true
       }
     }
   }
 
-  def generateEnemy(): Unit = {
+  private def generateEnemy(): Unit = {
     for (i <- 0 until enemyCap) {
 
       var state : Boolean = true
       var randomPos = Point(0,0)
 
       while (state) {
-        randomPos = uniqueCoin()
+        randomPos = uniqueLocation()
         if (enemys.isEmpty) {
           state = false
         } else {
           enemys.foreach(enemy => {
-            if (enemy.point.distance(randomPos) > width/5) state = false
+            if (enemy.point.distance(randomPos) > width/5) state = false // makes sure no enemy spawns close to the player
           })
         }
 
       }
 
-      val id = rand.nextInt(100000)
-      println("ID: " + id)
-      enemys = enemys :+ Enemy(randomPos, Point(playerPosition.x, playerPosition.y), id)
+      val enemyId = rand.nextInt(100000)
+      enemys = enemys :+ Enemy(randomPos, Point(playerPosition.x, playerPosition.y), enemyId)
       mazeCells(randomPos.y)(randomPos.x).isEnemyOn = true
-
-      mazeCells(randomPos.y)(randomPos.x).enemyIds = mazeCells(randomPos.y)(randomPos.x).enemyIds :+ id
+      mazeCells(randomPos.y)(randomPos.x).enemyIds = mazeCells(randomPos.y)(randomPos.x).enemyIds :+ enemyId
 
     }
   }
@@ -292,7 +280,6 @@ case class Maze(width: Int, height: Int, player: Player) {
     var color: Color = Color.Purple
     var lastMove : Point = point
     var stack : Stack[Direction] = Stack[Direction](Direction(point, possibleMove()))
-    //var st = Stack[Point]()
 
     def possibleMove(): Stack[Point] = {
       var positions: Stack[Point] = Stack[Point]()
@@ -308,61 +295,4 @@ case class Maze(width: Int, height: Int, player: Player) {
       positions
     }
   }
-
-  case class Cell(pos: Point) {
-    val coordinate : Point = pos
-    var walls : collection.mutable.Map[Char, Boolean] = collection.mutable.Map[Char, Boolean]('n' -> false, 's' -> false, 'w' -> false, 'e' -> false)
-    private var visited : Boolean = false
-    var isPlayerOn : Boolean = false
-    var isPortal : Boolean = false
-    var isCoin : Boolean = false
-    var isKey : Boolean = false
-    var isClock : Boolean = false
-    var isWeapon : Boolean = false
-    var isAttacked : Boolean = false
-    var isHeart : Boolean = false
-
-    var visitByEnemy : List[Int] = List[Int]() // Int = ID of enemy
-
-    var isEnemyOn : Boolean = false
-
-    var enemyIds : List[Int] = List[Int]()
-
-    //var updateIsEnemyOn : EnemyPair = EnemyPair(false, -1)
-
-    var linedCell : List[Point] = List[Point]()
-
-    def addLinkedCell(cell: Point): Cell = {
-      linedCell = linedCell :+ cell
-      return this
-    }
-
-    def getWalls(): List[Char] = {
-      var theWalls : List[Char] = List[Char]()
-      if (walls('n')) theWalls = theWalls :+ 'n'
-      if (walls('s')) theWalls = theWalls :+ 's'
-      if (walls('e')) theWalls = theWalls :+ 'e'
-      if (walls('w')) theWalls = theWalls :+ 'w'
-      theWalls
-    }
-
-    def addWall(wall: Char): Cell = {
-      walls(wall) = true
-      return this
-    }
-
-    def setVisited(state: Boolean): Cell = {
-      visited = state
-      return this
-    }
-
-    def setPlayer(state: Boolean): Cell = {
-      isPlayerOn = state
-      return  this
-    }
-
-    def isVisited(): Boolean =  visited
-
-  }
-
 }

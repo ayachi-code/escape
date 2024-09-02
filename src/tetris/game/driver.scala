@@ -9,27 +9,22 @@ import processing.event.KeyEvent
 import tetris.logic.Audio
 
 import javax.sound.sampled.AudioSystem.getMixerInfo
-import javax.sound.sampled.Mixer
 
-//TODO: Clean code --> Audio class, load all assets once!, Error handling(no audio) + no audio mode
+//TODO: clean code --> timer beetje beneden
 
 class driver extends PApplet{
-  var gameState = GameStateManager("start", 0, 0, audioEnabled = true, audioSupport = true)
+  var gameState: GameStateManager = GameStateManager("start", 0, 0, audioEnabled = true, audioSupport = true)
 
   var allScenes: Map[String, Scene] = Map[String, Scene]()
 
-  override def draw(): Unit = {
-    gameState = allScenes(gameState.scene).run(surface, gameState)
-  }
+  override def draw(): Unit = gameState = allScenes(gameState.scene).run(surface, gameState)
 
   override def settings(): Unit = {
     pixelDensity(displayDensity())
     size(470, 540)
   }
 
-  override def keyPressed(event: KeyEvent): Unit = {
-    allScenes(gameState.scene).keyEvent(event)
-  }
+  override def keyPressed(event: KeyEvent): Unit = allScenes(gameState.scene).keyEvent(event)
 
   override def setup(): Unit = {
     text("", 0, 0)
@@ -39,11 +34,11 @@ class driver extends PApplet{
     val assets = Map[String, PImage]("ghost" -> loadImage("src/tetris/assets/ghost.png"), "coin" -> loadImage("src/tetris/assets/x.png"), "clock" -> loadImage("src/tetris/assets/clocko.png"), "sword" -> loadImage("src/tetris/assets/weapons/sword/sword_1.png"))
 
     val mixers = getMixerInfo
-
     if (mixers.length <= 0) { // No audio port found if true
       gameState = gameState.copy(audioSupport = false)
       allScenes = Map[String, Scene]("start" -> new mainMenu(this, null, gameState, null), "gameOver" -> new gameOver(this, null, null), "game" -> new TetrisGame(this, null, assets, null, null))
     } else {
+
       val min = new Minim(this)
 
       val mainMenuSounds : Map[String, Audio] = Map[String, Audio]("background" -> new Audio("src/tetris/assets/main.mp3", min), "clickAudio" -> new Audio("src/tetris/assets/audioClick2.mp3", min))
@@ -53,11 +48,13 @@ class driver extends PApplet{
 
       allScenes = Map[String, Scene]("start" -> new mainMenu(this, min, gameState, mainMenuSounds), "gameOver" -> new gameOver(this, min, gameOverSounds), "game" -> new TetrisGame(this, min, assets, backgroundAudios, gameSound))
     }
+
     val highScoreFile = scala.io.Source.fromFile("src/tetris/logic/highscore")
     val oldHighScore = highScoreFile.mkString
     gameState = gameState.copy(highScore = oldHighScore.toInt )
     highScoreFile.close()
   }
+
 }
 
 object driver {
