@@ -21,9 +21,9 @@ import scala.util.Random
 
 
 
-class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, assets: Map[String, PImage]) extends GameBase(PApplet) with Scene{
+class TetrisGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  var backgroundSounds: List[Audio], soundEffects: Map[String, Audio]) extends GameBase(PApplet) with Scene{
 
-  var gameLogic : TetrisLogic = new TetrisLogic(minmin)
+  var gameLogic : TetrisLogic = new TetrisLogic(min, soundEffects)
   var mazeDims: Dimensions = gameLogic.mazeDim
   var rand = new Random()
 
@@ -48,11 +48,11 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
 
   var audioStartState = false
 
-  var backgroundAudios : List[AudioPlayer] = List[AudioPlayer](minmin.loadFile("src/tetris/assets/dungeonOST/bg1.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg2.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg3.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg4.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg5.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg6.mp3"))
+//  var backgroundAudios : List[AudioPlayer] = List[AudioPlayer](minmin.loadFile("src/tetris/assets/dungeonOST/bg1.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg2.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg3.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg4.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg5.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg6.mp3"))
 
-  var bgAudio : AudioPlayer = null
+  var bgAudio : Audio = null
 
-  var hitByEnemySF: Audio = new Audio("src/tetris/assets/soundeffects/hit.mp3", minmin)
+//  var hitByEnemySF: Audio = new Audio("src/tetris/assets/soundeffects/hit.mp3", minmin)
 
   def menu(): Unit = {
     PApplet.fill(169, 139, 53)
@@ -89,10 +89,10 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
 
     if (!audioStartState && state.audioEnabled) {
       audioStartState = true
-      val index : Int = rand.nextInt(backgroundAudios.length - 1)
+      val index : Int = rand.nextInt(backgroundSounds.length - 1)
       if (bgAudio != null) bgAudio.pause()
-      bgAudio = backgroundAudios(index)
-      backgroundAudios = backgroundAudios.patch(index, Nil, 1)
+      bgAudio = backgroundSounds(index)
+      backgroundSounds = backgroundSounds.patch(index, Nil, 1)
       bgAudio.loop()
     }
 
@@ -119,7 +119,7 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
       if (enmy.point == gameLogic.gameState.player.position) {
         if (!immunityCooldownActive) {
           gameLogic.gameState.player.setHp(gameLogic.gameState.player.hp - 1)
-          if (state.audioEnabled) hitByEnemySF.play()
+          if (state.audioEnabled) soundEffects("hit").play()
           if (gameLogic.gameState.player.hp <= 0) gameLogic.gameState = gameLogic.gameState.copy(gameDone = true)
           immunityCooldownActive = true
       }}
@@ -147,7 +147,8 @@ class TetrisGame(PApplet: PApplet, minmin: Minim, state: GameStateManager, asset
       if (state.audioEnabled) bgAudio.pause()
       audioStartState = false
       mazeDims = gameLogic.mazeDim
-      backgroundAudios = List[AudioPlayer](minmin.loadFile("src/tetris/assets/dungeonOST/bg1.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg2.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg3.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg4.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg5.mp3"),minmin.loadFile("src/tetris/assets/dungeonOST/bg6.mp3"))
+
+      if (backgroundSounds != null) backgroundSounds = List[Audio](new Audio("src/tetris/assets/dungeonOST/bg1.mp3", min), new Audio("src/tetris/assets/dungeonOST/bg2.mp3", min), new Audio("src/tetris/assets/dungeonOST/bg3.mp3",min), new Audio("src/tetris/assets/dungeonOST/bg4.mp3",min), new Audio("src/tetris/assets/dungeonOST/bg5.mp3",min), new Audio("src/tetris/assets/dungeonOST/bg6.mp3", min))
       gridDims = Dimensions(gameLogic.maze.width * 3, gameLogic.maze.height * 3 + 6)
       widthInPixels = (WidthCellInPixels * gridDims.width).ceil.toInt
       heightInPixels = (HeightCellInPixels * gridDims.height).ceil.toInt

@@ -11,7 +11,7 @@ import engine.GameBase
 import processing.event.KeyEvent
 import tetris.logic.buttons._
 
-class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager) extends GameBase(PApplet) with Scene {
+class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager, sounds: Map[String, Audio] ) extends GameBase(PApplet) with Scene {
 
   val mono: PFont = PApplet.createFont("src/tetris/assets/horror.ttf", 200)
   val fontNumber: PFont = PApplet.createFont("src/tetris/assets/number.ttf", 75)
@@ -22,11 +22,7 @@ class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager) extends
   val audioTurnOnButton = new ImageButton(PApplet, Point(PApplet.width - 100, PApplet.height - 100), 100, 100, PApplet.loadImage("src/tetris/assets/audioImages/audio.png"))
   val audioTurnOffButton = new ImageButton(PApplet, Point(PApplet.width - 100, PApplet.height - 100), 100, 100, PApplet.loadImage("src/tetris/assets/audioImages/noAudio.png"))
 
-
-  val backgroundAudio: Audio = new Audio("src/tetris/assets/main.mp3", minmin)
-  val clickAudio: Audio = new Audio("src/tetris/assets/audioClick2.mp3", minmin)
-
-  backgroundAudio.loop()
+  if (sounds != null) sounds("background").loop()
 
   var audioStartState = false
   var audioEnabledState = true
@@ -36,28 +32,28 @@ class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager) extends
 
     if (!audioStartState && state.audioEnabled) {
       audioStartState = true
-      backgroundAudio.play()
+      if (sounds != null)  sounds("background").play()
     }
 
     PApplet.background(0)
     startGameButton.display()
 
-    if (state.audioEnabled) {
+    if (state.audioEnabled && state.audioSupport) {
       audioTurnOffButton.display()
       audioTurnOffButton.enabled = true
       audioTurnOnButton.enabled = false
 
       if (!audioEnabledState) {
-        backgroundAudio.continue()
+        if (sounds != null)  sounds("background").continue()
         audioEnabledState = true
       }
-    } else {
+    } else if (!state.audioEnabled && state.audioSupport) {
       audioTurnOnButton.display()
       audioTurnOffButton.enabled = false
       audioTurnOnButton.enabled = true
 
-      backgroundAudio.pause()
-      clickAudio.pause()
+      if (sounds != null)  sounds("background").pause()
+      if (sounds != null)  sounds("clickAudio").pause()
 
       audioEnabledState = false
     }
@@ -68,8 +64,8 @@ class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager) extends
     drawText(state.highScore.toString, Point(PApplet.width / 2 + 150, 200 + 95), (255,0,0), fontNumber, 75)
 
     if (startGameButton.pressed()) {
-      clickAudio.play()
-      backgroundAudio.pause()
+      if (sounds != null)  sounds("clickAudio").play()
+      if (sounds != null)  sounds("background").pause()
       PApplet.delay(100)
       audioStartState = false
       return state.copy(scene = "game")

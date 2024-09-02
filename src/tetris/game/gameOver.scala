@@ -11,16 +11,16 @@ import processing.event.KeyEvent
 import tetris.logic.buttons.{Button, RectangleButton}
 
 
-class gameOver(PApplet: PApplet, min: Minim, state: GameStateManager) extends GameBase(PApplet) with Scene {
+class gameOver(PApplet: PApplet, min: Minim, sounds: Map[String, Audio]) extends GameBase(PApplet) with Scene {
 
   val mono: PFont = PApplet.createFont("src/tetris/assets/horror.ttf", 200)
   val fontNumber: PFont = PApplet.createFont("src/tetris/assets/number.ttf", 75)
 
   val button = new RectangleButton(PApplet, Point(PApplet.width / 2 - PApplet.width / 4, PApplet.height / 2 + PApplet.height / 5), PApplet.width / 2, 50, "  Restart", mono)
 
-  val backgroundAudio = new Audio("src/tetris/assets/main.mp3", min)
-  val clickAudio = new Audio("src/tetris/assets/audioClick2.mp3", min)
-  val gameOverAudio = new Audio("src/tetris/assets/scaryman.mp3", min)
+//  val backgroundAudio = new Audio("src/tetris/assets/main.mp3", min)
+//  val clickAudio = new Audio("src/tetris/assets/audioClick2.mp3", min)
+//  val gameOverAudio = new Audio("src/tetris/assets/scaryman.mp3", min)
 
   var stateStart: Boolean = true
 
@@ -28,9 +28,9 @@ class gameOver(PApplet: PApplet, min: Minim, state: GameStateManager) extends Ga
   def run(surface: processing.core.PSurface, state: GameStateManager): GameStateManager = {
 
     if (stateStart) {
-      backgroundAudio.play()
-      backgroundAudio.loop()
-      gameOverAudio.play()
+      if (sounds != null) sounds("background").play()
+      if (sounds != null) sounds("background").loop()
+      if (sounds != null) sounds("gameOver").play()
       stateStart = false
       println(button)
     }
@@ -46,11 +46,11 @@ class gameOver(PApplet: PApplet, min: Minim, state: GameStateManager) extends Ga
 
 
     if (button.pressed()) {
-      clickAudio.play()
+      if (sounds != null) sounds("clickAudio").play()
       PApplet.delay(100)
       stateStart = true
-      gameOverAudio.pause()
-      backgroundAudio.pause()
+      if (sounds != null) sounds("gameOver").pause()
+      if (sounds != null) sounds("background").pause()
       return state.copy(scene = "start")
     }
     state

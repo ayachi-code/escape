@@ -13,7 +13,7 @@ import scala.collection.mutable.ArrayBuffer
 
 //TODO: Gamestate manager + progression levels + timer + highscore + voorkom dat als je knop niet kan ingedrukt houden om te lopen
 
-class TetrisLogic(minim: Minim) {
+class TetrisLogic(minim: Minim, soundEffects: Map[String, Audio]) {
 
 
   var gameState: GameState = GameState(false, new Player, 20, gameDone = false, leaveRoomButtonPressed = false, 0, transits = false)
@@ -29,12 +29,12 @@ class TetrisLogic(minim: Minim) {
   var audioEnabled : Boolean = true
 
 
-  val clockSF = new Audio("src/tetris/assets/soundeffects/clock.mp3", minim)
-  val coinSF = new Audio("src/tetris/assets/soundeffects/coin.mp3", minim)
-  val lootSF = new Audio("src/tetris/assets/soundeffects/loot.mp3", minim)
-  val openDoorSF = new Audio("src/tetris/assets/soundeffects/opendoor.mp3", minim)
-  val attackSF = new Audio("src/tetris/assets/soundeffects/attack.mp3", minim)
-  val hpSF = new Audio("src/tetris/assets/soundeffects/hp.mp3", minim)
+//  val clockSF = new Audio("src/tetris/assets/soundeffects/clock.mp3", minim)
+//  val coinSF = new Audio("src/tetris/assets/soundeffects/coin.mp3", minim)
+//  val lootSF = new Audio("src/tetris/assets/soundeffects/loot.mp3", minim)
+//  val openDoorSF = new Audio("src/tetris/assets/soundeffects/opendoor.mp3", minim)
+//  val attackSF = new Audio("src/tetris/assets/soundeffects/attack.mp3", minim)
+//  val hpSF = new Audio("src/tetris/assets/soundeffects/hp.mp3", minim)
 
 
 
@@ -49,7 +49,7 @@ class TetrisLogic(minim: Minim) {
       gameState.player.playersWeapons.last.attack(maze)
       gameState = gameState.copy(attackAnimation = true)
 
-      if (audioEnabled) attackSF.play()
+      if (audioEnabled) soundEffects("attack").play()
     }
   }
 
@@ -74,7 +74,6 @@ class TetrisLogic(minim: Minim) {
     }
   }
 
-  // TODO implement me
   def moveLeft(): Unit = {
     if (isMovePossible(gameState.player.position, 'w')) {
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).setPlayer(false)
@@ -87,7 +86,7 @@ class TetrisLogic(minim: Minim) {
 
   def checkCoinCollision(): Unit = {
     if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isCoin && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn) {
-      if (audioEnabled) coinSF.play()
+      if (audioEnabled) soundEffects("coin").play()
       gameState.player.increaseScore(1)
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).isCoin = false
     }
@@ -132,7 +131,7 @@ class TetrisLogic(minim: Minim) {
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).isClock = false
       gameState = gameState.copy(timeLeft = gameState.timeLeft + 6)
 
-      if (audioEnabled) clockSF.play()
+      if (audioEnabled) soundEffects("clock").play()
     }
   }
 
@@ -141,7 +140,7 @@ class TetrisLogic(minim: Minim) {
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).isWeapon = false
       gameState.player.playersWeapons = gameState.player.playersWeapons :+ Sword(gameState.player)
 
-      if (audioEnabled) lootSF.play()
+      if (audioEnabled) soundEffects("loot").play()
     }
   }
 
@@ -150,7 +149,7 @@ class TetrisLogic(minim: Minim) {
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).isHeart = false
       gameState.player.setHp(gameState.player.hp + 1)
 
-      if (audioEnabled) hpSF.play()
+      if (audioEnabled) soundEffects("hp").play()
     }
   }
 
@@ -165,7 +164,7 @@ class TetrisLogic(minim: Minim) {
   def leaveRoom(): Unit = {
     if (gameState.player.position == maze.portalLocation && gameState.player.gotKey) {
 
-      if (audioEnabled) openDoorSF.play()
+      if (audioEnabled) soundEffects("openDoor").play()
       gameState = gameState.copy(transits = true)
     }
   }
@@ -176,7 +175,7 @@ class TetrisLogic(minim: Minim) {
       gameState.player.keyState(true)
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).isKey = false
 
-      if (audioEnabled) lootSF.play()
+      if (audioEnabled) soundEffects("loot").play()
     }
   }
 
