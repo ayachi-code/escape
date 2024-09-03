@@ -35,7 +35,7 @@ class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager, sounds:
       if (sounds != null)  sounds("background").play()
     }
 
-    PApplet.background(0)
+    setBackground((0, 0, 0))
     startGameButton.display()
 
     if (state.audioEnabled && state.audioSupport) {
@@ -66,18 +66,19 @@ class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager, sounds:
     if (startGameButton.pressed()) {
       if (sounds != null)  sounds("clickAudio").play()
       if (sounds != null)  sounds("background").pause()
-      PApplet.delay(100)
+      sleep(100)
       audioStartState = false
       return state.copy(scene = "game")
     }
 
     if (audioTurnOnButton.pressed()) {
       state.audioEnabled = true
-      delay(100)
+      sleep(100)
     }
+
     if (audioTurnOffButton.pressed()) {
       state.audioEnabled = false
-      delay(100)
+      sleep(100)
     }
 
     state

@@ -10,7 +10,7 @@ import escape.logic.Audio
 
 import javax.sound.sampled.AudioSystem.getMixerInfo
 
-//TODO: clean code --> timer beetje beneden
+//TODO: clean code(good gameBase abstarction) --> timer beetje beneden
 
 class driver extends PApplet{
   var gameState: GameStateManager = GameStateManager("start", 0, 0, audioEnabled = true, audioSupport = true)

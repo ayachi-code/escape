@@ -49,31 +49,28 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
 
 
   def menu(): Unit = {
-    PApplet.fill(169, 139, 53)
+    setFillColor(169, 139, 53)
     drawTextCentered("Gold: " + gameLogic.gameState.player.gold, 23, Point(45, ((screenArea.height / gridDims.height) * 3) / 2))
     drawTextCentered("Depth: " + gameLogic.gameState.level, 23, Point(screenArea.width - 49, ((screenArea.height / gridDims.height) * 3) / 2))
     if (gameLogic.gameState.player.gotKey) drawSprite(Rectangle(Point(100,(screenArea.height / gridDims.height) - 20), 45,45), assets("key"))
 
     for (i <- 0 until gameLogic.gameState.player.hp) drawSprite(Rectangle(Point(150 + i * 35, (screenArea.height / gridDims.height.toFloat) - 20), 45, 45), assets("heart"))
 
-    PApplet.fill(255, 0, 0)
+    setFillColor(255, 0, 0)
     drawTextCentered(gameLogic.gameState.timeLeft.toString, 23, Point(screenArea.width - 49 - 100, ((screenArea.height / gridDims.height) * 3) / 2))
   }
 
   def weaponMenu(): Unit = {
-    PApplet.fill(192,192,192)
+    setFillColor(192,192,192)
     drawTextCentered("Weapons: ", 23, Point(60, screenArea.height - 15))
 
     drawTextCentered(gameLogic.gameState.player.playersWeapons.length.toString, 23, Point(150, ((screenArea.height - 15))))
     drawSprite(Rectangle(Point(150 + 10, screenArea.height - 35), 30,30), assets("sword"))
   }
 
-  def showAttackAnimation(): Unit = {
-    gameLogic.gameState.player.playersWeapons.last.animation(gameLogic.maze)
-  }
+  def showAttackAnimation(): Unit = gameLogic.gameState.player.playersWeapons.last.animation(gameLogic.maze)
 
   def run(surface: processing.core.PSurface, state: GameStateManager): GameStateManager = {
-
     gameLogic.audioEnabled = state.audioEnabled
 
     if (!audioStartState && state.audioEnabled) {
@@ -94,13 +91,13 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     menu()
     weaponMenu()
 
-    if (gameLogic.gameState.attackAnimation && PApplet.millis() - time >= 500) {
+    if (gameLogic.gameState.attackAnimation && millis() - time >= 500) {
       gameLogic.gameState = gameLogic.gameState.copy(attackAnimation = false)
       gameLogic.maze.mazeCells(gameLogic.gameState.player.playersWeapons.last.attackCell.y)(gameLogic.gameState.player.playersWeapons.last.attackCell.x).isAttacked = false
       gameLogic.gameState.player.playersWeapons = gameLogic.gameState.player.playersWeapons.dropRight(1)
     }
 
-    if (immunityCooldownActive && PApplet.millis() - time >= 1000) {
+    if (immunityCooldownActive && millis() - time >= 1000) {
         immunityCooldownActive = false
     }
 
@@ -146,10 +143,10 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
       return state
     }
 
-    if(PApplet.millis() - time >= 1000){
+    if(millis() - time >= 1000){
       gameLogic.maze.enemyPath()
       gameLogic.gameState = gameLogic.gameState.copy(timeLeft = gameLogic.gameState.timeLeft - 1)
-      time = PApplet.millis();
+      time = millis();
     }
 
     state

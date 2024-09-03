@@ -19,11 +19,11 @@ class GameBase(PApplet: PApplet) extends driver  {
     def advanceFrame(): Unit = nextFrame = nextFrame + frameDuration
   }
 
-  def drawImage(img: PImage, position: Point, width: Float, height: Float): Unit = {
-    PApplet.image(img, position.x, position.y, width, height)
-  }
-
   // ===Processing Wrappers & Abstractions===
+
+  def getWidth: Int = PApplet.width
+  def getHeight: Int = PApplet.height
+
 
   /** An alias for the obscurely named function millis()
     *
@@ -35,7 +35,6 @@ class GameBase(PApplet: PApplet) extends driver  {
     val (x, y) = (center.x, center.y-(size/2))
     PApplet.textAlign(PConstants.CENTER, PConstants.CENTER)
     PApplet.textSize(size)
-    //drawText(string, Point(x, y))
     PApplet.text(string, x, y)
   }
 
@@ -44,13 +43,10 @@ class GameBase(PApplet: PApplet) extends driver  {
     PApplet.textSize(size)
     PApplet.fill(color._1, color._2, color._3)
     PApplet.text(string, pos.x,pos.y)
-    //if (withShadow) drawTextShadow(string, pos)
     PApplet.text(string, pos.x, pos.y)
   }
 
-  def drawLine(p1 : Point, p2 : Point) : Unit = {
-    PApplet.line(p1.x,p1.y, p2.x,p2.y )
-  }
+  def drawLine(p1 : Point, p2 : Point) : Unit = PApplet.line(p1.x,p1.y, p2.x,p2.y )
 
 
   def drawMazeCell(r: Rectangle, walls: List[Char]): Unit = {
@@ -107,20 +103,10 @@ class GameBase(PApplet: PApplet) extends driver  {
   }
 
   def resetTextAlign() : Unit = PApplet.textAlign(PConstants.LEFT, PConstants.BASELINE)
-
   def sleep(milli: Int): Unit = PApplet.delay(milli)
 
 
-  def drawSprite(r: Rectangle, img: PImage): Unit = {
-    PApplet.image(img, r.leftUp.x, r.leftUp.y, r.width, r.height)
-  }
-
-  def drawEllipse(r: Rectangle): Unit =
-    ellipse(r.center.x, r.center.y, r.width, r.height)
-
-  def setFillColor(c: Color): Unit =
-    PApplet.fill(c.red, c.green, c.blue, c.alpha)
-
-  def setBackground(rgb: (Int, Int, Int)): Unit =
-    PApplet.background(rgb._1, rgb._2, rgb._3)
+  def drawSprite(r: Rectangle, img: PImage): Unit = PApplet.image(img, r.leftUp.x, r.leftUp.y, r.width, r.height)
+  def setFillColor(rgb: (Int, Int, Int)): Unit = PApplet.fill(rgb._1, rgb._2, rgb._3)
+  def setBackground(rgb: (Int, Int, Int)): Unit = PApplet.background(rgb._1, rgb._2, rgb._3)
 }
