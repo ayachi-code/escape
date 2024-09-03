@@ -27,8 +27,6 @@ class GameBase(PApplet: PApplet) extends driver  {
     PApplet.image(img, position.x, position.y, width, height)
   }
 
-
-
   // ===Processing Wrappers & Abstractions===
 
   /** An alias for the obscurely named function millis()
@@ -45,8 +43,6 @@ class GameBase(PApplet: PApplet) extends driver  {
     PApplet.text(string, x, y)
   }
 
-
-
   def drawText(string: String, pos: Point, color: (Float, Float, Float), font: PFont, size: Float): Unit = {
     PApplet.textFont(font)
     PApplet.textSize(size)
@@ -55,17 +51,6 @@ class GameBase(PApplet: PApplet) extends driver  {
     //if (withShadow) drawTextShadow(string, pos)
     PApplet.text(string, pos.x, pos.y)
   }
-
-  /** Quick hack for legibility on different backgrounds */
-  def drawTextShadow(string: String, pos: Point, color: Color = Black, thickness: Float = 1): Unit = {
-    pushStyle()
-    setFillColor(color)
-    List((1,0),(-1,0),(0,1),(0,-1)).foreach(t => {
-      text(string, pos.x+(t._1*thickness), pos.y+t._2*thickness)
-    })
-    popStyle()
-  }
-
 
   def drawLine(p1 : Point, p2 : Point) : Unit = {
     PApplet.line(p1.x,p1.y, p2.x,p2.y )
@@ -93,12 +78,8 @@ class GameBase(PApplet: PApplet) extends driver  {
     }
   }
 
-  def drawRectangle(r: Rectangle): Unit = {
-    PApplet.rect(r.left,r.top, r.width, r.height)
-  }
-
   def drawPortal(r: Rectangle): Unit = {
-    val img : PImage = PApplet.loadImage("src/tetris/assets/door.png")
+    val img : PImage = PApplet.loadImage("src/tetris/assets/sprite/door.png")
     PApplet.image(img, r.left, r.top, r.width, r.height)
   }
 
@@ -132,26 +113,13 @@ class GameBase(PApplet: PApplet) extends driver  {
   }
 
 
-  def drawTriangle(t: Triangle): Unit =
-    PApplet.triangle(t.p1.x, t.p1.y, t.p2.x,t.p2.y, t.p3.x,t.p3.y)
-
-  def drawCoin(r: Rectangle): Unit = { // TODO: Substarct by halve of cell width
-    val img : PImage = PApplet.loadImage("src/tetris/assets/x.png")
-    PApplet.image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
-  }
-
-  def drawMiniSword(r: Rectangle): Unit = {
-    val img : PImage = PApplet.loadImage("src/tetris/assets/weapons/sword/sword_1.png")
-    PApplet.image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
-  }
-
   def drawPlayerOnDoor(r: Rectangle): Unit = {
     drawPortal(r)
     drawPlayer(r)
   }
 
   def drawOpenDoor(r: Rectangle): Unit = {
-    val img : PImage = PApplet.loadImage("src/tetris/assets/openDoor.png")
+    val img : PImage = PApplet.loadImage("src/tetris/assets/sprite/openDoor.png")
     PApplet.image(img, r.left, r.top, r.width, r.height)
 
     PApplet.fill(255, 165, 0)
@@ -160,17 +128,17 @@ class GameBase(PApplet: PApplet) extends driver  {
   }
 
   def drawHeart(r: Rectangle): Unit = {
-    val go : PImage = PApplet.loadImage("src/tetris/assets/heart.png")
+    val go : PImage = PApplet.loadImage("src/tetris/assets/sprite/heart.png")
     PApplet.image(go, r.left, r.top, r.width, r.height)
   }
 
   def drawKey(r: Rectangle): Unit = {
-    val go : PImage = PApplet.loadImage("src/tetris/assets/dd.png")
+    val go : PImage = PApplet.loadImage("src/tetris/assets/sprite/key.png")
     PApplet.image(go, r.left, r.top, r.width, r.height)
   }
 
   def drawClock(r: Rectangle): Unit = {
-    val go : PImage = PApplet.loadImage("src/tetris/assets/clocko.png")
+    val go : PImage = PApplet.loadImage("src/tetris/assets/sprite/clock.png")
     PApplet.image(go, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
   }
 

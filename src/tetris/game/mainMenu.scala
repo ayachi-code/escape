@@ -13,9 +13,8 @@ import tetris.logic.buttons._
 
 class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager, sounds: Map[String, Audio] ) extends GameBase(PApplet) with Scene {
 
-  val mono: PFont = PApplet.createFont("src/tetris/assets/horror.ttf", 200)
-  val fontNumber: PFont = PApplet.createFont("src/tetris/assets/number.ttf", 75)
-
+  val mono: PFont = PApplet.createFont("src/tetris/assets/fonts/horror.ttf", 200)
+  val fontNumber: PFont = PApplet.createFont("src/tetris/assets/fonts/number.ttf", 75)
 
   val startGameButton = new RectangleButton(PApplet, Point(PApplet.width.toFloat/2 - PApplet.width.toFloat/4,PApplet.height.toFloat/2 + PApplet.height.toFloat/5),PApplet.width.toFloat/2,50, "Descend", mono)
 

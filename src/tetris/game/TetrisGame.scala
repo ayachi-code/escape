@@ -23,7 +23,7 @@ import scala.util.Random
 
 class TetrisGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val backgroundSounds: List[Audio], soundEffects: Map[String, Audio]) extends GameBase(PApplet) with Scene{
 
-  private var gameLogic : TetrisLogic = new TetrisLogic(min, soundEffects)
+  private val gameLogic: TetrisLogic = new TetrisLogic(min, soundEffects)
   private var mazeDims: Dimensions = gameLogic.mazeDim
   var rand = new Random()
 
@@ -39,7 +39,6 @@ class TetrisGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
   private var changeState = false
   var time: Int = millis()
   updateTimer.init()
-//  time = millis()
 
   private var immunityCooldownActive = false
 
