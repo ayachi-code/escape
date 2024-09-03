@@ -6,8 +6,8 @@ package engine
 import engine.graphics.Color.Black
 import engine.graphics.{Color, Point, Rectangle, Triangle}
 import processing.core.{PApplet, PConstants, PImage, PFont}
-import tetris.game.driver
-import tetris.logic.TetrisLogic
+import escape.game.driver
+import escape.logic._
 
 import java.sql.Driver
 
@@ -79,7 +79,7 @@ class GameBase(PApplet: PApplet) extends driver  {
   }
 
   def drawPortal(r: Rectangle): Unit = {
-    val img : PImage = PApplet.loadImage("src/tetris/assets/sprite/door.png")
+    val img : PImage = PApplet.loadImage("src/escape/assets/sprite/door.png")
     PApplet.image(img, r.left, r.top, r.width, r.height)
   }
 
@@ -89,22 +89,22 @@ class GameBase(PApplet: PApplet) extends driver  {
     PApplet.ellipse(r.center.x, r.center.y, r.width / 2, r.height / 2)
   }
 
-  def drawAttackSword(r: Rectangle, game: TetrisLogic): Unit = {
+  def drawAttackSword(r: Rectangle, game: EscapeLogic): Unit = {
     game.gameState.player.playersWeapons.last.direction match {
       case 'e' => {
-        val img : PImage = PApplet.loadImage("src/tetris/assets/weapons/sword/attackEast.png")
+        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackEast.png")
         PApplet.image(img, (r.left + r.right - r.width/2 - 40) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
       }
       case 'w' => {
-        val img : PImage = PApplet.loadImage("src/tetris/assets/weapons/sword/attackWest.png")
+        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackWest.png")
         PApplet.image(img, (r.left + r.right - r.width/2 + 40) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
       }
       case 's' => {
-        val img : PImage = PApplet.loadImage("src/tetris/assets/weapons/sword/attackSouth.png")
+        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackSouth.png")
         PApplet.image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2 - 40) / 2, r.width / 2, r.height / 2)
       }
       case 'n' => {
-        val img : PImage = PApplet.loadImage("src/tetris/assets/weapons/sword/attackNorth.png")
+        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackNorth.png")
         PApplet.image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2 + 40) / 2, r.width / 2, r.height / 2)
       }
 
@@ -119,7 +119,7 @@ class GameBase(PApplet: PApplet) extends driver  {
   }
 
   def drawOpenDoor(r: Rectangle): Unit = {
-    val img : PImage = PApplet.loadImage("src/tetris/assets/sprite/openDoor.png")
+    val img : PImage = PApplet.loadImage("src/escape/assets/sprite/openDoor.png")
     PApplet.image(img, r.left, r.top, r.width, r.height)
 
     PApplet.fill(255, 165, 0)
@@ -128,24 +128,24 @@ class GameBase(PApplet: PApplet) extends driver  {
   }
 
   def drawHeart(r: Rectangle): Unit = {
-    val go : PImage = PApplet.loadImage("src/tetris/assets/sprite/heart.png")
+    val go : PImage = PApplet.loadImage("src/escape/assets/sprite/heart.png")
     PApplet.image(go, r.left, r.top, r.width, r.height)
   }
 
   def drawKey(r: Rectangle): Unit = {
-    val go : PImage = PApplet.loadImage("src/tetris/assets/sprite/key.png")
+    val go : PImage = PApplet.loadImage("src/escape/assets/sprite/key.png")
     PApplet.image(go, r.left, r.top, r.width, r.height)
   }
 
   def drawClock(r: Rectangle): Unit = {
-    val go : PImage = PApplet.loadImage("src/tetris/assets/sprite/clock.png")
+    val go : PImage = PApplet.loadImage("src/escape/assets/sprite/clock.png")
     PApplet.image(go, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
   }
 
 
 
   def drawWeapon(r: Rectangle): Unit = {
-    val img : PImage = PApplet.loadImage("src/tetris/assets/weapons/sword/sword_1.png")
+    val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/sword_1.png")
     PApplet.image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width, r.height)
   }
 
