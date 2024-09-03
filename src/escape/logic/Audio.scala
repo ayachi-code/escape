@@ -11,9 +11,6 @@ class Audio(var url: String, minim: Minim) {
   }
 
   def continue(): Unit = if (audio != null) audio.play()
-
   def pause(): Unit = if (audio != null) audio.pause()
-
   def loop(): Unit = if (audio != null) audio.loop()
-
 }

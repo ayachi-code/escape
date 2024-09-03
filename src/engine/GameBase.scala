@@ -3,16 +3,12 @@
 
 package engine
 
-import engine.graphics.Color.Black
 import engine.graphics.{Color, Point, Rectangle, Triangle}
 import processing.core.{PApplet, PConstants, PImage, PFont}
 import escape.game.driver
 import escape.logic._
 
-import java.sql.Driver
-
 class GameBase(PApplet: PApplet) extends driver  {
-  // inner class: can call current time of outer class
   class UpdateTimer(val framesPerSecond: Float) {
 
     val frameDuration: Float = 1000 / framesPerSecond // ms
@@ -78,11 +74,6 @@ class GameBase(PApplet: PApplet) extends driver  {
     }
   }
 
-  def drawPortal(r: Rectangle): Unit = {
-    val img : PImage = PApplet.loadImage("src/escape/assets/sprite/door.png")
-    PApplet.image(img, r.left, r.top, r.width, r.height)
-  }
-
   def drawPlayer(r : Rectangle): Unit = {
     PApplet.fill(255, 165, 0)
     PApplet.strokeWeight(1)
@@ -91,31 +82,19 @@ class GameBase(PApplet: PApplet) extends driver  {
 
   def drawAttackSword(r: Rectangle, game: EscapeLogic): Unit = {
     game.gameState.player.playersWeapons.last.direction match {
-      case 'e' => {
+      case 'e' =>
         val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackEast.png")
         PApplet.image(img, (r.left + r.right - r.width/2 - 40) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
-      }
-      case 'w' => {
+      case 'w' =>
         val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackWest.png")
         PApplet.image(img, (r.left + r.right - r.width/2 + 40) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
-      }
-      case 's' => {
+      case 's' =>
         val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackSouth.png")
         PApplet.image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2 - 40) / 2, r.width / 2, r.height / 2)
-      }
-      case 'n' => {
+      case 'n' =>
         val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackNorth.png")
         PApplet.image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2 + 40) / 2, r.width / 2, r.height / 2)
-      }
-
     }
-
-  }
-
-
-  def drawPlayerOnDoor(r: Rectangle): Unit = {
-    drawPortal(r)
-    drawPlayer(r)
   }
 
   def drawOpenDoor(r: Rectangle): Unit = {
@@ -127,30 +106,13 @@ class GameBase(PApplet: PApplet) extends driver  {
     PApplet.ellipse(r.center.x - 5, r.center.y, r.width / 2 - 10, r.height / 2 - 10)
   }
 
-  def drawHeart(r: Rectangle): Unit = {
-    val go : PImage = PApplet.loadImage("src/escape/assets/sprite/heart.png")
-    PApplet.image(go, r.left, r.top, r.width, r.height)
-  }
+  def resetTextAlign() : Unit = PApplet.textAlign(PConstants.LEFT, PConstants.BASELINE)
 
-  def drawKey(r: Rectangle): Unit = {
-    val go : PImage = PApplet.loadImage("src/escape/assets/sprite/key.png")
-    PApplet.image(go, r.left, r.top, r.width, r.height)
-  }
-
-  def drawClock(r: Rectangle): Unit = {
-    val go : PImage = PApplet.loadImage("src/escape/assets/sprite/clock.png")
-    PApplet.image(go, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
-  }
+  def sleep(milli: Int): Unit = PApplet.delay(milli)
 
 
-
-  def drawWeapon(r: Rectangle): Unit = {
-    val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/sword_1.png")
-    PApplet.image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width, r.height)
-  }
-
-  def drawEnemy(r: Rectangle, img: PImage): Unit = {
-    PApplet.image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2 )
+  def drawSprite(r: Rectangle, img: PImage): Unit = {
+    PApplet.image(img, r.leftUp.x, r.leftUp.y, r.width, r.height)
   }
 
   def drawEllipse(r: Rectangle): Unit =
@@ -159,7 +121,6 @@ class GameBase(PApplet: PApplet) extends driver  {
   def setFillColor(c: Color): Unit =
     PApplet.fill(c.red, c.green, c.blue, c.alpha)
 
-  def setBackground(c: Color): Unit =
-    background(c.red, c.green, c.blue, c.alpha)
-
+  def setBackground(rgb: (Int, Int, Int)): Unit =
+    PApplet.background(rgb._1, rgb._2, rgb._3)
 }

@@ -9,10 +9,10 @@ import escape.logic._
 import ddf.minim.Minim
 import engine.GameBase
 import processing.event.KeyEvent
-
 import escape.logic.buttons._
 
 class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager, sounds: Map[String, Audio] ) extends GameBase(PApplet) with Scene {
+
 
   val mono: PFont = PApplet.createFont("src/escape/assets/fonts/horror.ttf", 200)
   val fontNumber: PFont = PApplet.createFont("src/escape/assets/fonts/number.ttf", 75)

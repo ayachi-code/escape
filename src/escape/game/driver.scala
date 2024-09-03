@@ -31,7 +31,7 @@ class driver extends PApplet{
 
     surface.setTitle("Escape")
 
-    val assets = Map[String, PImage]("ghost" -> loadImage("src/escape/assets/sprite/ghost.png"), "coin" -> loadImage("src/escape/assets/sprite/coin.png"), "clock" -> loadImage("src/escape/assets/sprite/clock.png"), "sword" -> loadImage("src/escape/assets/weapons/sword/sword_1.png"))
+    val assets = Map[String, PImage]("door" -> loadImage("src/escape/assets/sprite/door.png"), "ghost" -> loadImage("src/escape/assets/sprite/ghost.png"), "coin" -> loadImage("src/escape/assets/sprite/coin.png"), "clock" -> loadImage("src/escape/assets/sprite/clock.png"), "sword" -> loadImage("src/escape/assets/weapons/sword/sword_1.png"), "key" -> loadImage("src/escape/assets/sprite/key.png"), "heart" -> loadImage("src/escape/assets/sprite/heart.png") )
 
     val mixers = getMixerInfo
     if (mixers.length <= 0) { // No audio port found if true

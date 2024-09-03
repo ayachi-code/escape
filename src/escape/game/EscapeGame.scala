@@ -52,9 +52,9 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     PApplet.fill(169, 139, 53)
     drawTextCentered("Gold: " + gameLogic.gameState.player.gold, 23, Point(45, ((screenArea.height / gridDims.height) * 3) / 2))
     drawTextCentered("Depth: " + gameLogic.gameState.level, 23, Point(screenArea.width - 49, ((screenArea.height / gridDims.height) * 3) / 2))
-    if (gameLogic.gameState.player.gotKey) drawKey(Rectangle(Point(100,(screenArea.height / gridDims.height) - 20), 45,45))
+    if (gameLogic.gameState.player.gotKey) drawSprite(Rectangle(Point(100,(screenArea.height / gridDims.height) - 20), 45,45), assets("key"))
 
-    for (i <- 0 until gameLogic.gameState.player.hp) drawHeart(Rectangle(Point(150 + i * 35, (screenArea.height / gridDims.height.toFloat) - 20), 45, 45))
+    for (i <- 0 until gameLogic.gameState.player.hp) drawSprite(Rectangle(Point(150 + i * 35, (screenArea.height / gridDims.height.toFloat) - 20), 45, 45), assets("heart"))
 
     PApplet.fill(255, 0, 0)
     drawTextCentered(gameLogic.gameState.timeLeft.toString, 23, Point(screenArea.width - 49 - 100, ((screenArea.height / gridDims.height) * 3) / 2))
@@ -62,10 +62,10 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
 
   def weaponMenu(): Unit = {
     PApplet.fill(192,192,192)
-    drawTextCentered("Weapons: ", 23, Point(60, ((screenArea.height - 15))))
+    drawTextCentered("Weapons: ", 23, Point(60, screenArea.height - 15))
 
     drawTextCentered(gameLogic.gameState.player.playersWeapons.length.toString, 23, Point(150, ((screenArea.height - 15))))
-    drawWeapon(Rectangle(Point(150 + 10, screenArea.height - 45), 30,30))
+    drawSprite(Rectangle(Point(150 + 10, screenArea.height - 35), 30,30), assets("sword"))
   }
 
   def showAttackAnimation(): Unit = {
@@ -85,7 +85,7 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
       bgAudio.loop()
     }
 
-    PApplet.background(0)
+    setBackground((0,0,0))
     updateState(surface)
 
     if (gameLogic.gameState.attackAnimation) showAttackAnimation()
@@ -172,21 +172,22 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     }
 
     def drawCell(area: Rectangle, walls: List[Char], typeOfCell: Array[CellType]): Unit = {
+      val smallSizeSprite = Rectangle(Point((area.left + area.right - area.width/2) / 2, (area.top + area.bottom - area.width / 2) / 2), area.width / 2, area.height / 2)
+
       typeOfCell.foreach {
         case PlayerCell => drawPlayer(area)
-        case Portal => drawPortal(area)
-        case Coin => drawEnemy(area, assets("coin"))
-        case PlayerOnDoor => drawPlayerOnDoor(area)
+        case Portal => drawSprite(area, assets("door"))
+        case Coin => drawSprite(smallSizeSprite, assets("coin"))
         case OpenPortal => {
           drawOpenDoor(area)
           changeState = true
         }
-        case Key => drawKey(area)
-        case Clock => drawEnemy(area, assets("clock"))
-        case Enemy => drawEnemy(area, assets("ghost"))
-        case SwordCell => drawEnemy(area, assets("sword"))
+        case Key => drawSprite(area, assets("key"))
+        case Clock => drawSprite(smallSizeSprite, assets("clock"))
+        case Enemy => drawSprite(smallSizeSprite, assets("ghost"))
+        case SwordCell => drawSprite(smallSizeSprite, assets("sword"))
         case SwordAttack => drawAttackSword(area, gameLogic)
-        case Heart => drawHeart(area)
+        case Heart => drawSprite(area, assets("heart"))
         case _ => Empty
       }
       drawMazeCell(area, walls)
