@@ -40,7 +40,6 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
 
   def attack(): Unit = {
     if (gameState.player.playersWeapons.nonEmpty && !gameState.attackAnimation) {
-      println("attack")
       gameState.player.playersWeapons.last.attack(maze)
       gameState = gameState.copy(attackAnimation = true)
       if (audioEnabled) soundEffects("attack").play()
@@ -60,11 +59,6 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
     })
   }
 
-  def attackAnimation(): Unit = {
-    gameState = gameState.copy(attackAnimation = false)
-    maze.mazeCells(gameState.player.playersWeapons.last.attackCell.y)(gameState.player.playersWeapons.last.attackCell.x).isAttacked = false
-    gameState.player.playersWeapons = gameState.player.playersWeapons.dropRight(1)
-  }
 
   def difficultyCurve(level: Int): Dimensions = {
     if (level >= 0 && level <= 3) return Dimensions(10, 10)
@@ -199,8 +193,13 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
   }
 
   def getCellType(p : Point): Array[CellType] = {
-
     var array = Array[CellType]()
+
+
+    if (mazeGrid(p.y)(p.x).isAttacked) {
+      array = array :+ SwordAttack
+      println(p)
+    }
 
     if (mazeGrid(p.y)(p.x).isPortal) {
         if (gameState.transits) {
@@ -211,7 +210,6 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
     }
 
     if (mazeGrid(p.y)(p.x).isHeart) array = array :+ Heart
-    if (mazeGrid(p.y)(p.x).isAttacked) array = array :+ SwordAttack
     if (mazeGrid(p.y)(p.x).isWeapon) array = array :+ SwordCell
     if (mazeGrid(p.y)(p.x).isEnemyOn) array = array :+ Enemy
     if (mazeGrid(p.y)(p.x).isClock) array = array :+ Clock

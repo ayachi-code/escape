@@ -36,7 +36,14 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
   private var screenArea: Rectangle = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
 
   private var changeState = false
+
   var time: Int = millis()
+
+
+  var timeAttack : Int = _
+
+
+
   updateTimer.init()
 
   private var immunityCooldownActive = false
@@ -49,8 +56,13 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
 
   var toggle : Boolean = false
 
+  var startedAnimation : Boolean = false
+
 
   def menu(): Unit = {
+
+    println(time)
+
     setFillColor(169, 139, 53)
     drawTextCentered("Gold: " + gameLogic.gameState.player.gold, 23, Point(45, ((screenArea.height / gridDims.height) * 3) / 2))
     drawTextCentered("Depth: " + gameLogic.gameState.level, 23, Point(screenArea.width - 49, ((screenArea.height / gridDims.height) * 3) / 2))
@@ -87,18 +99,26 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     setBackground((0,0,0))
     updateState(surface)
 
-    if (gameLogic.gameState.attackAnimation) showAttackAnimation()
 
-    drawGrid()
     menu()
     weaponMenu()
+    drawGrid()
 
+    if (gameLogic.gameState.attackAnimation && !startedAnimation) {
+      showAttackAnimation()
+      timeAttack = millis() // Start of attack
+      startedAnimation = true
+//      println(gameLogic.mazeGrid(1)(0).isAttacked)
+    }
 
-    if (gameLogic.gameState.attackAnimation && millis() - time >= 500) {
+    if (gameLogic.gameState.attackAnimation && millis() - timeAttack >= 1) {
       gameLogic.gameState = gameLogic.gameState.copy(attackAnimation = false)
       gameLogic.maze.mazeCells(gameLogic.gameState.player.playersWeapons.last.attackCell.y)(gameLogic.gameState.player.playersWeapons.last.attackCell.x).isAttacked = false
       gameLogic.gameState.player.playersWeapons = gameLogic.gameState.player.playersWeapons.dropRight(1)
+      timeAttack = millis()
+      startedAnimation = false
     }
+
 
     if (gameLogic.immunityCooldownActive && millis() - time >= 1000) {
       gameLogic.immunityCooldownActive = false
@@ -155,7 +175,6 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     }
 
 
-
     state
   }
 
@@ -189,8 +208,8 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
         case Key => drawSprite(area, assets("key"))
         case Clock => drawSprite(smallSizeSprite, assets("clock"))
         case Enemy => drawSprite(smallSizeSprite, assets("ghost"))
-        case SwordCell => drawSprite(smallSizeSprite, assets("sword"))
         case SwordAttack => drawAttackSword(area, gameLogic, assets)
+        case SwordCell => drawSprite(smallSizeSprite, assets("sword"))
         case Heart => drawSprite(area, assets("heart"))
         case _ => Empty
       }

@@ -78,9 +78,11 @@ class GameBase(PApplet: PApplet) extends driver  {
 
   def drawAttackSword(r: Rectangle, game: EscapeLogic, assets : Map[String, PImage]): Unit = {
 //    println(game.gameState.player.playersWeapons.last.direction)
+    println(game.gameState.player.playersWeapons.last.direction)
     game.gameState.player.playersWeapons.last.direction match {
       case 'e' =>
 //        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackEast.png")
+        println("draw east")
         PApplet.image(assets("swordEast"), (r.left + r.right - r.width/2 - 40) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
       case 'w' =>
 //        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackWest.png")
