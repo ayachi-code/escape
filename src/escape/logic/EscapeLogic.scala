@@ -38,6 +38,13 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
   // TODO implement me
   def rotateRight(): Unit = ()
 
+
+  def finishAttack(): Unit = {
+    gameState = gameState.copy(attackAnimation = false)
+    maze.mazeCells(gameState.player.playersWeapons.last.attackCell.y)(gameState.player.playersWeapons.last.attackCell.x).isAttacked = false
+    gameState.player.playersWeapons = gameState.player.playersWeapons.dropRight(1)
+  }
+
   def attack(): Unit = {
     if (gameState.player.playersWeapons.nonEmpty && !gameState.attackAnimation) {
       gameState.player.playersWeapons.last.attack(maze)
@@ -61,6 +68,7 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
 
 
   def difficultyCurve(level: Int): Dimensions = {
+//    if (level == 1) return Dimensions(12, 12) // DEBUG
     if (level >= 0 && level <= 3) return Dimensions(10, 10)
     if (level >= 4 && level <= 6) return Dimensions(12, 12)
     if (level >= 7 && level <= 10) return Dimensions(15, 15)

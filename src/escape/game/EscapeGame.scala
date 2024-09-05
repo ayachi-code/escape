@@ -60,9 +60,6 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
 
 
   def menu(): Unit = {
-
-    println(time)
-
     setFillColor(169, 139, 53)
     drawTextCentered("Gold: " + gameLogic.gameState.player.gold, 23, Point(45, ((screenArea.height / gridDims.height) * 3) / 2))
     drawTextCentered("Depth: " + gameLogic.gameState.level, 23, Point(screenArea.width - 49, ((screenArea.height / gridDims.height) * 3) / 2))
@@ -84,7 +81,7 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
 
   def showAttackAnimation(): Unit = gameLogic.gameState.player.playersWeapons.last.animation(gameLogic.maze)
 
-  def run(surface: processing.core.PSurface, state: GameStateManager): GameStateManager = {
+  def setAudio(state: GameStateManager): Unit = {
     gameLogic.audioEnabled = state.audioEnabled
 
     if (!audioStartState && state.audioEnabled) {
@@ -96,9 +93,26 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
       bgAudio.loop()
     }
 
+  }
+
+  def resetWindowStates(width: Int, height: Int, player: Player, mazeDimension : Dimensions): Unit = {
+    gameLogic.maze = Maze(width,height, player)
+    gameLogic.mazeGrid = gameLogic.maze.generateMaze()
+
+    gridDims = Dimensions(gameLogic.maze.width * 3, gameLogic.maze.height * 3 + 6)
+    mazeDims = mazeDimension
+
+    widthInPixels = (WidthCellInPixels * gridDims.width).ceil.toInt
+    heightInPixels = (HeightCellInPixels * gridDims.height).ceil.toInt
+    screenArea = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
+
+  }
+
+
+  def run(surface: processing.core.PSurface, state: GameStateManager): GameStateManager = {
     setBackground((0,0,0))
     updateState(surface)
-
+    setAudio(state)
 
     menu()
     weaponMenu()
@@ -108,42 +122,24 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
       showAttackAnimation()
       timeAttack = millis() // Start of attack
       startedAnimation = true
-//      println(gameLogic.mazeGrid(1)(0).isAttacked)
     }
 
-    if (gameLogic.gameState.attackAnimation && millis() - timeAttack >= 1) {
-      gameLogic.gameState = gameLogic.gameState.copy(attackAnimation = false)
-      gameLogic.maze.mazeCells(gameLogic.gameState.player.playersWeapons.last.attackCell.y)(gameLogic.gameState.player.playersWeapons.last.attackCell.x).isAttacked = false
-      gameLogic.gameState.player.playersWeapons = gameLogic.gameState.player.playersWeapons.dropRight(1)
+    if (gameLogic.gameState.attackAnimation && millis() - timeAttack >= 100) {
+      gameLogic.finishAttack()
       timeAttack = millis()
       startedAnimation = false
     }
 
-
-    if (gameLogic.immunityCooldownActive && millis() - time >= 1000) {
-      gameLogic.immunityCooldownActive = false
-    }
+    if (gameLogic.immunityCooldownActive && millis() - time >= 1000) gameLogic.immunityCooldownActive = false
 
     gameLogic.ghostHit(state)
-
-//    gameLogic.maze.enemys.foreach(enemy => {
-//      if (enemy.point == gameLogic.gameState.player.position) {
-//        if (!immunityCooldownActive) {
-//          gameLogic.gameState.player.setHp(gameLogic.gameState.player.hp - 1)
-//          if (state.audioEnabled) soundEffects("hit").play()
-//          if (gameLogic.gameState.player.hp <= 0) gameLogic.gameState = gameLogic.gameState.copy(gameDone = true)
-//          immunityCooldownActive = true
-//        }}
-//    })
 
     if (gameLogic.gameState.gameDone) {
       state.scene = "gameOver"
       state.score = gameLogic.gameState.level
 
-      gameLogic.maze = Maze(10,10, new Player)
-      gameLogic.mazeGrid = gameLogic.maze.generateMaze()
+      resetWindowStates(10, 10, new Player, gameLogic.mazeDim)
       gameLogic.gameState = gameLogic.gameState.copy(gameDone = false, player = new Player, level = 0, timeLeft = 20, attackAnimation = false)
-
 
       if (state.score > state.highScore) {
         state.highScore = state.score
@@ -154,16 +150,10 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
 
       surface.setSize(470, 540)
 
-
       if (state.audioEnabled) bgAudio.pause()
       audioStartState = false
-      mazeDims = gameLogic.mazeDim
 
       if (backgroundSounds != null) backgroundMusic = backgroundSounds
-      gridDims = Dimensions(gameLogic.maze.width * 3, gameLogic.maze.height * 3 + 6)
-      widthInPixels = (WidthCellInPixels * gridDims.width).ceil.toInt
-      heightInPixels = (HeightCellInPixels * gridDims.height).ceil.toInt
-      screenArea = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
 
       return state
     }
@@ -173,8 +163,6 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
       gameLogic.gameState = gameLogic.gameState.copy(timeLeft = gameLogic.gameState.timeLeft - 1)
       time = millis();
     }
-
-
     state
   }
 
@@ -232,37 +220,25 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     }
   }
 
-  override def settings(): Unit = {
-    pixelDensity(displayDensity())
-    size(1, 1)
-  }
+//  override def settings(): Unit = {
+//    pixelDensity(displayDensity())
+//    size(1, 1)
+//  }
 
   def updateState(surface: PSurface): Unit = {
     if (updateTimer.timeForNextFrame()) {
       if (changeState) {
         delay(1000)
-
         val newSize = gameLogic.difficultyCurve(gameLogic.gameState.level + 1)
+        if (newSize.width != gameLogic.maze.width) audioStartState = false // Make sure we get a new background audio when we increase maze size
 
-        if (newSize.width != gameLogic.maze.width) {
-          audioStartState = false // Make sure we get a new background audio when we increase maze size
-        }
+        resetWindowStates(newSize.width, newSize.height, gameLogic.gameState.player, Dimensions(newSize.width * 3, newSize.height * 3))
 
-        gameLogic.maze = Maze(newSize.width,newSize.height, gameLogic.gameState.player)
-        gameLogic.mazeGrid = gameLogic.maze.generateMaze()
         gameLogic.gameState.player.nextRound()
-
-        gridDims = Dimensions(gameLogic.maze.width * 3, gameLogic.maze.height * 3 + 6)
-        mazeDims = Dimensions(gameLogic.maze.width * 3, gameLogic.maze.height * 3)
         gameLogic.gameState = gameLogic.gameState.copy(timeLeft = 20, transits = false, level = gameLogic.gameState.level + 1)
 
 
-        widthInPixels = (WidthCellInPixels * gridDims.width).ceil.toInt
-        heightInPixels = (HeightCellInPixels * gridDims.height).ceil.toInt
-        screenArea = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
-
         surface.setSize(widthInPixels, heightInPixels)
-
         changeState = false
       }
       updateTimer.advanceFrame()
