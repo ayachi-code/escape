@@ -30,6 +30,8 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
 
   var audioEnabled : Boolean = true
 
+  var immunityCooldownActive = false
+
   // TODO implement me
   def rotateLeft(): Unit = ()
 
@@ -38,11 +40,30 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
 
   def attack(): Unit = {
     if (gameState.player.playersWeapons.nonEmpty && !gameState.attackAnimation) {
+      println("attack")
       gameState.player.playersWeapons.last.attack(maze)
       gameState = gameState.copy(attackAnimation = true)
-
       if (audioEnabled) soundEffects("attack").play()
     }
+  }
+
+  def ghostHit(gameStateManager: GameStateManager) : Unit = {
+    maze.enemys.foreach(enemy => {
+      if (enemy.point == gameState.player.position) {
+        if (!immunityCooldownActive) {
+          gameState.player.setHp(gameState.player.hp - 1)
+          if (gameStateManager.audioEnabled) soundEffects("hit").play()
+          if (gameState.player.hp <= 0) gameState = gameState.copy(gameDone = true)
+          immunityCooldownActive = true
+        }
+      }
+    })
+  }
+
+  def attackAnimation(): Unit = {
+    gameState = gameState.copy(attackAnimation = false)
+    maze.mazeCells(gameState.player.playersWeapons.last.attackCell.y)(gameState.player.playersWeapons.last.attackCell.x).isAttacked = false
+    gameState.player.playersWeapons = gameState.player.playersWeapons.dropRight(1)
   }
 
   def difficultyCurve(level: Int): Dimensions = {
@@ -204,7 +225,7 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
 
 object EscapeLogic {
 
-  val FramesPerSecond: Int = 60 // change this to speed up or slow down the game
+  val FramesPerSecond: Int = 10 // change this to speed up or slow down the game
 
   val DrawSizeFactor = 1.0 // increase this to make the game bigger (for high-res screens)
   // or decrease to make game smaller

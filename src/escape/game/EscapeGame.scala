@@ -47,6 +47,8 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
 
   private var backgroundMusic: List[Audio] = backgroundSounds
 
+  var toggle : Boolean = false
+
 
   def menu(): Unit = {
     setFillColor(169, 139, 53)
@@ -91,25 +93,28 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     menu()
     weaponMenu()
 
+
     if (gameLogic.gameState.attackAnimation && millis() - time >= 500) {
       gameLogic.gameState = gameLogic.gameState.copy(attackAnimation = false)
       gameLogic.maze.mazeCells(gameLogic.gameState.player.playersWeapons.last.attackCell.y)(gameLogic.gameState.player.playersWeapons.last.attackCell.x).isAttacked = false
       gameLogic.gameState.player.playersWeapons = gameLogic.gameState.player.playersWeapons.dropRight(1)
     }
 
-    if (immunityCooldownActive && millis() - time >= 1000) {
-        immunityCooldownActive = false
+    if (gameLogic.immunityCooldownActive && millis() - time >= 1000) {
+      gameLogic.immunityCooldownActive = false
     }
 
-    gameLogic.maze.enemys.foreach(enemy => {
-      if (enemy.point == gameLogic.gameState.player.position) {
-        if (!immunityCooldownActive) {
-          gameLogic.gameState.player.setHp(gameLogic.gameState.player.hp - 1)
-          if (state.audioEnabled) soundEffects("hit").play()
-          if (gameLogic.gameState.player.hp <= 0) gameLogic.gameState = gameLogic.gameState.copy(gameDone = true)
-          immunityCooldownActive = true
-      }}
-    })
+    gameLogic.ghostHit(state)
+
+//    gameLogic.maze.enemys.foreach(enemy => {
+//      if (enemy.point == gameLogic.gameState.player.position) {
+//        if (!immunityCooldownActive) {
+//          gameLogic.gameState.player.setHp(gameLogic.gameState.player.hp - 1)
+//          if (state.audioEnabled) soundEffects("hit").play()
+//          if (gameLogic.gameState.player.hp <= 0) gameLogic.gameState = gameLogic.gameState.copy(gameDone = true)
+//          immunityCooldownActive = true
+//        }}
+//    })
 
     if (gameLogic.gameState.gameDone) {
       state.scene = "gameOver"
@@ -149,6 +154,8 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
       time = millis();
     }
 
+
+
     state
   }
 
@@ -183,7 +190,7 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
         case Clock => drawSprite(smallSizeSprite, assets("clock"))
         case Enemy => drawSprite(smallSizeSprite, assets("ghost"))
         case SwordCell => drawSprite(smallSizeSprite, assets("sword"))
-        case SwordAttack => drawAttackSword(area, gameLogic)
+        case SwordAttack => drawAttackSword(area, gameLogic, assets)
         case Heart => drawSprite(area, assets("heart"))
         case _ => Empty
       }
@@ -191,6 +198,7 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     }
 
   }
+
 
   def keyEvent(event: KeyEvent): Unit = {
 
@@ -200,7 +208,7 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
       case VK_LEFT if !gameLogic.gameState.attackAnimation  => gameLogic.moveLeft()
       case VK_RIGHT if !gameLogic.gameState.attackAnimation => gameLogic.moveRight()
       case VK_SPACE => gameLogic.leaveRoom()
-      case VK_V if !gameLogic.gameState.attackAnimation => gameLogic.attack()
+      case VK_V if !gameLogic.gameState.attackAnimation =>  gameLogic.attack()
       case _        => ()
     }
   }
@@ -234,7 +242,7 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
         heightInPixels = (HeightCellInPixels * gridDims.height).ceil.toInt
         screenArea = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
 
-       surface.setSize(widthInPixels, heightInPixels)
+        surface.setSize(widthInPixels, heightInPixels)
 
         changeState = false
       }

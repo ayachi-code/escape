@@ -76,20 +76,21 @@ class GameBase(PApplet: PApplet) extends driver  {
     PApplet.ellipse(r.center.x, r.center.y, r.width / 2, r.height / 2)
   }
 
-  def drawAttackSword(r: Rectangle, game: EscapeLogic): Unit = {
+  def drawAttackSword(r: Rectangle, game: EscapeLogic, assets : Map[String, PImage]): Unit = {
+//    println(game.gameState.player.playersWeapons.last.direction)
     game.gameState.player.playersWeapons.last.direction match {
       case 'e' =>
-        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackEast.png")
-        PApplet.image(img, (r.left + r.right - r.width/2 - 40) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
+//        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackEast.png")
+        PApplet.image(assets("swordEast"), (r.left + r.right - r.width/2 - 40) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
       case 'w' =>
-        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackWest.png")
-        PApplet.image(img, (r.left + r.right - r.width/2 + 40) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
+//        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackWest.png")
+        PApplet.image(assets("swordWest"), (r.left + r.right - r.width/2 + 40) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
       case 's' =>
-        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackSouth.png")
-        PApplet.image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2 - 40) / 2, r.width / 2, r.height / 2)
+//        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackSouth.png")
+        PApplet.image(assets("swordSouth"), (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2 - 40) / 2, r.width / 2, r.height / 2)
       case 'n' =>
-        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackNorth.png")
-        PApplet.image(img, (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2 + 40) / 2, r.width / 2, r.height / 2)
+//        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackNorth.png")
+        PApplet.image(assets("swordNorth"), (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2 + 40) / 2, r.width / 2, r.height / 2)
     }
   }
 

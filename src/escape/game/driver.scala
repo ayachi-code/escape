@@ -10,9 +10,9 @@ import escape.logic.Audio
 
 import javax.sound.sampled.AudioSystem.getMixerInfo
 
-//TODO: clean code(good gameBase abstarction) --> timer beetje beneden
+//TODO: clean code(good gameBase abstarction) + Load fonts in setup --> timer beetje beneden
 
-class driver extends PApplet{
+class driver extends PApplet {
   var gameState: GameStateManager = GameStateManager("start", 0, 0, audioEnabled = true, audioSupport = true)
 
   var allScenes: Map[String, Scene] = Map[String, Scene]()
@@ -31,7 +31,7 @@ class driver extends PApplet{
 
     surface.setTitle("Escape")
 
-    val assets = Map[String, PImage]("door" -> loadImage("src/escape/assets/sprite/door.png"), "ghost" -> loadImage("src/escape/assets/sprite/ghost.png"), "coin" -> loadImage("src/escape/assets/sprite/coin.png"), "clock" -> loadImage("src/escape/assets/sprite/clock.png"), "sword" -> loadImage("src/escape/assets/weapons/sword/sword_1.png"), "key" -> loadImage("src/escape/assets/sprite/key.png"), "heart" -> loadImage("src/escape/assets/sprite/heart.png") )
+    val assets = Map[String, PImage]("swordEast" -> loadImage("src/escape/assets/weapons/sword/attackEast.png"), "swordWest" -> loadImage("src/escape/assets/weapons/sword/attackWest.png"), "swordSouth" -> loadImage("src/escape/assets/weapons/sword/attackSouth.png"), "swordNorth" -> loadImage("src/escape/assets/weapons/sword/attackNorth.png"), "door" -> loadImage("src/escape/assets/sprite/door.png"), "ghost" -> loadImage("src/escape/assets/sprite/ghost.png"), "coin" -> loadImage("src/escape/assets/sprite/coin.png"), "clock" -> loadImage("src/escape/assets/sprite/clock.png"), "sword" -> loadImage("src/escape/assets/weapons/sword/sword_1.png"), "key" -> loadImage("src/escape/assets/sprite/key.png"), "heart" -> loadImage("src/escape/assets/sprite/heart.png") )
 
     val mixers = getMixerInfo
     if (mixers.length <= 0) { // No audio port found if true

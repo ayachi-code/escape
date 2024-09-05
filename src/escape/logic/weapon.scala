@@ -32,7 +32,6 @@ case class Sword(player: Player) extends Weapon {
         })
       }
 
-      1
     })
   }
 
@@ -44,7 +43,6 @@ case class Sword(player: Player) extends Weapon {
       direction = at(0).direction
     }
     maze.mazeCells(attackCell.y)(attackCell.x).isAttacked = true
-    println("foo")
   }
 
 }
