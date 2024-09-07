@@ -86,10 +86,10 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
 
     if (!audioStartState && state.audioEnabled) {
       audioStartState = true
-      val index : Int = rand.nextInt(backgroundSounds.length - 1)
-      if (bgAudio != null) bgAudio.pause()
-      bgAudio = backgroundSounds(index)
-      backgroundMusic = backgroundSounds.patch(index, Nil, 1)
+      val index : Int = if (backgroundMusic.length <= 1) rand.nextInt(backgroundMusic.length) else rand.nextInt(backgroundMusic.length - 1)
+      if (bgAudio != null) bgAudio.stop()
+      bgAudio = backgroundMusic(index)
+      backgroundMusic = backgroundMusic.patch(index, Nil, 1)
       bgAudio.loop()
     }
 
@@ -110,6 +110,7 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
 
 
   def run(surface: processing.core.PSurface, state: GameStateManager): GameStateManager = {
+    setAudio(state)
     setBackground((0,0,0))
     updateState(surface)
     setAudio(state)
@@ -153,7 +154,7 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
       if (state.audioEnabled) bgAudio.pause()
       audioStartState = false
 
-      if (backgroundSounds != null) backgroundMusic = backgroundSounds
+      if (backgroundSounds != null) backgroundMusic = List[Audio](new Audio("src/escape/assets/dungeonOST/bg1.mp3", min), new Audio("src/escape/assets/dungeonOST/bg2.mp3", min), new Audio("src/escape/assets/dungeonOST/bg3.mp3",min), new Audio("src/escape/assets/dungeonOST/bg4.mp3",min), new Audio("src/escape/assets/dungeonOST/bg5.mp3",min), new Audio("src/escape/assets/dungeonOST/bg6.mp3", min))
 
       return state
     }
@@ -215,14 +216,14 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
       case VK_LEFT if !gameLogic.gameState.attackAnimation  => gameLogic.moveLeft()
       case VK_RIGHT if !gameLogic.gameState.attackAnimation => gameLogic.moveRight()
       case VK_SPACE => gameLogic.leaveRoom()
-      case VK_V if !gameLogic.gameState.attackAnimation =>  gameLogic.attack()
+      case VK_V if !gameLogic.gameState.attackAnimation =>  changeState = true
       case _        => ()
     }
   }
 
 //  override def settings(): Unit = {
 //    pixelDensity(displayDensity())
-//    size(1, 1)
+//    //size(1, 1)
 //  }
 
   def updateState(surface: PSurface): Unit = {
