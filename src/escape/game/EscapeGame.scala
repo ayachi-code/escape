@@ -38,24 +38,14 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
   private var changeState = false
 
   var time: Int = millis()
-
-
   var timeAttack : Int = _
-
-
 
   updateTimer.init()
 
-  private var immunityCooldownActive = false
 
   var audioStartState = false
-
   private var bgAudio : Audio = null
-
   private var backgroundMusic: List[Audio] = backgroundSounds
-
-  var toggle : Boolean = false
-
   var startedAnimation : Boolean = false
 
 
@@ -220,11 +210,6 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
       case _        => ()
     }
   }
-
-//  override def settings(): Unit = {
-//    pixelDensity(displayDensity())
-//    //size(1, 1)
-//  }
 
   def updateState(surface: PSurface): Unit = {
     if (updateTimer.timeForNextFrame()) {
