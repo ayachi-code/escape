@@ -55,10 +55,10 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     drawTextCentered("Depth: " + gameLogic.gameState.level, 23, Point(screenArea.width - 49, ((screenArea.height / gridDims.height) * 3) / 2))
     if (gameLogic.gameState.player.gotKey) drawSprite(Rectangle(Point(100,(screenArea.height / gridDims.height) - 20), 45,45), assets("key"))
 
-    for (i <- 0 until gameLogic.gameState.player.hp) drawSprite(Rectangle(Point(150 + i * 35, (screenArea.height / gridDims.height.toFloat) - 20), 45, 45), assets("heart"))
+    for (i <- 0 until gameLogic.gameState.player.hp) drawSprite(Rectangle(Point((150 + i * 35).toFloat, (screenArea.height / gridDims.height.toFloat) - 20), 45, 45), assets("heart"))
 
     setFillColor(255, 0, 0)
-    drawTextCentered(gameLogic.gameState.timeLeft.toString, 23, Point(screenArea.width - 49 - 100, ((screenArea.height / gridDims.height) * 3) / 2))
+    drawTextCentered(gameLogic.gameState.timeLeft.toString, 23, Point(screenArea.width - 49 - 100, ((screenArea.height / gridDims.height) * 3) / 2 + 5))
   }
 
   def weaponMenu(): Unit = {

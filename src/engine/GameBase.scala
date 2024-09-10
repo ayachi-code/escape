@@ -110,6 +110,6 @@ class GameBase(PApplet: PApplet) extends driver  {
 
 
   def drawSprite(r: Rectangle, img: PImage): Unit = PApplet.image(img, r.leftUp.x, r.leftUp.y, r.width, r.height)
-  def setFillColor(rgb: (Int, Int, Int)): Unit = PApplet.fill(rgb._1, rgb._2, rgb._3)
-  def setBackground(rgb: (Int, Int, Int)): Unit = PApplet.background(rgb._1, rgb._2, rgb._3)
+  def setFillColor(rgb: (Float, Float, Float)): Unit = PApplet.fill(rgb._1, rgb._2, rgb._3)
+  def setBackground(rgb: (Float, Float, Float)): Unit = PApplet.background(rgb._1, rgb._2, rgb._3)
 }
