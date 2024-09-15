@@ -17,15 +17,15 @@ class mainMenu(PApplet: PApplet, minmin: Minim, state: GameStateManager, sounds:
   val mono: PFont = PApplet.createFont("src/escape/assets/fonts/horror.ttf", 200)
   val fontNumber: PFont = PApplet.createFont("src/escape/assets/fonts/number.ttf", 75)
 
-  val startGameButton = new RectangleButton(PApplet, Point(PApplet.width.toFloat/2 - PApplet.width.toFloat/4,PApplet.height.toFloat/2 + PApplet.height.toFloat/5),PApplet.width.toFloat/2,50, "Descend", mono)
+  private val startGameButton = new RectangleButton(PApplet, Point(PApplet.width.toFloat/2 - PApplet.width.toFloat/4,PApplet.height.toFloat/2 + PApplet.height.toFloat/5),PApplet.width.toFloat/2,50, "Descend", mono)
 
-  val audioTurnOnButton = new ImageButton(PApplet, Point(PApplet.width.toFloat - 100, PApplet.height.toFloat - 100), 100, 100, PApplet.loadImage("src/escape/assets/audioImages/audio.png"))
-  val audioTurnOffButton = new ImageButton(PApplet, Point(PApplet.width.toFloat - 100, PApplet.height.toFloat - 100), 100, 100, PApplet.loadImage("src/escape/assets/audioImages/noAudio.png"))
+  private val audioTurnOnButton = new ImageButton(PApplet, Point(PApplet.width.toFloat - 100, PApplet.height.toFloat - 100), 100, 100, PApplet.loadImage("src/escape/assets/audioImages/audio.png"))
+  private val audioTurnOffButton = new ImageButton(PApplet, Point(PApplet.width.toFloat - 100, PApplet.height.toFloat - 100), 100, 100, PApplet.loadImage("src/escape/assets/audioImages/noAudio.png"))
 
   if (sounds != null) sounds("background").loop()
 
   var audioStartState = false
-  var audioEnabledState = true
+  private var audioEnabledState = true
 
 
   def run(surface: processing.core.PSurface, state: GameStateManager) : GameStateManager = {

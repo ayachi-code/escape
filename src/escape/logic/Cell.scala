@@ -15,15 +15,12 @@ case class Cell(pos: Point) {
   var visitByEnemy : List[Int] = List[Int]() // Int = ID of enemy
 
   var isEnemyOn : Boolean = false
-
   var enemyIds : List[Int] = List[Int]()
-
-
-  var linedCell : List[Point] = List[Point]()
+  var linkedCells : List[Point] = List[Point]()
 
   def addLinkedCell(cell: Point): Cell = {
-    linedCell = linedCell :+ cell
-    return this
+    linkedCells = linkedCells :+ cell
+    this
   }
 
   def getWalls: List[Char] = {
@@ -37,19 +34,18 @@ case class Cell(pos: Point) {
 
   def addWall(wall: Char): Cell = {
     walls(wall) = true
-    return this
+    this
   }
 
   def setVisited(state: Boolean): Cell = {
     visited = state
-    return this
+    this
   }
 
   def setPlayer(state: Boolean): Cell = {
     isPlayerOn = state
-    return  this
+    this
   }
 
   def isVisited: Boolean = visited
-
 }

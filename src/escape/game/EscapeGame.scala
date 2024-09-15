@@ -37,8 +37,8 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
 
   private var changeState = false
 
-  var time: Int = millis()
-  var timeAttack : Int = _
+  private var time: Int = millis()
+  private var timeAttack : Int = _
 
   updateTimer.init()
 
@@ -46,7 +46,7 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
   var audioStartState = false
   private var bgAudio : Audio = null
   private var backgroundMusic: List[Audio] = backgroundSounds
-  var startedAnimation : Boolean = false
+  private var startedAnimation : Boolean = false
 
 
   def menu(): Unit = {
@@ -69,9 +69,9 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     drawSprite(Rectangle(Point(150 + 10, screenArea.height - 35), 30,30), assets("sword"))
   }
 
-  def showAttackAnimation(): Unit = gameLogic.gameState.player.playersWeapons.last.animation(gameLogic.maze)
+  private def showAttackAnimation(): Unit = gameLogic.gameState.player.playersWeapons.last.animation(gameLogic.maze)
 
-  def setAudio(state: GameStateManager): Unit = {
+  private def setAudio(state: GameStateManager): Unit = {
     gameLogic.audioEnabled = state.audioEnabled
 
     if (!audioStartState && state.audioEnabled) {
@@ -85,7 +85,7 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
 
   }
 
-  def resetWindowStates(width: Int, height: Int, player: Player, mazeDimension : Dimensions): Unit = {
+  private def resetWindowStates(width: Int, height: Int, player: Player, mazeDimension : Dimensions): Unit = {
     gameLogic.maze = Maze(width,height, player)
     gameLogic.mazeGrid = gameLogic.maze.generateMaze()
 
@@ -206,7 +206,7 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
       case VK_LEFT if !gameLogic.gameState.attackAnimation  => gameLogic.moveLeft()
       case VK_RIGHT if !gameLogic.gameState.attackAnimation => gameLogic.moveRight()
       case VK_SPACE => gameLogic.leaveRoom()
-      case VK_V if !gameLogic.gameState.attackAnimation =>  changeState = true
+      case VK_V if !gameLogic.gameState.attackAnimation => gameLogic.attack()  //changeState = true
       case _        => ()
     }
   }

@@ -10,7 +10,7 @@ import escape.logic.Audio
 
 import javax.sound.sampled.AudioSystem.getMixerInfo
 
-//TODO: clean code(good gameBase abstarction) + Load fonts in setup --> timer beetje beneden
+//TODO: Load fonts in setup + juiste bestand naam hoofdletter + clean maze code
 
 class driver extends PApplet {
   var gameState: GameStateManager = GameStateManager("start", 0, 0, audioEnabled = true, audioSupport = true)

@@ -160,7 +160,7 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
   }
 
   def checkHeartCollision(): Unit = {
-    if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isHeart && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn && gameState.player.playersWeapons.length <= 9) {
+    if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isHeart && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn) {
       mazeGrid(gameState.player.position.y)(gameState.player.position.x).isHeart = false
       gameState.player.setHp(gameState.player.hp + 1)
 
@@ -178,7 +178,6 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
 
   def leaveRoom(): Unit = {
     if (gameState.player.position == maze.portalLocation && gameState.player.gotKey) {
-
       if (audioEnabled) soundEffects("openDoor").play()
       gameState = gameState.copy(transits = true)
     }
@@ -204,10 +203,7 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
     var array = Array[CellType]()
 
 
-    if (mazeGrid(p.y)(p.x).isAttacked) {
-      array = array :+ SwordAttack
-      println(p)
-    }
+    if (mazeGrid(p.y)(p.x).isAttacked) array = array :+ SwordAttack
 
     if (mazeGrid(p.y)(p.x).isPortal) {
         if (gameState.transits) {
