@@ -11,7 +11,7 @@ import processing.event.KeyEvent
 import escape.logic.buttons.RectangleButton
 
 
-class gameOver(PApplet: PApplet, min: Minim, sounds: Map[String, Audio]) extends GameBase(PApplet) with Scene {
+class GameOver(PApplet: PApplet, min: Minim, sounds: Map[String, Audio]) extends GameBase(PApplet) with Scene {
 
   val mono: PFont = PApplet.createFont("src/escape/assets/fonts/horror.ttf", 200)
   val fontNumber: PFont = PApplet.createFont("src/escape/assets/fonts/number.ttf", 75)

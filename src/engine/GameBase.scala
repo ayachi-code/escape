@@ -4,11 +4,11 @@
 package engine
 
 import engine.graphics.{Color, Point, Rectangle, Triangle}
-import processing.core.{PApplet, PConstants, PImage, PFont}
-import escape.game.driver
+import processing.core.{PApplet, PConstants, PFont, PImage}
+import escape.game.{Driver, driver}
 import escape.logic._
 
-class GameBase(PApplet: PApplet) extends driver  {
+class GameBase(PApplet: PApplet) extends Driver  {
   class UpdateTimer(val framesPerSecond: Float) {
 
     val frameDuration: Float = 1000 / framesPerSecond // ms
@@ -81,17 +81,13 @@ class GameBase(PApplet: PApplet) extends driver  {
     println(game.gameState.player.playersWeapons.last.direction)
     game.gameState.player.playersWeapons.last.direction match {
       case 'e' =>
-//        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackEast.png")
         println("draw east")
         PApplet.image(assets("swordEast"), (r.left + r.right - r.width/2 - 40) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
       case 'w' =>
-//        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackWest.png")
         PApplet.image(assets("swordWest"), (r.left + r.right - r.width/2 + 40) / 2, (r.top + r.bottom - r.width/2) / 2, r.width / 2, r.height / 2)
       case 's' =>
-//        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackSouth.png")
         PApplet.image(assets("swordSouth"), (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2 - 40) / 2, r.width / 2, r.height / 2)
       case 'n' =>
-//        val img : PImage = PApplet.loadImage("src/escape/assets/weapons/sword/attackNorth.png")
         PApplet.image(assets("swordNorth"), (r.left + r.right - r.width/2) / 2, (r.top + r.bottom - r.width/2 + 40) / 2, r.width / 2, r.height / 2)
     }
   }

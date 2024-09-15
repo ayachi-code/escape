@@ -1,7 +1,7 @@
 package escape.logic.buttons
 
 import engine.graphics.Point
-import processing.core.{PApplet, PFont, PImage}
+import processing.core.{PApplet, PImage}
 
 
 class ImageButton(pApplet: PApplet, point: Point, width: Float, height: Float, img: PImage) extends Button {

@@ -1,7 +1,6 @@
 package escape.logic.buttons
 
-import engine.graphics.Point
-import processing.core.{PApplet, PFont}
+import processing.core.PApplet
 
 abstract class Button extends PApplet{
   def display() : Unit
