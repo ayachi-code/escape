@@ -42,13 +42,15 @@ class Player() {
     gotKey = state
   }
 
-  def setHp(newValue: Int): Unit = {
+  def setHp(newValue: Int): Player = {
     hp = newValue
+    this
   }
 
   def nextRound(): Unit = {
     gotKey = false
     position = Point(0,0)
   }
+
 
 }

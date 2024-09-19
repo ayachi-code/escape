@@ -12,7 +12,7 @@ import javax.sound.sampled.AudioSystem.getMixerInfo
 class Driver extends PApplet {
   var gameState: GameStateManager = GameStateManager("start", 0, 0, audioEnabled = true, audioSupport = true)
 
-  var allScenes: Map[String, Scene] = Map[String, Scene]()
+  private var allScenes: Map[String, Scene] = Map[String, Scene]()
 
   override def draw(): Unit = gameState = allScenes(gameState.scene).run(surface, gameState)
 
@@ -36,16 +36,17 @@ class Driver extends PApplet {
     // This is to make sure devices without audio can play the game
     if (mixers.length <= 0) {
       gameState = gameState.copy(audioSupport = false, audioEnabled = false)
-      allScenes = Map[String, Scene]("start" -> new MainMenu(this, null, gameState, null), "gameOver" -> new GameOver(this, null, null), "game" -> new EscapeGame(this, null, assets, null, null))
+      allScenes = Map[String, Scene]("start" -> new MainMenu(this,null), "gameOver" -> new GameOver(this, null), "game" -> new EscapeGame(this, null, assets, null, null))
     } else {
       val min = new Minim(this)
 
+      // The assets are initially loaded at the start of the game (setup)
       val mainMenuSounds : Map[String, Audio] = Map[String, Audio]("background" -> new Audio("src/escape/assets/soundEffects/main.mp3", min), "clickAudio" -> new Audio("src/escape/assets/soundEffects/audioClick2.mp3", min))
       val gameOverSounds : Map[String, Audio] = Map[String, Audio]("background" -> new Audio("src/escape/assets/soundEffects/main.mp3", min), "clickAudio" -> new Audio("src/escape/assets/soundEffects/audioClick2.mp3", min),  "gameOver" -> new Audio("src/escape/assets/soundEffects/scaryman.mp3", min))
       val backgroundAudios : List[Audio] = List[Audio](new Audio("src/escape/assets/dungeonOST/bg1.mp3", min), new Audio("src/escape/assets/dungeonOST/bg2.mp3", min), new Audio("src/escape/assets/dungeonOST/bg3.mp3",min), new Audio("src/escape/assets/dungeonOST/bg4.mp3",min), new Audio("src/escape/assets/dungeonOST/bg5.mp3",min), new Audio("src/escape/assets/dungeonOST/bg6.mp3", min))
       val gameSound : Map[String, Audio] = Map[String, Audio]("hit" -> new Audio("src/escape/assets/soundEffects/hit.mp3", min), "clock" -> new Audio("src/escape/assets/soundEffects/clock.mp3", min), "coin" -> new Audio("src/escape/assets/soundEffects/coin.mp3", min), "loot" -> new Audio("src/escape/assets/soundEffects/loot.mp3", min), "openDoor" -> new Audio("src/escape/assets/soundEffects/opendoor.mp3", min), "attack" -> new Audio("src/escape/assets/soundEffects/attack.mp3", min), "hp" -> new Audio("src/escape/assets/soundEffects/hp.mp3", min))
 
-      allScenes = Map[String, Scene]("start" -> new MainMenu(this, min, gameState, mainMenuSounds), "gameOver" -> new GameOver(this, min, gameOverSounds), "game" -> new EscapeGame(this, min, assets, backgroundAudios, gameSound))
+      allScenes = Map[String, Scene]("start" -> new MainMenu(this, mainMenuSounds), "gameOver" -> new GameOver(this, gameOverSounds), "game" -> new EscapeGame(this, min, assets, backgroundAudios, gameSound))
     }
 
     val highScoreFile = scala.io.Source.fromFile("src/escape/logic/highscore")

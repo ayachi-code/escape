@@ -6,12 +6,15 @@ import escape.game.GameStateManager
 import scala.collection.mutable.ArrayBuffer
 
 
-class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
+class EscapeLogic(soundEffects: Map[String, Audio]) {
 
-  var gameState: GameState = GameState(false, new Player, 20, gameDone = false, leaveRoomButtonPressed = false, 0, transits = false)
 
-  var maze: Maze = Maze(10,10, gameState.player)
+  var player : Player = new Player
+  var maze: Maze = Maze(10,10, player)
   var mazeGrid: ArrayBuffer[ArrayBuffer[Cell]] = maze.generateMaze()
+
+  var gameState: GameState = GameState(false, player, 20, gameDone = false, leaveRoomButtonPressed = false, 0, transits = false, mazeGrid)
+
   var gridDims: Dimensions = Dimensions(maze.width * 3, maze.height * 3 + 6)
   var mazeDim: Dimensions = Dimensions(maze.width * 3, maze.height * 3)
 
@@ -36,24 +39,13 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
     maze.enemys.foreach(enemy => {
       if (enemy.point == gameState.player.position) {
         if (!immunityCooldownActive) {
-          gameState.player.setHp(gameState.player.hp - 1)
+          gameState = gameState.copy(player = player.setHp(gameState.player.hp - 1))
           if (gameStateManager.audioEnabled) soundEffects("hit").play()
           if (gameState.player.hp <= 0) gameState = gameState.copy(gameDone = true)
           immunityCooldownActive = true
         }
       }
     })
-  }
-
-
-  def difficultyCurve(level: Int): Dimensions = {
-    if (level >= 0 && level <= 3) return Dimensions(10, 10)
-    if (level >= 4 && level <= 6) return Dimensions(12, 12)
-    if (level >= 7 && level <= 10) return Dimensions(15, 15)
-    if (level >= 11 && level <= 13) return Dimensions(16, 16)
-    if (level >= 14 && level <= 16) return Dimensions(17, 17)
-
-    Dimensions(18, 18)
   }
 
   def moveUp(): Unit = {
@@ -95,7 +87,6 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
     }
   }
 
-
   def isMovePossible(point: Point, move: Char): Boolean = {
     move match {
       case 's' => !(point.x < 0 || point.y + 1 < 0 || point.x > mazeGrid.length - 1 || point.y + 1 > mazeGrid.length - 1) && !mazeGrid(point.y + 1)(point.x).walls('n') && !mazeGrid(point.y)(point.x).walls('s')
@@ -105,7 +96,6 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
     }
 
   }
-
 
   def moveDown(): Unit = {
     if (isMovePossible(gameState.player.position, 's')) {
@@ -160,7 +150,6 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
     }
   }
 
-
   def checkKeyCollision(): Unit = {
     if (mazeGrid(gameState.player.position.y)(gameState.player.position.x).isKey && mazeGrid(gameState.player.position.y)(gameState.player.position.x).isPlayerOn) {
       gameState.player.keyState(true)
@@ -170,35 +159,7 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
     }
   }
 
-  def isGameOver: Boolean = if (gameState.timeLeft <= 0 && !gameState.transits) true else false
-
-  def getWalls(p : Point): List[Char] = {
-    mazeGrid(p.y)(p.x).getWalls
-  }
-
-  def getCellTypes(p : Point): Array[CellType] = {
-    var array = Array[CellType]()
-
-    if (mazeGrid(p.y)(p.x).isAttacked) array = array :+ SwordAttack
-
-    if (mazeGrid(p.y)(p.x).isPortal) {
-        if (gameState.transits) {
-          array = array :+ OpenPortal
-          return array
-        }
-        else array = array :+ Portal
-    }
-
-    if (mazeGrid(p.y)(p.x).isHeart) array = array :+ Heart
-    if (mazeGrid(p.y)(p.x).isWeapon) array = array :+ SwordCell
-    if (mazeGrid(p.y)(p.x).isEnemyOn) array = array :+ Enemy
-    if (mazeGrid(p.y)(p.x).isClock) array = array :+ Clock
-    if (mazeGrid(p.y)(p.x).isKey) array = array :+ Key
-    if (mazeGrid(p.y)(p.x).isPlayerOn) array = array :+ PlayerCell
-    if (mazeGrid(p.y)(p.x).isCoin) array = array :+ Coin
-
-    array
-  }
+  def getCellTypes(p : Point): Array[CellType] = gameState.getCellTypes(p)
 }
 
 object EscapeLogic {

@@ -4,7 +4,6 @@ package escape.game
 import engine.GameBase
 import ddf.minim.{AudioPlayer, Minim}
 
-
 import java.awt.event.KeyEvent._
 import engine.graphics.{Color, Point, Rectangle}
 import processing.core.{PApplet, PConstants, PImage, PSurface}
@@ -13,13 +12,12 @@ import escape.logic._
 import escape.game.EscapeGame._
 import escape.logic.{Point => GridPoint}
 
-import java.io
 import java.io.{File, FileWriter}
 import scala.util.Random
 
 class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val backgroundSounds: List[Audio], soundEffects: Map[String, Audio]) extends GameBase(PApplet) with Scene{
 
-  private val gameLogic: EscapeLogic = new EscapeLogic(min, soundEffects)
+  private val gameLogic: EscapeLogic = new EscapeLogic(soundEffects)
   private var mazeDims: Dimensions = gameLogic.mazeDim
   var rand = new Random()
 
@@ -41,7 +39,6 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
   private var bgAudio : Audio = null
   private var backgroundMusic: List[Audio] = backgroundSounds
   private var startedAnimation : Boolean = false
-
 
   def menu(): Unit = {
     setFillColor(169, 139, 53)
@@ -82,6 +79,8 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
   private def resetWindowStates(width: Int, height: Int, player: Player, mazeDimension : Dimensions): Unit = {
     gameLogic.maze = Maze(width,height, player)
     gameLogic.mazeGrid = gameLogic.maze.generateMaze()
+
+    gameLogic.gameState = gameLogic.gameState.copy(mazeGrid = gameLogic.mazeGrid)
 
     gridDims = Dimensions(gameLogic.maze.width * 3, gameLogic.maze.height * 3 + 6)
     mazeDims = mazeDimension
@@ -157,7 +156,7 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     val heightPerCell = (screenArea.height / gridDims.height) * 3
 
     for (p <- mazeDims.allPointsInside) {
-      drawCell(getCell(p), gameLogic.getWalls(p), gameLogic.getCellTypes(p))  // s
+      drawCell(getCell(p), gameLogic.gameState.getWalls(p), gameLogic.getCellTypes(p))  // s
     }
 
     def getCell(p : GridPoint): Rectangle = {
@@ -208,14 +207,12 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     if (updateTimer.timeForNextFrame()) {
       if (changeState) {
         delay(1000)
-        val newSize = gameLogic.difficultyCurve(gameLogic.gameState.level + 1)
+        val newSize = gameLogic.gameState.difficultyCurve(gameLogic.gameState.level + 1)
         if (newSize.width != gameLogic.maze.width) audioStartState = false // Make sure we get a new background audio when we increase maze size
 
         resetWindowStates(newSize.width, newSize.height, gameLogic.gameState.player, Dimensions(newSize.width * 3, newSize.height * 3))
-
         gameLogic.gameState.player.nextRound()
         gameLogic.gameState = gameLogic.gameState.copy(timeLeft = 20, transits = false, level = gameLogic.gameState.level + 1)
-
 
         surface.setSize(widthInPixels, heightInPixels)
         changeState = false
