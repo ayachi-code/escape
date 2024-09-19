@@ -9,7 +9,6 @@ abstract class Weapon {
   def animation(maze: Maze) : Unit
 }
 
-
 case class Sword(player: Player) extends Weapon {
 
   override var damage: Int = 1
@@ -18,13 +17,10 @@ case class Sword(player: Player) extends Weapon {
   override var direction: Char = _
 
   override def attack(maze: Maze): Unit = {
-    var x = player.possibleAttack(maze)
-    x.foreach(cell => {
+    player.possibleAttack(maze).foreach(cell => {
       if (maze.mazeCells(cell.point.y)(cell.point.x).isEnemyOn) {
-
         direction = cell.direction
         attackCell = cell.point
-        println("Enemy killed")
         maze.mazeCells(cell.point.y)(cell.point.x).isEnemyOn = false
 
         maze.mazeCells(cell.point.y)(cell.point.x).enemyIds.foreach(enemyId => {
@@ -39,8 +35,8 @@ case class Sword(player: Player) extends Weapon {
   override def animation(maze: Maze): Unit = {
     if (attackCell == null) {
       val at = player.possibleAttack(maze)
-      attackCell = at(0).point
-      direction = at(0).direction
+      attackCell = at.head.point
+      direction = at.head.direction
     }
     maze.mazeCells(attackCell.y)(attackCell.x).isAttacked = true
   }

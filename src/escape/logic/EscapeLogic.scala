@@ -1,43 +1,22 @@
 package escape.logic
 
-import escape.logic._
-
-import ddf.minim.{AudioPlayer, Minim}
+import ddf.minim.Minim
 import escape.game.GameStateManager
 
-import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 
-//Morgen
-//TODO: 9 coin reward + Highscore
-
-
-//TODO: Gamestate manager + progression levels + timer + highscore + voorkom dat als je knop niet kan ingedrukt houden om te lopen
-
 class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
-
 
   var gameState: GameState = GameState(false, new Player, 20, gameDone = false, leaveRoomButtonPressed = false, 0, transits = false)
 
   var maze: Maze = Maze(10,10, gameState.player)
-
   var mazeGrid: ArrayBuffer[ArrayBuffer[Cell]] = maze.generateMaze()
-
   var gridDims: Dimensions = Dimensions(maze.width * 3, maze.height * 3 + 6)
-
   var mazeDim: Dimensions = Dimensions(maze.width * 3, maze.height * 3)
 
   var audioEnabled : Boolean = true
-
   var immunityCooldownActive = false
-
-  // TODO implement me
-  def rotateLeft(): Unit = ()
-
-  // TODO implement me
-  def rotateRight(): Unit = ()
-
 
   def finishAttack(): Unit = {
     gameState = gameState.copy(attackAnimation = false)
@@ -68,7 +47,6 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
 
 
   def difficultyCurve(level: Int): Dimensions = {
-//    if (level == 1) return Dimensions(12, 12) // DEBUG
     if (level >= 0 && level <= 3) return Dimensions(10, 10)
     if (level >= 4 && level <= 6) return Dimensions(12, 12)
     if (level >= 7 && level <= 10) return Dimensions(15, 15)
@@ -136,7 +114,6 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
       gameState.player.move('s')
 
       maze.playerPosition = gameState.player.position
-
       checkCollisions()
     }
   }
@@ -199,9 +176,8 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
     mazeGrid(p.y)(p.x).getWalls
   }
 
-  def getCellType(p : Point): Array[CellType] = {
+  def getCellTypes(p : Point): Array[CellType] = {
     var array = Array[CellType]()
-
 
     if (mazeGrid(p.y)(p.x).isAttacked) array = array :+ SwordAttack
 
@@ -228,13 +204,7 @@ class EscapeLogic(minim: Minim, soundEffects: Map[String, Audio]) {
 object EscapeLogic {
 
   val FramesPerSecond: Int = 10 // change this to speed up or slow down the game
-
   val DrawSizeFactor = 1.0 // increase this to make the game bigger (for high-res screens)
-  // or decrease to make game smaller
   val DefaultWidth: Int = 30
-  //val NrTopInvisibleLines: Int = 4
   val DefaultVisibleHeight: Int = 36
-
-//  def apply() = new TetrisLogic()
-
 }

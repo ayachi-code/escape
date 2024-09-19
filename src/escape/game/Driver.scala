@@ -1,4 +1,3 @@
-// DO NOT MODIFY FOR BASIC SUBMISSION
 // scalastyle:off
 
 package escape.game
@@ -9,8 +8,6 @@ import processing.event.KeyEvent
 import escape.logic.Audio
 
 import javax.sound.sampled.AudioSystem.getMixerInfo
-
-//TODO: Load fonts in setup + juiste bestand naam hoofdletter + clean maze code
 
 class Driver extends PApplet {
   var gameState: GameStateManager = GameStateManager("start", 0, 0, audioEnabled = true, audioSupport = true)

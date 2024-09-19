@@ -1,4 +1,3 @@
-// DO NOT MODIFY FOR BASIC SUBMISSION
 // scalastyle:off
 package escape.game
 
@@ -18,8 +17,6 @@ import java.io
 import java.io.{File, FileWriter}
 import scala.util.Random
 
-
-
 class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val backgroundSounds: List[Audio], soundEffects: Map[String, Audio]) extends GameBase(PApplet) with Scene{
 
   private val gameLogic: EscapeLogic = new EscapeLogic(min, soundEffects)
@@ -28,7 +25,6 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
 
 
   private val updateTimer = new UpdateTimer(EscapeLogic.FramesPerSecond.toFloat)
-
   var gridDims: Dimensions = gameLogic.gridDims
 
   private var widthInPixels: Int = (WidthCellInPixels * gridDims.width).ceil.toInt
@@ -36,12 +32,10 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
   private var screenArea: Rectangle = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
 
   private var changeState = false
-
   private var time: Int = millis()
   private var timeAttack : Int = _
 
   updateTimer.init()
-
 
   var audioStartState = false
   private var bgAudio : Audio = null
@@ -163,7 +157,7 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     val heightPerCell = (screenArea.height / gridDims.height) * 3
 
     for (p <- mazeDims.allPointsInside) {
-      drawCell(getCell(p), gameLogic.getWalls(p), gameLogic.getCellType(p))  // s
+      drawCell(getCell(p), gameLogic.getWalls(p), gameLogic.getCellTypes(p))  // s
     }
 
     def getCell(p : GridPoint): Rectangle = {
@@ -199,7 +193,6 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
 
 
   def keyEvent(event: KeyEvent): Unit = {
-
     event.getKeyCode match {
       case VK_UP if !gameLogic.gameState.attackAnimation => gameLogic.moveUp()
       case VK_DOWN if !gameLogic.gameState.attackAnimation  => gameLogic.moveDown()
