@@ -30,7 +30,7 @@ class Driver extends PApplet {
 
     surface.setSize(470, 540)
 
-    val assets = Map[String, PImage]("swordEast" -> loadImage("src/escape/assets/weapons/sword/attackEast.png"), "swordWest" -> loadImage("src/escape/assets/weapons/sword/attackWest.png"), "swordSouth" -> loadImage("src/escape/assets/weapons/sword/attackSouth.png"), "swordNorth" -> loadImage("src/escape/assets/weapons/sword/attackNorth.png"), "door" -> loadImage("src/escape/assets/sprite/door.png"), "ghost" -> loadImage("src/escape/assets/sprite/ghost.png"), "coin" -> loadImage("src/escape/assets/sprite/coin.png"), "clock" -> loadImage("src/escape/assets/sprite/clock.png"), "sword" -> loadImage("src/escape/assets/weapons/sword/sword_1.png"), "key" -> loadImage("src/escape/assets/sprite/key.png"), "heart" -> loadImage("src/escape/assets/sprite/heart.png") )
+    val assets = Map[String, PImage]("player" -> loadImage("src/escape/assets/sprite/mainC.png"), "swordEast" -> loadImage("src/escape/assets/weapons/sword/attackEast.png"), "swordWest" -> loadImage("src/escape/assets/weapons/sword/attackWest.png"), "swordSouth" -> loadImage("src/escape/assets/weapons/sword/attackSouth.png"), "swordNorth" -> loadImage("src/escape/assets/weapons/sword/attackNorth.png"), "door" -> loadImage("src/escape/assets/sprite/door.png"), "ghost" -> loadImage("src/escape/assets/sprite/ghost.png"), "coin" -> loadImage("src/escape/assets/sprite/coin.png"), "clock" -> loadImage("src/escape/assets/sprite/clock.png"), "sword" -> loadImage("src/escape/assets/weapons/sword/sword_1.png"), "key" -> loadImage("src/escape/assets/sprite/key.png"), "heart" -> loadImage("src/escape/assets/sprite/heart.png") )
 
     val mixers = getMixerInfo
     // This is to make sure devices without audio can play the game
