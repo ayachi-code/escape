@@ -64,9 +64,9 @@ task zip(type: Zip) {
     dependsOn assemble
 
     from fileTree(dir: '.')
-    include 'src/tetris/logic/**.scala'
+    include '.'
 
-    archiveFileName = 'tetris.zip'
+    archiveFileName = 'escape.zip'
     destinationDirectory = layout.buildDirectory.dir("$projectDir")
 }
 
