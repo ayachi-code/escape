@@ -15,12 +15,16 @@ import escape.logic.{Point => GridPoint}
 import java.io.{File, FileWriter}
 import scala.util.Random
 
-class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val backgroundSounds: List[Audio], soundEffects: Map[String, Audio]) extends GameBase(PApplet) with Scene{
+class EscapeGame(
+                  PApplet: PApplet,
+                  min: Minim,
+                  assets: Map[String, PImage],
+                  backgroundSounds: List[Audio],
+                  soundEffects: Map[String, Audio]) extends GameBase(PApplet) with Scene {
 
   private val gameLogic: EscapeLogic = new EscapeLogic(soundEffects)
   private var mazeDims: Dimensions = gameLogic.mazeDim
   var rand = new Random()
-
 
   private val updateTimer = new UpdateTimer(EscapeLogic.FramesPerSecond.toFloat)
   var gridDims: Dimensions = gameLogic.gridDims
@@ -29,16 +33,16 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
   private var heightInPixels: Int = (HeightCellInPixels * gridDims.height).ceil.toInt
   private var screenArea: Rectangle = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
 
-  private var changeState = false
+  private var changeLevel = false
   private var time: Int = millis()
   private var timeAttack : Int = _
 
   updateTimer.init()
 
   var audioStartState = false
-  private var bgAudio : Audio = null
+  private var bgAudio: Audio = null
   private var backgroundMusic: List[Audio] = backgroundSounds
-  private var startedAnimation : Boolean = false
+  private var startedAnimation: Boolean = false
 
   def menu(): Unit = {
     setFillColor(169, 139, 53)
@@ -46,7 +50,11 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     drawTextCentered("Depth: " + gameLogic.gameState.level, 23, Point(screenArea.width - 49, ((screenArea.height / gridDims.height) * 3) / 2))
     if (gameLogic.gameState.player.gotKey) drawSprite(Rectangle(Point(100,(screenArea.height / gridDims.height) - 20), 45,45), assets("key"))
 
-    for (i <- 0 until gameLogic.gameState.player.hp) drawSprite(Rectangle(Point((150 + i * 35).toFloat, (screenArea.height / gridDims.height.toFloat) - 20), 45, 45), assets("heart"))
+    for (i <- 0 until gameLogic.gameState.player.hp) {
+      val heartLocation: Rectangle = Rectangle(Point((150 + i * 35).toFloat, (screenArea.height / gridDims.height.toFloat) - 20), 45, 45)
+
+      drawSprite(heartLocation, assets("heart"))
+    }
 
     setFillColor(255, 0, 0)
     drawTextCentered(gameLogic.gameState.timeLeft.toString, 23, Point(screenArea.width - 49 - 100, ((screenArea.height / gridDims.height) * 3) / 2 + 5))
@@ -56,18 +64,27 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     setFillColor(192,192,192)
     drawTextCentered("Weapons: ", 23, Point(60, screenArea.height - 15))
 
-    drawTextCentered(gameLogic.gameState.player.playersWeapons.length.toString, 23, Point(150, ((screenArea.height - 15))))
+    drawTextCentered(gameLogic.gameState.player.playersWeapons.length.toString, 23, Point(150, screenArea.height - 15))
     drawSprite(Rectangle(Point(150 + 10, screenArea.height - 35), 30,30), assets("sword"))
   }
 
   private def showAttackAnimation(): Unit = gameLogic.gameState.player.playersWeapons.last.animation(gameLogic.maze)
+
+  private def getAudioIndex: Int = {
+    if (backgroundMusic.length <= 1) {
+      rand.nextInt(backgroundMusic.length)
+    } else {
+      rand.nextInt(backgroundMusic.length - 1)
+    }
+  }
 
   private def setAudio(state: GameStateManager): Unit = {
     gameLogic.audioEnabled = state.audioEnabled
 
     if (!audioStartState && state.audioEnabled) {
       audioStartState = true
-      val index : Int = if (backgroundMusic.length <= 1) rand.nextInt(backgroundMusic.length) else rand.nextInt(backgroundMusic.length - 1)
+      val index: Int = getAudioIndex
+
       if (bgAudio != null) bgAudio.stop()
       bgAudio = backgroundMusic(index)
       backgroundMusic = backgroundMusic.patch(index, Nil, 1)
@@ -88,20 +105,37 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     widthInPixels = (WidthCellInPixels * gridDims.width).ceil.toInt
     heightInPixels = (HeightCellInPixels * gridDims.height).ceil.toInt
     screenArea = Rectangle(Point(0, 0), widthInPixels.toFloat, heightInPixels.toFloat)
-
   }
 
+  def gameOver(state: GameStateManager, surface: PSurface): GameStateManager = {
+    state.scene = "gameOver"
+    state.score = gameLogic.gameState.level
 
-  def run(surface: processing.core.PSurface, state: GameStateManager): GameStateManager = {
-    setAudio(state)
-    setBackground((0,0,0))
-    updateState(surface)
-    setAudio(state)
+    resetWindowStates(10, 10, new Player, gameLogic.mazeDim)
+    gameLogic.gameState = gameLogic.gameState.copy(
+      gameDone = false,
+      player = new Player,
+      level = 0,
+      timeLeft = 20,
+      attackAnimation = false)
 
-    menu()
-    weaponMenu()
-    drawGrid()
+    if (state.score > state.highScore) {
+      state.highScore = state.score
+      val fileWriter = new FileWriter(new File("src/escape/logic/highscore"))
+      fileWriter.write(state.score.toString)
+      fileWriter.close()
+    }
 
+    surface.setSize(470, 540)
+
+    if (state.audioEnabled) bgAudio.pause()
+    audioStartState = false
+    if (backgroundSounds != null) backgroundMusic = List[Audio](new Audio("src/escape/assets/dungeonOST/bg1.mp3", min), new Audio("src/escape/assets/dungeonOST/bg2.mp3", min), new Audio("src/escape/assets/dungeonOST/bg3.mp3",min), new Audio("src/escape/assets/dungeonOST/bg4.mp3",min), new Audio("src/escape/assets/dungeonOST/bg5.mp3",min), new Audio("src/escape/assets/dungeonOST/bg6.mp3", min))
+
+    state
+  }
+
+  def attackAnimation(): Unit = {
     if (gameLogic.gameState.attackAnimation && !startedAnimation) {
       showAttackAnimation()
       timeAttack = millis() // Start of attack
@@ -115,31 +149,25 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
     }
 
     if (gameLogic.immunityCooldownActive && millis() - time >= 1000) gameLogic.immunityCooldownActive = false
+  }
+
+
+  def run(surface: processing.core.PSurface, state: GameStateManager): GameStateManager = {
+    setAudio(state)
+    setBackground((0,0,0))
+    updateState(surface)
+    setAudio(state)
+
+    menu()
+    weaponMenu()
+    drawGrid()
+
+    attackAnimation()
 
     gameLogic.ghostHit()
 
     if (gameLogic.gameState.gameDone || gameLogic.gameState.isGameOver) {
-      state.scene = "gameOver"
-      state.score = gameLogic.gameState.level
-
-      resetWindowStates(10, 10, new Player, gameLogic.mazeDim)
-      gameLogic.gameState = gameLogic.gameState.copy(gameDone = false, player = new Player, level = 0, timeLeft = 20, attackAnimation = false)
-
-      if (state.score > state.highScore) {
-        state.highScore = state.score
-        val fileWriter = new FileWriter(new File("src/escape/logic/highscore"))
-        fileWriter.write(state.score.toString)
-        fileWriter.close()
-      }
-
-      surface.setSize(470, 540)
-
-      if (state.audioEnabled) bgAudio.pause()
-      audioStartState = false
-
-      if (backgroundSounds != null) backgroundMusic = List[Audio](new Audio("src/escape/assets/dungeonOST/bg1.mp3", min), new Audio("src/escape/assets/dungeonOST/bg2.mp3", min), new Audio("src/escape/assets/dungeonOST/bg3.mp3",min), new Audio("src/escape/assets/dungeonOST/bg4.mp3",min), new Audio("src/escape/assets/dungeonOST/bg5.mp3",min), new Audio("src/escape/assets/dungeonOST/bg6.mp3", min))
-
-      return state
+      return gameOver(state, surface)
     }
 
     if(millis() - time >= 1000){
@@ -175,7 +203,7 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
         case Coin => drawSprite(smallSizeSprite, assets("coin"))
         case OpenPortal => {
           drawOpenDoor(area)
-          changeState = true
+          changeLevel = true
         }
         case Key => drawSprite(area, assets("key"))
         case Clock => drawSprite(smallSizeSprite, assets("clock"))
@@ -198,14 +226,14 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
       case VK_LEFT if !gameLogic.gameState.attackAnimation  => gameLogic.moveLeft()
       case VK_RIGHT if !gameLogic.gameState.attackAnimation => gameLogic.moveRight()
       case VK_SPACE => gameLogic.leaveRoom()
-      case VK_V if !gameLogic.gameState.attackAnimation => gameLogic.attack()  //changeState = true
+      case VK_V if !gameLogic.gameState.attackAnimation => gameLogic.attack()
       case _        => ()
     }
   }
 
   def updateState(surface: PSurface): Unit = {
     if (updateTimer.timeForNextFrame()) {
-      if (changeState) {
+      if (changeLevel) {
         delay(1000)
         val newSize = gameLogic.gameState.difficultyCurve(gameLogic.gameState.level + 1)
         if (newSize.width != gameLogic.maze.width) audioStartState = false // Make sure we get a new background audio when we increase maze size
@@ -215,7 +243,7 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
         gameLogic.gameState = gameLogic.gameState.copy(timeLeft = 20, transits = false, level = gameLogic.gameState.level + 1)
 
         surface.setSize(widthInPixels, heightInPixels)
-        changeState = false
+        changeLevel = false
       }
       updateTimer.advanceFrame()
     }
