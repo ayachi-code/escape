@@ -7,44 +7,50 @@ import scala.util.Random
 
 case class Maze(width: Int, height: Int, player: Player) {
   val area: Int = width * height
-  var mazeCells : ArrayBuffer[ArrayBuffer[Cell]] = ArrayBuffer[ArrayBuffer[Cell]]()
-  private var visitedCells : Int = 1
+  var mazeCells: ArrayBuffer[ArrayBuffer[Cell]] = ArrayBuffer[ArrayBuffer[Cell]]()
+  private var visitedCells: Int = 1
 
   val rand = new Random()
-  var playerPosition : Point = Point(0,0)
-  val portalLocation : Point = Point(width - 1, height - 1)
-  var enemyCap : Int =  (math.ceil(math.pow(2, width / 5)).toInt)
+  var playerPosition: Point = Point(0, 0)
+  val portalLocation: Point = Point(width - 1, height - 1)
+  var enemyCap: Int = math.ceil(math.pow(2, width / 5)).toInt
   var enemys: Array[Enemy] = Array[Enemy]()
 
-  private def initMaze(): Unit = {
-    val roof = ArrayBuffer[Cell]().append(Cell(Point(0, 0)).addWall('n').addWall('w'))
-    for (i <- 1 until width-1) roof.append(Cell(Point(i,0)).addWall('n'))
-    mazeCells.append(roof.append(Cell(Point(width-1,0)).addWall('n').addWall('e')))
-
-    for (i <- 1 until height-1) {
-      val row: ArrayBuffer[Cell] = ArrayBuffer[Cell]()
-      for (j <- 0 until width) {
-        if (j == 0) {
-          row.append(Cell(Point(j,i)).addWall('w'))
-        } else if (j == width-1) {
-          row.append(Cell(Point(j,i)).addWall('e'))
-        } else {
-          row.append(Cell(Point(j,i)))
-        }
-      }
-      mazeCells.append(row)
-    }
-    val floor = ArrayBuffer[Cell]().append(Cell(Point(0, height - 1)).addWall('s').addWall('w'))
-    for (l <- 1 until width-1) floor.append(Cell(Point(l,height-1)).addWall('s'))
-    mazeCells.append(floor.append(Cell(Point(width-1,height-1)).addWall('s').addWall('e')))
-
-    mazeCells(height - 1)(width - 1).isPortal = true
+  private def generateMechanics(): Unit = {
     generateCoins()
     generateClock()
     generateEnemy()
     generateWeapons()
     generateHeart()
-    mazeCells(rand.nextInt(height - 1) + 1)(rand.nextInt(width - 1)).isKey = true
+    val uniqueKeyLocation: Point = uniqueLocation()
+    mazeCells(uniqueKeyLocation.y)(uniqueKeyLocation.x).isKey = true
+  }
+
+  private def initMaze(): Unit = {
+    val roof = ArrayBuffer[Cell]().append(Cell(Point(0, 0)).addWall('n').addWall('w'))
+    for (i <- 1 until width - 1) roof.append(Cell(Point(i, 0)).addWall('n'))
+    mazeCells.append(roof.append(Cell(Point(width - 1, 0)).addWall('n').addWall('e')))
+
+    for (i <- 1 until height - 1) {
+      val row: ArrayBuffer[Cell] = ArrayBuffer[Cell]()
+      for (j <- 0 until width) {
+        if (j == 0) {
+          row.append(Cell(Point(j, i)).addWall('w'))
+        } else if (j == width - 1) {
+          row.append(Cell(Point(j, i)).addWall('e'))
+        } else {
+          row.append(Cell(Point(j, i)))
+        }
+      }
+      mazeCells.append(row)
+    }
+
+    val floor = ArrayBuffer[Cell]().append(Cell(Point(0, height - 1)).addWall('s').addWall('w'))
+    for (l <- 1 until width - 1) floor.append(Cell(Point(l, height - 1)).addWall('s'))
+    mazeCells.append(floor.append(Cell(Point(width - 1, height - 1)).addWall('s').addWall('e')))
+
+    mazeCells(height - 1)(width - 1).isPortal = true
+    generateMechanics()
   }
 
   case class Direction(position: Point, neigb: Stack[Point])
@@ -95,7 +101,13 @@ case class Maze(width: Int, height: Int, player: Player) {
     })
   }
 
-  def inBound(point: Point): Boolean = if (point.x >= 0 && point.y <= height-1 && point.x <= width-1 && point.y >= 0) true else false
+  def inBound(point: Point): Boolean = {
+    if (point.x >= 0 && point.x <= width - 1 && point.y <= height - 1 && point.y >= 0) {
+      true
+    } else {
+      false
+    }
+  }
 
   private def possibleNeighbours(point: Point): Array[Point] = {
     var positions: Array[Point] = Array[Point]()
@@ -181,6 +193,16 @@ case class Maze(width: Int, height: Int, player: Player) {
     }
   }
 
+  private def generateHeart(): Unit = {
+    if (player.hp < player.maxHP) {
+      val rng : Int = rand.nextInt(3)
+      if (rng == 1) {
+        val uniquePoint = uniqueLocation()
+        mazeCells(uniquePoint.y)(uniquePoint.x).isHeart = true
+      }
+    }
+  }
+
   def generateMaze(): ArrayBuffer[ArrayBuffer[Cell]] = {
     initMaze()
     var theStack = mutable.Stack[Cell](mazeCells(0)(0).setVisited(true).setPlayer(true))
@@ -203,16 +225,6 @@ case class Maze(width: Int, height: Int, player: Player) {
         neighbours.foreach(cell => if (!mazeCells(i)(j).linkedCells.contains(cell) && !mazeCells(cell.y)(cell.x).linkedCells.contains(Point(j, i))) addWall(mazeCells(i)(j).pos, cell))
       }}
     mazeCells
-  }
-
-  private def generateHeart(): Unit = {
-    if (player.hp < player.maxHP) {
-      val rng : Int = rand.nextInt(3)
-      if (rng == 1) {
-        val uniquePoint = uniqueLocation()
-        mazeCells(uniquePoint.y)(uniquePoint.x).isHeart = true
-      }
-    }
   }
 
   private def generateEnemy(): Unit = {
