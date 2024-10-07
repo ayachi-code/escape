@@ -57,7 +57,7 @@ class Driver extends PApplet {
 
 }
 
-object driver {
+object Driver {
   def main(args: Array[String]): Unit = {
     PApplet.main("escape.game.Driver")
   }

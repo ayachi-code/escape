@@ -5,7 +5,7 @@ package engine
 
 import engine.graphics.{Color, Point, Rectangle, Triangle}
 import processing.core.{PApplet, PConstants, PFont, PImage}
-import escape.game.{Driver, driver}
+import escape.game.{Driver}
 import escape.logic._
 
 class GameBase(PApplet: PApplet) extends Driver  {
