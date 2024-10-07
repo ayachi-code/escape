@@ -35,16 +35,13 @@ class EscapeLogic(soundEffects: Map[String, Audio]) {
     }
   }
 
-  def ghostHit(gameStateManager: GameStateManager) : Unit = {
+  def ghostHit() : Unit = {
     maze.enemys.foreach(enemy => {
       if (enemy.point == gameState.player.position) {
         if (!immunityCooldownActive) {
-          gameState = gameState.copy(player = player.setHp(gameState.player.hp - 1))
-          if (gameStateManager.audioEnabled) soundEffects("hit").play()
-          if (gameState.player.hp <= 0) gameState = gameState.copy(gameDone = true)
+          gameState.player.setHp(gameState.player.hp - 1)
           immunityCooldownActive = true
-        }
-      }
+        }}
     })
   }
 

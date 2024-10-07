@@ -116,7 +116,7 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
 
     if (gameLogic.immunityCooldownActive && millis() - time >= 1000) gameLogic.immunityCooldownActive = false
 
-    gameLogic.ghostHit(state)
+    gameLogic.ghostHit()
 
     if (gameLogic.gameState.gameDone || gameLogic.gameState.isGameOver) {
       state.scene = "gameOver"
@@ -170,7 +170,7 @@ class EscapeGame(PApplet: PApplet, min: Minim, assets: Map[String, PImage],  val
       val smallSizeSprite = Rectangle(Point((area.left + area.right - area.width/2) / 2, (area.top + area.bottom - area.width / 2) / 2), area.width / 2, area.height / 2)
 
       typeOfCell.foreach {
-        case PlayerCell => drawSprite(area, assets("player")) //drawPlayer(area)
+        case PlayerCell => drawPlayer(area)
         case Portal => drawSprite(area, assets("door"))
         case Coin => drawSprite(smallSizeSprite, assets("coin"))
         case OpenPortal => {

@@ -152,7 +152,7 @@ case class Maze(width: Int, height: Int, player: Player) {
       val randomX = rand.nextInt(mazeCells.length - 1) + 1
       val randomY = rand.nextInt(mazeCells.length - 1) + 1
 
-      if(!coords.contains(Point(randomX, randomY)) && !mazeCells(randomY)(randomX).isClock && !mazeCells(randomY)(randomX).isEnemyOn && !mazeCells(randomY)(randomX).isKey && !mazeCells(randomY)(randomX).isWeapon) {
+      if(!coords.contains(Point(randomX, randomY)) && !mazeCells(randomY)(randomX).isClock && !mazeCells(randomY)(randomX).isEnemyOn && !mazeCells(randomY)(randomX).isKey && !mazeCells(randomY)(randomX).isWeapon && !mazeCells(randomY)(randomX).isCoin) {
         state = false
         return Point(randomX, randomY)
       }

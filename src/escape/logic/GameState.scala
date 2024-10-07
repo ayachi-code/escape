@@ -37,7 +37,7 @@ case class GameState(attackAnimation: Boolean,  player: Player, timeLeft: Int, g
     Dimensions(18, 18)
   }
 
-  def isGameOver: Boolean = if (timeLeft <= 0 && !transits) true else false
+  def isGameOver: Boolean = if (timeLeft <= 0 && !transits || player.hp <= 0) true else false
 
   def getWalls(p : Point): List[Char] = {
     mazeGrid(p.y)(p.x).getWalls
