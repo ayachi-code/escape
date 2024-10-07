@@ -1,6 +1,6 @@
 package escape.logic
 
-class Player() {
+class Player {
   var playersWeapons: List[Weapon] = List[Weapon](Sword(this), Sword(this), Sword(this), Sword(this), Sword(this), Sword(this), Sword(this), Sword(this), Sword(this))
   val maxHP : Int = 3
 
@@ -51,6 +51,5 @@ class Player() {
     gotKey = false
     position = Point(0,0)
   }
-
 
 }
