@@ -3,6 +3,7 @@ package escape.logic
 case class Cell(pos: Point) {
   var walls : collection.mutable.Map[Char, Boolean] = collection.mutable.Map[Char, Boolean]('n' -> false, 's' -> false, 'w' -> false, 'e' -> false)
   private var visited : Boolean = false
+
   var isPlayerOn : Boolean = false
   var isPortal : Boolean = false
   var isCoin : Boolean = false

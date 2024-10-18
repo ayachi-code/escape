@@ -109,25 +109,32 @@ case class Maze(width: Int, height: Int, player: Player) {
     }
   }
 
-  private def possibleNeighbours(point: Point): Array[Point] = {
-    var positions: Array[Point] = Array[Point]()
+  private def possibleNeighbours(point: Point): List[Point] = {
+    var positions: List[Point] = List[Point]()
 
-    if (inBound(Point(point.x + 1, point.y)) && !mazeCells(point.y)(point.x + 1).isVisited)  positions = positions :+ Point(point.x + 1, point.y)
+    if (inBound(Point(point.x + 1, point.y)) && !mazeCells(point.y)(point.x + 1).isVisited) {
+      positions = positions :+ Point(point.x + 1, point.y)
+    }
 
-    if (inBound(Point(point.x, point.y + 1)) && !mazeCells(point.y + 1)(point.x).isVisited) positions = positions :+ Point(point.x, point.y + 1)
+    if (inBound(Point(point.x, point.y + 1)) && !mazeCells(point.y + 1)(point.x).isVisited) {
+      positions = positions :+ Point(point.x, point.y + 1)
+    }
 
-    if (inBound(Point(point.x - 1, point.y)) && !mazeCells(point.y)(point.x - 1).isVisited) positions = positions :+ Point(point.x - 1, point.y)
+    if (inBound(Point(point.x - 1, point.y)) && !mazeCells(point.y)(point.x - 1).isVisited) {
+      positions = positions :+ Point(point.x - 1, point.y)
+    }
 
-    if (inBound(Point(point.x, point.y - 1)) && !mazeCells(point.y - 1)(point.x).isVisited) positions = positions :+ Point(point.x, point.y - 1)
+    if (inBound(Point(point.x, point.y - 1)) && !mazeCells(point.y - 1)(point.x).isVisited) {
+      positions = positions :+ Point(point.x, point.y - 1)
+    }
 
     positions
   }
 
-
   private def neighbouringCells(point: Point): Array[Point] = {
     var positions: Array[Point] = Array[Point]()
 
-    if (inBound(Point(point.x + 1, point.y)))  positions = positions :+ Point(point.x + 1, point.y)
+    if (inBound(Point(point.x + 1, point.y))) positions = positions :+ Point(point.x + 1, point.y)
 
     if (inBound(Point(point.x, point.y + 1))) positions = positions :+ Point(point.x, point.y + 1)
 
@@ -157,15 +164,15 @@ case class Maze(width: Int, height: Int, player: Player) {
   }
 
   private def uniqueLocation(): Point = {
-    var state : Boolean = true
+    var foundPoint : Boolean = false
     val coords : List[Point] = List[Point]()
 
-    while (state) {
+    while (!foundPoint) {
       val randomX = rand.nextInt(mazeCells.length - 1) + 1
       val randomY = rand.nextInt(mazeCells.length - 1) + 1
 
       if(!coords.contains(Point(randomX, randomY)) && !mazeCells(randomY)(randomX).isClock && !mazeCells(randomY)(randomX).isEnemyOn && !mazeCells(randomY)(randomX).isKey && !mazeCells(randomY)(randomX).isWeapon && !mazeCells(randomY)(randomX).isCoin) {
-        state = false
+        foundPoint = true
         return Point(randomX, randomY)
       }
     }
@@ -197,10 +204,23 @@ case class Maze(width: Int, height: Int, player: Player) {
     if (player.hp < player.maxHP) {
       val rng : Int = rand.nextInt(3)
       if (rng == 1) {
-        val uniquePoint = uniqueLocation()
-        mazeCells(uniquePoint.y)(uniquePoint.x).isHeart = true
+        val heartLocation = uniqueLocation()
+        mazeCells(heartLocation.y)(heartLocation.x).isHeart = true
       }
     }
+  }
+
+  def generateWalls(): Unit = {
+    for (i <- 0 until height) {
+      for (j <- 0 until width) {
+        val neighbours = neighbouringCells(Point(j, i))
+
+        neighbours.foreach(cell => {
+          val isCellNotLinked = !mazeCells(cell.y)(cell.x).linkedCells.contains(Point(j, i))
+          if (!mazeCells(i)(j).linkedCells.contains(cell) && isCellNotLinked) {
+            addWall(mazeCells(i)(j).pos, cell)
+          }})
+      }}
   }
 
   def generateMaze(): ArrayBuffer[ArrayBuffer[Cell]] = {
@@ -219,11 +239,7 @@ case class Maze(width: Int, height: Int, player: Player) {
       }
     }
 
-    for (i <- 0 until height) {
-      for (j <- 0 until width) {
-        val neighbours = neighbouringCells(Point(j, i))
-        neighbours.foreach(cell => if (!mazeCells(i)(j).linkedCells.contains(cell) && !mazeCells(cell.y)(cell.x).linkedCells.contains(Point(j, i))) addWall(mazeCells(i)(j).pos, cell))
-      }}
+    generateWalls()
     mazeCells
   }
 

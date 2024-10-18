@@ -1,13 +1,9 @@
 package escape.logic
 
-import ddf.minim.Minim
-import escape.game.GameStateManager
-
 import scala.collection.mutable.ArrayBuffer
 
 
 class EscapeLogic(soundEffects: Map[String, Audio]) {
-
 
   var player : Player = new Player
   var maze: Maze = Maze(10,10, player)
