@@ -22,11 +22,17 @@ class RectangleButton(pApplet: PApplet, point: Point, width: Float, height: Floa
     pApplet.text(textOnButton, point.x + width / 2 - 80, point.y + 50 )
   }
 
-  override def onButton(): Boolean =
-    if (pApplet.mouseX > point.x && pApplet.mouseX < point.x + width && pApplet.mouseY > point.y && pApplet.mouseY < point.y + height) true else false
+  override def onButton(): Boolean = {
+    val mouseOnX = pApplet.mouseX > point.x && pApplet.mouseX < point.x + width
+    val mouseOnY = pApplet.mouseY > point.y && pApplet.mouseY < point.y + height
 
+    if (mouseOnX && mouseOnY) {
+      true
+    } else{
+      false
+    }
+  }
 
   override def pressed(): Boolean =
     if (onButton() && pApplet.mousePressed) true else false
-
 }

@@ -1,7 +1,7 @@
 package escape.logic
 
 class Player {
-  var playersWeapons: List[Weapon] = List[Weapon](Sword(this), Sword(this), Sword(this), Sword(this), Sword(this), Sword(this), Sword(this), Sword(this), Sword(this))
+  var playersWeapons: List[Weapon] = List[Weapon](Sword(this), Sword(this), Sword(this))
   val maxHP : Int = 3
 
   var gold : Int = 0
@@ -14,13 +14,29 @@ class Player {
   def possibleAttack(maze: Maze): List[attackPair] = {
     var positions: List[attackPair] = List[attackPair]()
 
-    if (maze.inBound(Point(position.x + 1, position.y))  && !maze.mazeCells(position.y)(position.x).walls('e') &&  !maze.mazeCells(position.y)(position.x + 1).walls('w') )  positions = positions :+  attackPair((Point(position.x + 1, position.y)), 'e')
+    if (maze.inBound(Point(position.x + 1, position.y))
+      && !maze.mazeCells(position.y)(position.x).walls('e')
+      && !maze.mazeCells(position.y)(position.x + 1).walls('w')) {
+      positions = positions :+  attackPair((Point(position.x + 1, position.y)), 'e')
+    }
 
-    if (maze.inBound(Point(position.x, position.y + 1)) && !maze.mazeCells(position.y)(position.x).walls('s') &&  !maze.mazeCells(position.y + 1)(position.x).walls('n')) positions = positions :+ attackPair((Point(position.x, position.y + 1)), 's')
+    if (maze.inBound(Point(position.x, position.y + 1)) &&
+      !maze.mazeCells(position.y)(position.x).walls('s')
+      && !maze.mazeCells(position.y + 1)(position.x).walls('n')) {
+      positions = positions :+ attackPair((Point(position.x, position.y + 1)), 's')
+    }
 
-    if (maze.inBound(Point(position.x - 1, position.y)) && !maze.mazeCells(position.y)(position.x).walls('w') &&  !maze.mazeCells(position.y)(position.x - 1).walls('e')) positions = positions :+ attackPair((Point(position.x - 1, position.y)), 'w')
+    if (maze.inBound(Point(position.x - 1, position.y))
+      && !maze.mazeCells(position.y)(position.x).walls('w')
+      && !maze.mazeCells(position.y)(position.x - 1).walls('e')) {
+      positions = positions :+ attackPair((Point(position.x - 1, position.y)), 'w')
+    }
 
-    if (maze.inBound(Point(position.x, position.y - 1)) && !maze.mazeCells(position.y)(position.x).walls('n') &&  !maze.mazeCells(position.y - 1)(position.x).walls('s')) positions = positions :+ attackPair((Point(position.x, position.y - 1)), 'n')
+    if (maze.inBound(Point(position.x, position.y - 1))
+      && !maze.mazeCells(position.y)(position.x).walls('n')
+      && !maze.mazeCells(position.y - 1)(position.x).walls('s')) {
+      positions = positions :+ attackPair((Point(position.x, position.y - 1)), 'n')
+    }
 
     positions
   }
