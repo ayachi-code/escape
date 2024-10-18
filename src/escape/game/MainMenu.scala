@@ -74,12 +74,12 @@ class MainMenu(PApplet: PApplet, sounds: Map[String, Audio] ) extends GameBase(P
 
     if (audioTurnOnButton.pressed()) {
       state.audioEnabled = true
-      sleep(100)
+      sleep(250)
     }
 
     if (audioTurnOffButton.pressed()) {
       state.audioEnabled = false
-      sleep(100)
+      sleep(250)
     }
 
     state
