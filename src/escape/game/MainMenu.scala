@@ -25,17 +25,7 @@ class MainMenu(PApplet: PApplet, sounds: Map[String, Audio] ) extends GameBase(P
   var audioStartState = false
   private var audioEnabledState = true
 
-
-  def run(surface: processing.core.PSurface, state: GameStateManager) : GameStateManager = {
-
-    if (!audioStartState && state.audioEnabled) {
-      audioStartState = true
-      if (sounds != null)  sounds("background").play()
-    }
-
-    setBackground((0, 0, 0))
-    startGameButton.display()
-
+  def setAudio(state: GameStateManager): Unit = {
     if (state.audioEnabled && state.audioSupport) {
       audioTurnOffButton.display()
       audioTurnOffButton.enabled = true
@@ -50,11 +40,24 @@ class MainMenu(PApplet: PApplet, sounds: Map[String, Audio] ) extends GameBase(P
       audioTurnOffButton.enabled = false
       audioTurnOnButton.enabled = true
 
-      if (sounds != null)  sounds("background").pause()
-      if (sounds != null)  sounds("clickAudio").pause()
+      if (sounds != null) sounds("background").pause()
+      if (sounds != null) sounds("clickAudio").pause()
 
       audioEnabledState = false
     }
+  }
+
+
+  def run(surface: processing.core.PSurface, state: GameStateManager) : GameStateManager = {
+
+    if (!audioStartState && state.audioEnabled) {
+      audioStartState = true
+      if (sounds != null) sounds("background").play()
+    }
+
+    setBackground((0, 0, 0))
+    startGameButton.display()
+    setAudio(state)
 
     drawText("Escape", Point(PApplet.width.toFloat / 2 - 200,200), (255,36,0), mono, 150)
     drawText("Highscore ", Point(50, 200 + 100), (255,0,0), mono, 75)
@@ -62,8 +65,8 @@ class MainMenu(PApplet: PApplet, sounds: Map[String, Audio] ) extends GameBase(P
     drawText(state.highScore.toString, Point(PApplet.width.toFloat / 2 + 150, 200 + 95), (255,0,0), fontNumber, 75)
 
     if (startGameButton.pressed()) {
-      if (sounds != null)  sounds("clickAudio").play()
-      if (sounds != null)  sounds("background").pause()
+      if (sounds != null) sounds("clickAudio").play()
+      if (sounds != null) sounds("background").pause()
       sleep(100)
       audioStartState = false
       return state.copy(scene = "game")

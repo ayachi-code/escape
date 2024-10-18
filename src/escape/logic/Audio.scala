@@ -1,7 +1,7 @@
 package escape.logic
 import ddf.minim.{AudioPlayer, Minim}
 
-class Audio(var url: String, minim: Minim) {
+class Audio(url: String, minim: Minim) {
   private val audio: AudioPlayer = minim.loadFile(url)
 
   def play(): Unit = {
