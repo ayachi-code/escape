@@ -64,38 +64,40 @@ case class Maze(width: Int, height: Int, player: Player) {
       mazeCells(enemy.point.y)(enemy.point.x).visitByEnemy = mazeCells(enemy.point.y)(enemy.point.x).visitByEnemy :+ enemy.id
       val neighbours = enemy.stack.top.neigb
 
-      def backtrack(): Unit = {
-        mazeCells(enemy.point.y)(enemy.point.x).visitByEnemy = mazeCells(enemy.point.y)(enemy.point.x).visitByEnemy.filterNot(elm => elm == enemy.id)
-        if (enemy.stack.nonEmpty) {
-          enemy.stack.pop()
-          mazeCells(enemy.point.y)(enemy.point.x).isEnemyOn = false
-          enemy.point = enemy.stack.top.position
+      var state: Boolean = true
+      while (state) {
+        if (neighbours.length <= 0) {
+          mazeCells(enemy.point.y)(enemy.point.x).visitByEnemy = mazeCells(enemy.point.y)(enemy.point.x).visitByEnemy.filterNot(elm => elm == enemy.id)
+          if (enemy.stack.nonEmpty) {
+            enemy.stack.pop()
+            mazeCells(enemy.point.y)(enemy.point.x).isEnemyOn = false
+            enemy.point = enemy.stack.top.position
 
-          mazeCells(enemy.stack.top.position.y)(enemy.stack.top.position.x).isEnemyOn = true
-          mazeCells(enemy.point.y)(enemy.point.x).enemyIds = mazeCells(enemy.point.y)(enemy.point.x).enemyIds :+ enemy.id
-        } else {
-          enemy.stack.push(Direction(enemy.point, enemy.possibleMove()))
+            mazeCells(enemy.stack.top.position.y)(enemy.stack.top.position.x).isEnemyOn = true
+            mazeCells(enemy.point.y)(enemy.point.x).enemyIds = mazeCells(enemy.point.y)(enemy.point.x).enemyIds :+ enemy.id
+          } else {
+            enemy.stack.push(Direction(enemy.point, enemy.possibleMove()))
+          }
+          state = false
+        }
+
+        if (neighbours.nonEmpty) {
+          if (!mazeCells(neighbours.top.y)(neighbours.top.x).visitByEnemy.contains(enemy.id) && neighbours.nonEmpty) {
+            mazeCells(enemy.point.y)(enemy.point.x).isEnemyOn = false
+            val move = neighbours.top
+            enemy.point = move
+            mazeCells(move.y)(move.x).isEnemyOn = true
+
+            mazeCells(enemy.point.y)(enemy.point.x).enemyIds = mazeCells(enemy.point.y)(enemy.point.x).enemyIds :+ enemy.id
+
+            enemy.stack.top.neigb.pop()
+            enemy.stack.push(Direction(move, enemy.possibleMove()))
+            state = false
+          } else {
+            neighbours.pop()
+          }
         }
       }
-
-      def findPath(): Unit = {
-        if (!mazeCells(neighbours.top.y)(neighbours.top.x).visitByEnemy.contains(enemy.id) && neighbours.nonEmpty) {
-          mazeCells(enemy.point.y)(enemy.point.x).isEnemyOn = false
-          val move = neighbours.top
-          enemy.point = move
-          mazeCells(move.y)(move.x).isEnemyOn = true
-
-          mazeCells(enemy.point.y)(enemy.point.x).enemyIds = mazeCells(enemy.point.y)(enemy.point.x).enemyIds :+ enemy.id
-
-          enemy.stack.top.neigb.pop()
-          enemy.stack.push(Direction(move, enemy.possibleMove()))
-        } else {
-          neighbours.pop()
-        }
-      }
-
-      if (neighbours.length <= 0) backtrack()
-      if (neighbours.nonEmpty) findPath()
     })
   }
 
@@ -169,7 +171,7 @@ case class Maze(width: Int, height: Int, player: Player) {
     var randomY = -1
 
     while (!foundPoint) {
-      randomX = rand.nextInt(mazeCells.length - 1) + 1
+      randomX = rand.nextInt(mazeCells(0).length - 1) + 1
       randomY = rand.nextInt(mazeCells.length - 1) + 1
 
       if(!coords.contains(Point(randomX, randomY)) && !mazeCells(randomY)(randomX).isClock && !mazeCells(randomY)(randomX).isEnemyOn && !mazeCells(randomY)(randomX).isKey && !mazeCells(randomY)(randomX).isWeapon && !mazeCells(randomY)(randomX).isCoin) {

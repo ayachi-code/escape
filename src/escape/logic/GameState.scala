@@ -31,10 +31,10 @@ case class GameState(attackAnimation: Boolean,  player: Player, timeLeft: Int, g
     if (level >= 0 && level <= 3) return Dimensions(10, 10)
     if (level >= 4 && level <= 6) return Dimensions(12, 12)
     if (level >= 7 && level <= 10) return Dimensions(15, 15)
-    if (level >= 11 && level <= 13) return Dimensions(16, 16)
-    if (level >= 14 && level <= 16) return Dimensions(17, 17)
+    if (level >= 11 && level <= 13) return Dimensions(17, 15)
+    if (level >= 14 && level <= 16) return Dimensions(19, 15)
 
-    Dimensions(18, 18)
+    Dimensions(21, 15)
   }
 
   def isGameOver: Boolean = if (timeLeft <= 0 && !transits || player.hp <= 0) true else false

@@ -9,6 +9,7 @@ class EscapeLogic(soundEffects: Map[String, Audio]) {
   var maze: Maze = Maze(10,10, player)
   var mazeGrid: ArrayBuffer[ArrayBuffer[Cell]] = maze.generateMaze()
 
+
   var gameState: GameState = GameState(false, player, 20, gameDone = false, leaveRoomButtonPressed = false, 0, transits = false, mazeGrid)
 
   var gridDims: Dimensions = Dimensions(maze.width * 3, maze.height * 3 + 6)
@@ -35,6 +36,7 @@ class EscapeLogic(soundEffects: Map[String, Audio]) {
     maze.enemys.foreach(enemy => {
       if (enemy.point == gameState.player.position) {
         if (!immunityCooldownActive) {
+          if (audioEnabled) soundEffects("hit").play()
           gameState.player.setHp(gameState.player.hp - 1)
           immunityCooldownActive = true
         }}
@@ -82,10 +84,10 @@ class EscapeLogic(soundEffects: Map[String, Audio]) {
 
   def isMovePossible(point: Point, move: Char): Boolean = {
     move match {
-      case 's' => !(point.x < 0 || point.y + 1 < 0 || point.x > mazeGrid.length - 1 || point.y + 1 > mazeGrid.length - 1) && !mazeGrid(point.y + 1)(point.x).walls('n') && !mazeGrid(point.y)(point.x).walls('s')
-      case 'n' => !(point.x < 0 || point.y - 1 < 0 || point.x > mazeGrid.length - 1 || point.y - 1 > mazeGrid.length - 1) && !mazeGrid(point.y - 1)(point.x).walls('s') && !mazeGrid(point.y)(point.x).walls('n')
-      case 'e' => !(point.x + 1 < 0 || point.y < 0 || point.x + 1 > mazeGrid.length - 1|| point.y > mazeGrid.length - 1) && !mazeGrid(point.y)(point.x + 1).walls('w') && !mazeGrid(point.y)(point.x).walls('e')
-      case 'w' => !(point.x - 1 < 0 || point.y < 0 || point.x - 1 > mazeGrid.length - 1 || point.y > mazeGrid.length - 1) && !mazeGrid(point.y)(point.x - 1).walls('e') && !mazeGrid(point.y)(point.x).walls('w')
+      case 's' => !(point.x < 0 || point.y + 1 < 0 || point.x > mazeGrid(0).length - 1 || point.y + 1 > mazeGrid.length - 1) && !mazeGrid(point.y + 1)(point.x).walls('n') && !mazeGrid(point.y)(point.x).walls('s')
+      case 'n' => !(point.x < 0 || point.y - 1 < 0 || point.x > mazeGrid(0).length - 1 || point.y - 1 > mazeGrid.length - 1) && !mazeGrid(point.y - 1)(point.x).walls('s') && !mazeGrid(point.y)(point.x).walls('n')
+      case 'e' => !(point.x + 1 < 0 || point.y < 0 || point.x + 1 > mazeGrid(0).length - 1 || point.y > mazeGrid.length - 1) && !mazeGrid(point.y)(point.x + 1).walls('w') && !mazeGrid(point.y)(point.x).walls('e')
+      case 'w' => !(point.x - 1 < 0 || point.y < 0 || point.x - 1 > mazeGrid(0).length - 1 || point.y > mazeGrid.length - 1) && !mazeGrid(point.y)(point.x - 1).walls('e') && !mazeGrid(point.y)(point.x).walls('w')
     }
 
   }

@@ -94,7 +94,7 @@ class EscapeGame(
   }
 
   private def resetWindowStates(width: Int, height: Int, player: Player, mazeDimension : Dimensions): Unit = {
-    gameLogic.maze = Maze(width,height, player)
+    gameLogic.maze = Maze(width, height, player)
     gameLogic.mazeGrid = gameLogic.maze.generateMaze()
 
     gameLogic.gameState = gameLogic.gameState.copy(mazeGrid = gameLogic.mazeGrid)
