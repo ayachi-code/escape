@@ -58,6 +58,6 @@ After downloading the project from codegrade there are two ways to start the gam
 ```
 
 The second way involes using the intelIJU IDEA. Go to the Driver.scala file in     ```
-     src/escape/logic/Driver.scala
+     src/escape/game/Driver.scala
      ```, and press the green play button.
     
