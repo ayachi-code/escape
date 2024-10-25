@@ -31,7 +31,7 @@ As you progress, the dungeons grow larger, increasing in size every few levels, 
 
 ## Controls
 
-You can move through the dungeon using the following keys:
+You can move and interact through the dungeon using the following keys:
 
 - **W**: Move North
 - **A**: Move West
