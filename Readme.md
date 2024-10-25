@@ -15,11 +15,12 @@ As you progress, the dungeons grow larger, increasing in size every few levels, 
 
 ## Feauters
 
-- Randomly generated dungeon
+- Randomly generated dungeons
 - Unlimited levels
 - Objective to find the key and escape
 - Patrolling ghost enemies
 - Randomly spawned sword for defeating ghosts
+- Gold coins to collect!
 - 20-second countdown timer for each level
 - Clocks that add 5 seconds to the timer
 - Increasing dungeon size with progression, maxing out at depth 17
@@ -36,6 +37,7 @@ You can move through the dungeon using the following keys:
 - **A**: Move West
 - **S**: Move South
 - **D**: Move East
+- **V**: Attacks nearby enemys
 - **Spacebar**: Open the door (when you have the key)
 
 ## Demo
